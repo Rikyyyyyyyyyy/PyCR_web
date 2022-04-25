@@ -1,0 +1,39 @@
+"""Tproject URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/3.1/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
+from Profile import views
+from django.conf.urls import url
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('Profile.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    # path('profile/', include(('Profile.urls', 'Profile'), namespace='account')),
+    path('profile/<user_id>', views.profile, name='profile'),
+    path('profile/<user_id>/edit/', views.edit_profile_view, name='edit'),
+    path('featureselection/task', views.feature_task_list, name='feature_task_list'),
+    path('featureselection/tasks/upload/', views.feature_upload_task, name='feature_upload_task'),
+    path('delete/feature/<int:pk>/', views.delete_feature_task, name='delete_feature_task'),
+    path('BuyMeCofee/', views.buyMeCoffee, name='buyMeCoffee'),
+    path('BuyMeCofee/charge', views.stripe_charge, name='charge'),
+    path('BuyMeCofee/success/<str:args>/', views.stripe_success, name='success'),
+    path('about/', views.about, name='aboutPage'),
+
+]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
