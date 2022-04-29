@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'Tproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pycrfree',
+        'NAME': 'pycr',
         'USER':'wenwen',
         'PASSWORD':'Li704647903',
-        'HOST':'pycrfree.cvhutn0ofsx8.us-east-1.rds.amazonaws.com',
+        'HOST':'pycr.cvhutn0ofsx8.us-east-1.rds.amazonaws.com',
         'PORT':'5432',
     }
 }
