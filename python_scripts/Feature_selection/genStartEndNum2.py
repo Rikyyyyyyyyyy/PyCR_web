@@ -8,8 +8,8 @@ import math
 from scipy import special
 from scipy.stats import f
 import warnings
-import SelectivityRatio_in
-import vipScore_in
+from python_scripts.Feature_selection import SelectivityRatio_in
+from python_scripts.Feature_selection import vipScore_in
 warnings.filterwarnings('ignore')
 # get the start and stop number
 # INPUT : class number, class data, sample data

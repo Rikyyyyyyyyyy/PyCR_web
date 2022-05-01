@@ -13,6 +13,9 @@ from django.urls import reverse
 import base64
 import shutil
 import stripe
+from python_scripts.Feature_selection import PyCR
+from python_scripts import sent_email
+
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -184,17 +187,18 @@ def feature_upload_task(request):
                 sampleName_url = 'none'
                 variableName_url = 'none'
                 motabo_url = task.motaboFile.path
-            out = run([sys.executable, '//Users//wenwenli//Desktop//TMIC//PyCRWEB//python_scripts//Feature_selection//main.py',isExternal, str(splitRatio), rocType, tupaType, isMotabo, motabo_url, sample_url, class_url,sampleName_url, variableName_url, scaleType, str(iterations),str(survivalRate),rankingAlgorithm, str(vipComponent), str(task.pk)], shell=False, stdout=PIPE)
-
+            # out = run([sys.executable, '//Users//wenwenli//Desktop//TMIC//PyCRWEB//python_scripts//Feature_selection//PyCR.py',isExternal, str(splitRatio), rocType, tupaType, isMotabo, motabo_url, sample_url, class_url,sampleName_url, variableName_url, scaleType, str(iterations),str(survivalRate),rankingAlgorithm, str(vipComponent), str(task.pk)], shell=False, stdout=PIPE)
+            PyCR.main(isExternal, splitRatio, rocType, tupaType, isMotabo, motabo_url, sample_url, class_url, sampleName_url, variableName_url, scaleType, iterations, survivalRate, rankingAlgorithm, vipComponent, task.pk)
             shutil.make_archive('static/images/featureSelection/temp/zipOutput/output' + str(task.pk), "zip", 'static/images/featureSelection/temp/output/','output' + str(task.pk))
             task.project_output.name = '/featureSelection/temp/zipOutput/output' + str(task.pk) + ".zip"
             task.save()
             current_user = request.user
             current_user = Author.objects.get(userid=current_user.id)
             if sent_email:
-                sent_mail_out = run([sys.executable,
-                           '//Users//wenwenli//Desktop//TMIC//PyCRWEB//python_scripts//sent_email.py',
-                          current_user.email,'/static/images/featureSelection/temp/zipOutput/output'+str(task.pk)+'.zip', settings.BASE_DIR,current_user.username,task.task_name, task.isExternal, task.rankingAlgorithm, task.rocType, task.tupaType, task.scaleType,str(task.iterations),str(task.survivalRate)], shell=False, stdout=PIPE)
+                # sent_mail_out = run([sys.executable,
+                #            '//Users//wenwenli//Desktop//TMIC//PyCRWEB//python_scripts//sent_email.py',
+                #           current_user.email,'/static/images/featureSelection/temp/zipOutput/output'+str(task.pk)+'.zip', settings.BASE_DIR,current_user.username,task.task_name, task.isExternal, task.rankingAlgorithm, task.rocType, task.tupaType, task.scaleType,str(task.iterations),str(task.survivalRate)], shell=False, stdout=PIPE)
+                sent_email.send_mail(current_user.email,'/static/images/featureSelection/temp/zipOutput/output'+str(task.pk)+'.zip', settings.BASE_DIR,current_user.username,task.task_name, task.isExternal, task.rankingAlgorithm, task.rocType, task.tupaType, task.scaleType,task.iterations,task.survivalRate)
             return redirect('feature_task_list')
     else:
         form = FeatureSelectionForm()

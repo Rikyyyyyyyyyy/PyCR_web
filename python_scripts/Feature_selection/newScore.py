@@ -3,8 +3,8 @@ import copy
 from numpy import inf
 import sys
 from scipy.sparse.linalg import svds
-import fisherRatio_in
-import gen_clust
+from python_scripts.Feature_selection import fisherRatio_in
+from python_scripts.Feature_selection import gen_clust
 import numpy as np
 import math
 import os
@@ -16,8 +16,8 @@ from scipy.stats.distributions import chi2
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import scale
 import warnings
-import SelectivityRatio
-import vipScore
+from python_scripts.Feature_selection import SelectivityRatio
+from python_scripts.Feature_selection import vipScore
 warnings.filterwarnings('ignore')
 # start backward Feature Selection and Forward Feature selection
 # INPUT : class number, class data, sample data, start number, stop number , spliting rate, iteration number(in main), original class name, scale type

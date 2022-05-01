@@ -1,4 +1,4 @@
-import ClustResolution
+from python_scripts.Feature_selection import ClustResolution
 import numpy as np
 import itertools
 import warnings

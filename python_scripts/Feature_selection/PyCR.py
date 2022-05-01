@@ -1,7 +1,7 @@
 import copy
 import numpy as np
-import newScore
-import genStartEndNum2
+from python_scripts.Feature_selection import newScore
+from python_scripts.Feature_selection import genStartEndNum2
 from sklearn import svm
 import matplotlib.pyplot as plt
 from sklearn import metrics
@@ -20,7 +20,7 @@ from sklearn.preprocessing import label_binarize
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import scale
-import file_pkg
+from python_scripts.Feature_selection import file_pkg
 import warnings
 from sklearn.metrics import accuracy_score
 import sys
@@ -216,7 +216,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
 
         # scale the data
         if scale_type == 'SNV':
-            scaled_sample_training,col_mean = SNV_scale_half_data(sample_taining)
+            scaled_sample_training,col_mean = SVN_scale_half_data(sample_taining)
             scaled_all_sample = SNV_scale_all_data(sampleList,col_mean)
         else:
             scaled_sample_training,train_mean,train_std = scale_half_data(sample_taining)
