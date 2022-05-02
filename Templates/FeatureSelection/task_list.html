@@ -80,7 +80,22 @@
             </tr>
         </thead>
         <tbody>
-            CHECK YOUR EMAIL FOR THE FILES
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task.task_name }}</td>
+                        {% if task.project_output.name %}
+                            <td>
+                                <a href="{{ task.project_output.url}}" class="btn btn-primary btn-sm">Download</a>
+                            </td>
+                            <td>
+                                <a href= "{% url 'delete_feature_task' pk=task.pk %}" class="btn btn-primary btn-sm">Delete</a>
+                            </td>
+                        {% else %}
+                            <td>Generating...</td>
+                        {% endif %}
+
+                </tr>
+            {% endfor %}
 
         </tbody>
     </table>
