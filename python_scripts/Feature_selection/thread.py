@@ -6,7 +6,7 @@ from python_scripts import sent_email
 fake = Faker()
 
 
-def PyCRThread(Thread):
+class PyCRThread(Thread):
     def __init__(self,isExternal, splitRatio, rocType, tupaType, isMotabo, motabo_url, sample_url, class_url, sampleName_url, variableName_url, scaleType, iterations, survivalRate, rankingAlgorithm, vipComponent, pk,task,isSendEmail,cur_user, base_dir):
         self.isExternal = isExternal
         self.splitratio = splitRatio
