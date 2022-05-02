@@ -11,6 +11,7 @@ import os
 import shutil
 import imageio
 import matplotlib.pyplot as plt
+import matplotlib
 from sklearn.model_selection import train_test_split
 from scipy.stats.distributions import chi2
 from sklearn.preprocessing import StandardScaler
@@ -19,6 +20,7 @@ import warnings
 from python_scripts.Feature_selection import SelectivityRatio
 from python_scripts.Feature_selection import vipScore
 warnings.filterwarnings('ignore')
+matplotlib.use('agg')
 # start backward Feature Selection and Forward Feature selection
 # INPUT : class number, class data, sample data, start number, stop number , spliting rate, iteration number(in main), original class name, scale type
 # OUTPUT : selected variable index, training sample data, testing sample data, training class data, testing class data

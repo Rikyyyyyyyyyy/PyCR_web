@@ -1,4 +1,5 @@
 import copy
+import matplotlib
 import numpy as np
 from python_scripts.Feature_selection import newScore
 from python_scripts.Feature_selection import genStartEndNum2
@@ -24,8 +25,10 @@ from python_scripts.Feature_selection import file_pkg
 import warnings
 from sklearn.metrics import accuracy_score
 import sys
+import matplotlib
 
 warnings.filterwarnings('ignore')
+matplotlib.use('agg')
 def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFileName,ClassFileName,sampleNameFile,variableNameFile,scale_type,iteration,survivalRate,V_rankingAlgorithm, nComponent,task_pk):
     ITERATION = iteration
 
