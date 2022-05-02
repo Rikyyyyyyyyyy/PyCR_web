@@ -193,8 +193,8 @@ def feature_upload_task(request):
             # out = run([sys.executable, '//Users//wenwenli//Desktop//TMIC//PyCRWEB//python_scripts//Feature_selection//PyCR.py',isExternal, str(splitRatio), rocType, tupaType, isMotabo, motabo_url, sample_url, class_url,sampleName_url, variableName_url, scaleType, str(iterations),str(survivalRate),rankingAlgorithm, str(vipComponent), str(task.pk)], shell=False, stdout=PIPE)
             current_user = request.user
             current_user = Author.objects.get(userid=current_user.id)
-            PyCRThread(isExternal, splitRatio, rocType, tupaType, isMotabo, motabo_url, sample_url, class_url, sampleName_url, variableName_url, scaleType, iterations, survivalRate, rankingAlgorithm, vipComponent, task.pk,task,sent_email,current_user,settings.BASE_DIR).start()
-
+            pyThread = PyCRThread(isExternal, splitRatio, rocType, tupaType, isMotabo, motabo_url, sample_url, class_url, sampleName_url, variableName_url, scaleType, iterations, survivalRate, rankingAlgorithm, vipComponent, task.pk,task,sent_email,current_user,settings.BASE_DIR)
+            pyThread.start()
             return redirect('feature_task_list')
     else:
         form = FeatureSelectionForm()

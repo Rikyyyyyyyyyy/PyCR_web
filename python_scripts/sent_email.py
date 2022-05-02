@@ -23,8 +23,8 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
                          'Roc Type: '+ RocType + '\n'+
                          'Tupa Type: ' + TupaType + '\n' +
                          'Scale Type: ' + scaletype + '\n' +
-                         'How Many Iteration: ' + iterations + '\n' +
-                         'Survival Rate: ' + survivalRate + '\n'
+                         'How Many Iteration: ' + str(iterations)+ '\n' +
+                         'Survival Rate: ' + str(survivalRate) + '\n'
                          , 'plain')
     msg['Subject'] = "output"
     msg['From'] = "wenwenli.ws@gmail.com"
@@ -51,11 +51,12 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
 
 
 def runSendEmail(user_email, file_path,root_url,userName,taskName,isExternal, RankingAlg,rocType,tupaType,scaleType,iterations,survivalRate):
-    url = root_url + file_path
+    url = str(root_url) + file_path
     if isExternal:
         ValidationData = "with External Dataset"
     else:
         ValidationData = "Without External Dataset"
+    print("Test3")
     send_mail(user_email, url, userName, taskName, ValidationData, RankingAlg, rocType, tupaType, scaleType, iterations,
               survivalRate)
 #
