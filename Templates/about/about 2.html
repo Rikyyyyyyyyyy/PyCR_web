@@ -1,0 +1,50 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+
+    .head_text{
+        color: white;
+    }
+    header{
+        background-color: #3398E1;
+    }
+
+    .card{
+        box-shadow: 0 16px 48px #E3E7EB;
+    }
+    .group_pic{
+        max-height: 500px;
+        height: 70%;
+        width: auto;
+    }
+
+
+</style>
+
+<header class="masthead">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class=" col-md-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h3 class=" site-heading my-4 mt-3 text-white">
+                      About
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<body>
+    <div class ="image_container">
+        <img class ="group_pic" src="/images/aboutPage/Group_Photo_2021.jpg">
+    </div>
+</body>
+
+{%endblock%}

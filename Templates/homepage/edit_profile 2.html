@@ -1,0 +1,224 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <meta name="google" content="notranslate" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <title> TMIC Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <style type="text/css">
+        body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+
+    .head_text{
+        color: white;
+    }
+
+    .card{
+        box-shadow: 0 16px 48px #E3E7EB;
+    }
+    .container{
+        margin-top:15px;
+    }
+
+    .image_container{
+        width:300px;
+        height:300px;
+    }
+    .container img{
+        max-height: 500px;
+        height: 70%;
+        width: auto;
+    }
+
+    </style>
+
+    {% csrf_token %}
+<header class="masthead">
+    <div class="container">
+        <div class="row">
+            <div class=" col-md-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h3 class=" site-heading my-4 mt-3 text-white">
+                        Edit Profile
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class = "container">
+    <div class ="personal_info col-md-8 col-md-10 mx-auto">
+        {% if user.is_authenticated %}
+              <div class="card-body">
+                <div class="d-flex flex-column justify-content-center p-4">
+                    <div class="mb-2" id="id_image_crop_confirm">
+                        <span id="id_cancel" class="material-icons">cancel</span>
+                        <span id="id_confirm" class="material-icons">check</span>
+                    </div>
+                    <div class="image-container" id="id_image_container">
+                        <img class="border border-dark  profile-image" id="id_profile_image_display" src="{{form.initial.profile_pic.url}}" alt="Profile image">
+                        <div class="middle" id="id_middle_container">
+                            <div class="text" id="id_text">Edit</div>
+                        </div>
+                    </div>
+                    <form class="form-signin" method="post" enctype="multipart/form-data">{% csrf_token %}
+                        <input class="d-none" type="file" id="id_profile_image" name="profile_pic" onchange="readURL(this)">
+                        <h6 class="mt-4 field-heading">Email</h6>
+                        <input type="email" name="email" id="id_input_email" class="form-control" placeholder="Email address" required autofocus value={{form.initial.email}}>
+                        <h6 class="mt-4 field-heading">Username</h6>
+                        <input type="text" name="username" id="id_input_username" class="form-control" placeholder="Username" required
+                        value="{{form.initial.username}}">
+                        <div>
+                            <button type="submit" class="bt btn-primary">Save</button>
+                        </div>
+
+                    </form>
+
+                </div>
+              </div>
+        {% else %}
+            Please sign up/ login
+        {% endif %}
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var cropper;
+    var imageFile;
+    var base64ImageString;
+    var cropX;
+    var cropY;
+    var cropWidth;
+    var cropHeight;
+
+    enable_image_overlay()
+
+    function readURL(input){
+       if(input.files && input.files[0]){
+           var reader = new FileReader();
+           reader.onload = function (e){
+               disable_image_overlay()
+               var image = e.target.result
+               var imageField = document.getElementById("id_profile_image_display")
+               imageField.src = image
+               {#cropper = new Cropper(imageField,{#}
+               {#    aspectRatio :1/1,#}
+               {#    crop(event){#}
+               {#        console.log("CROP START")#}
+               {#        console.log("x: "+ event.detail.x)#}
+               {#        console.log("y: "+ event.detail.y)#}
+               {#        console.log("width: "+ event.detail.width)#}
+               {#        console.log("height: "+ event.detail.height)#}
+               {#    }#}
+               {# }) #}
+           }
+           reader.readAsDataURL(input.files[0]);
+       }
+    }
+    function enable_image_overlay(){
+        var text = document.getElementById('id_text')
+        text.style.background = "#0066ff"
+        text.style.color = "white"
+        text.style.fontSize = "16px"
+        text.style.padding = "16px 32px"
+        text.style.cursor = "pointer"
+
+        var profile_image = document.getElementById("id_profile_image")
+        profile_image.style.opacity ='1'
+        profile_image.style.display = "block"
+        profile_image.style.width = "100%"
+        profile_image.style.height = "auto"
+        profile_image.style.transition = ".5s ease"
+        profile_image.style.backfaceVisibility = "hidden"
+        profile_image.style.cursor = "pointer"
+
+        var middle_container = document.getElementById("id_middle_container")
+        middle_container.style.opacity ="0"
+        middle_container.style.position = "absolute"
+        middle_container.style.top = "40%"
+        middle_container.style.left = "32%"
+        middle_container.style.transform = "translate(-50%, -50%)"
+
+        var image_container = document.getElementById("id_image_container")
+        image_container.style.width = "50%"
+        image_container.addEventListener("mouseover", function (event){
+            profile_image.style.opacity = "0.3"
+            middle_container.style.opacity = "1"
+        })
+
+        image_container.addEventListener("mouseout", function (event){
+            profile_image.style.opacity = "1"
+            middle_container.style.opacity = "0"
+        })
+
+        image_container.addEventListener("click", function (event){
+            document.getElementById("id_profile_image").click()
+        })
+
+        var crop_confirm = document.getElementById("id_image_crop_confirm")
+        crop_confirm.classList.remove("d-flex")
+        crop_confirm.classList.remove("flex-row")
+        crop_confirm.classList.remove("justify-content-between")
+        crop_confirm.classList.add("d-none")
+    }
+
+    function disable_image_overlay(){
+        var profile_image = document.getElementById("id_profile_image_display")
+        var middle_container = document.getElementById("id_middle_container")
+        var image_container = document.getElementById("id_image_container")
+        var text = document.getElementById("id_text")
+
+        image_container.removeEventListener("mouseover", function (event){
+            profile_image.style.opacity = "0.3"
+            middle_container.style.opacity = "1"
+        })
+        image_container.removeEventListener("mouseout", function (event){
+            profile_image.style.opacity = "1"
+            middle_container.style.opacity = "0.3"
+        })
+        profile_image.style.opacity = "1"
+        middle_container.style.opacity = "0"
+        text.style.cursor = "default"
+        text.style.opacity = "0"
+
+        image_container.removeEventListener("click", function (event){
+            event.preventDefault()
+        })
+        document.getElementById("id_profile_image").addEventListener("click",function (event){
+            event.preventDefault()
+        })
+
+        var crop_confirm = document.getElementById("id_image_crop_confirm")
+        crop_confirm.classList.add("d-flex")
+        crop_confirm.classList.add("flex-row")
+        crop_confirm.classList.add("justify-content-between")
+        crop_confirm.classList.remove("d-none")
+
+        var confirm = document.getElementById("id_confirm")
+        confirm.style.cursor = "pointer"
+        confirm.addEventListener("click",function (event){
+            // TODO
+            enable_image_overlay()
+        })
+
+        var cancel = document.getElementById("id_cancel")
+        cancel.style.cursor = "pointer"
+        cancel.addEventListener("click", function (event){
+            console.log("reloading window")
+            window.location.reload();
+        })
+
+    }
+</script>
+</html>
+{% endblock content%}
