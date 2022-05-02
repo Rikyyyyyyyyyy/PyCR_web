@@ -35,7 +35,6 @@ class PyCRThread(threading.Thread):
                                 'static/images/featureSelection/temp/output/', 'output' + str(self.task.pk))
             self.task.project_output.name = '/featureSelection/temp/zipOutput/output' + str(self.task.pk) + ".zip"
             self.task.save()
-
             if self.isSentEmail:
                 sent_email.runSendEmail(self.cur_user.email,'/static/images/featureSelection/temp/zipOutput/output'+str(self.task.pk)+'.zip',self.base_dir,self.cur_user.username,self.task.task_name, self.task.isExternal, self.task.rankingAlgorithm, self.task.rocType, self.task.tupaType, self.task.scaleType,self.task.iterations,self.task.survivalRate)
         except Exception as e:
