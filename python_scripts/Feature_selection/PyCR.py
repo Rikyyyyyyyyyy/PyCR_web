@@ -781,34 +781,55 @@ def notEnoughtSelectedVariableErrorMessage(hash_list,survivalRate,variableName,i
 ## 11 how would you like to scale your data: a) AotuScale b)SNV
 ## 12 how many iterations you like
 ## 13 the survival rate
-if __name__ == "__main__":
-    if sys.argv[1].lower() == 'true':
+def runPyCR(isexternal,rateSplit,isMicro,tupaType,isMotabo,motaboFileName,dataFileName,classFileName,sampleNameFileName,variableNameFileName,scaleType,howManyIteration,survivalrate,V_rankingAlgorithm,nComponent, task_pk):
+    if isexternal == 'true':
         isexternal = True
     else:
         isexternal = False
-    rateSplit = float(sys.argv[2])
-    if sys.argv[3].lower() == 'true':
+    if isMicro == 'true':
         isMicro = True
     else:
         isMicro = False
-    tupaType = sys.argv[4]
-    if sys.argv[5].lower() == 'true':
+    if isMotabo == 'true':
         isMotabo = True
     else:
         isMotabo = False
-    motaboFileName = sys.argv[6]
-    dataFileName = sys.argv[7]
-    classFileName = sys.argv[8]
-    sampleNameFileName = sys.argv[9]
-    variableNameFileName = sys.argv[10]
-    scaleType = sys.argv[11]
-    howManyIteration = int(sys.argv[12])
-    survivalrate = float(sys.argv[13])
-    V_rankingAlgorithm = sys.argv[14]
     try:
-        nComponent = int(sys.argv[15])
+        nComponent = int(nComponent)
     except:
         nComponent = 0
-    task_pk = sys.argv[16]
+    main(isexternal, rateSplit, isMicro, tupaType, isMotabo, motaboFileName, dataFileName, classFileName,
+         sampleNameFileName, variableNameFileName, scaleType, howManyIteration, survivalrate, V_rankingAlgorithm,
+         nComponent, task_pk)
 
-    main(isexternal,rateSplit,isMicro,tupaType,isMotabo,motaboFileName,dataFileName,classFileName,sampleNameFileName,variableNameFileName,scaleType,howManyIteration,survivalrate,V_rankingAlgorithm,nComponent, task_pk)
+# if __name__ == "__main__":
+#     if sys.argv[1].lower() == 'true':
+#         isexternal = True
+#     else:
+#         isexternal = False
+#     rateSplit = float(sys.argv[2])
+#     if sys.argv[3].lower() == 'true':
+#         isMicro = True
+#     else:
+#         isMicro = False
+#     tupaType = sys.argv[4]
+#     if sys.argv[5].lower() == 'true':
+#         isMotabo = True
+#     else:
+#         isMotabo = False
+#     motaboFileName = sys.argv[6]
+#     dataFileName = sys.argv[7]
+#     classFileName = sys.argv[8]
+#     sampleNameFileName = sys.argv[9]
+#     variableNameFileName = sys.argv[10]
+#     scaleType = sys.argv[11]
+#     howManyIteration = int(sys.argv[12])
+#     survivalrate = float(sys.argv[13])
+#     V_rankingAlgorithm = sys.argv[14]
+#     try:
+#         nComponent = int(sys.argv[15])
+#     except:
+#         nComponent = 0
+#     task_pk = sys.argv[16]
+#
+#     main(isexternal,rateSplit,isMicro,tupaType,isMotabo,motaboFileName,dataFileName,classFileName,sampleNameFileName,variableNameFileName,scaleType,howManyIteration,survivalrate,V_rankingAlgorithm,nComponent, task_pk)

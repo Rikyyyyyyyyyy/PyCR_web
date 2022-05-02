@@ -49,24 +49,34 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
     smtp_obj.sendmail(msg['From'], msg['To'], msg.as_string())
     smtp_obj.quit()
 
-def main():
-    user_email = sys.argv[1]
-    file_path = sys.argv[2]
-    root_url = sys.argv[3]
-    userName = sys.argv[4]
-    taskName = sys.argv[5]
-    isExternal = sys.argv[6]
-    RankingAlg = sys.argv[7]
-    rocType = sys.argv[8]
-    tupaType = sys.argv[9]
-    scaleType = sys.argv[10]
-    iterations = sys.argv[11]
-    survivalRate = sys.argv[12]
 
+def runSendEmail(user_email, file_path,root_url,userName,taskName,isExternal, RankingAlg,rocType,tupaType,scaleType,iterations,survivalRate):
     url = root_url + file_path
     if isExternal:
         ValidationData = "with External Dataset"
     else:
         ValidationData = "Without External Dataset"
-    send_mail(user_email, url,userName,taskName,ValidationData, RankingAlg,rocType,tupaType,scaleType,iterations,survivalRate)
-main()
+    send_mail(user_email, url, userName, taskName, ValidationData, RankingAlg, rocType, tupaType, scaleType, iterations,
+              survivalRate)
+#
+# def main():
+#     user_email = sys.argv[1]
+#     file_path = sys.argv[2]
+#     root_url = sys.argv[3]
+#     userName = sys.argv[4]
+#     taskName = sys.argv[5]
+#     isExternal = sys.argv[6]
+#     RankingAlg = sys.argv[7]
+#     rocType = sys.argv[8]
+#     tupaType = sys.argv[9]
+#     scaleType = sys.argv[10]
+#     iterations = sys.argv[11]
+#     survivalRate = sys.argv[12]
+#
+#     url = root_url + file_path
+#     if isExternal:
+#         ValidationData = "with External Dataset"
+#     else:
+#         ValidationData = "Without External Dataset"
+#     send_mail(user_email, url,userName,taskName,ValidationData, RankingAlg,rocType,tupaType,scaleType,iterations,survivalRate)
+# main()
