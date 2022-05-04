@@ -86,7 +86,6 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
     # start the backward selection
     for idx in startNumList:
         print("doing backward slection...")
-        print(len(finalOutPutIdx))
         if len(finalOutPutIdx) >2:
             finalOutPutIdx.remove(idx)
             temp_scaled_half_samples = scaled_half_samples[:, finalOutPutIdx]
@@ -138,6 +137,7 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                     plt.savefig(outputPath + '/animation/' + str(picCounter) + '.png')
                     plt.figure().clear()
                     picCounter += 1
+                    print("gen animation")
         else:
             print("break")
             break
