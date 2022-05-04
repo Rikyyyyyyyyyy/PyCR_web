@@ -137,7 +137,10 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                     plt.figure().clear()
                     picCounter += 1
         else:
+            print("break")
             break
+    print("Test1")
+    print(finalOutPutIdx)
 
     # start forward selection
     for index in endNumList:
@@ -193,7 +196,7 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
             print("IGNORED, SCORES [new: old] - ["+ str(e_new) + ":"+str(e_old) + "]" )
     png_dir = outputPath + '/animation/'
     images = []
-    print("Test1")
+
     for file_num in range(len(sorted(os.listdir(png_dir)))-1):
         print("Test2")
         file_name = str(file_num)+'.png'
