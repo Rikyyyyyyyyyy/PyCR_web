@@ -83,12 +83,8 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
     score1 = score[:,0]
     score2 = score[:,1]
 
-    temp_counter = 0
-
     # start the backward selection
     for idx in startNumList:
-        print(temp_counter)
-        temp_counter +=1
         if len(finalOutPutIdx) >2:
             finalOutPutIdx.remove(idx)
             temp_scaled_half_samples = scaled_half_samples[:, finalOutPutIdx]
