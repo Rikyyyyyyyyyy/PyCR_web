@@ -100,42 +100,42 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                 print("KEPT   , SCORES [new: old] - ["+ str(s_new) + ":"+str(s_old) + "]" )
                 finalOutPutIdx.append(idx)
                 # generate the PCA graph for the first iteration and gather together to form a gif  animation
-                if iternum ==0:
-                    dummyU, dummyS, V = svds(temp_scaled_half_samples, k=2)
-                    V = V.transpose()
-                    score = np.dot(temp_scaled_all_samples, V)
-                    temp_score1 = score[:,0]
-                    temp_score1 = np.transpose(temp_score1)
-                    temp_score2 = score[:, 1]
-                    temp_score2 = np.transpose(temp_score2)
-                    sign_val1 = np.dot(temp_score1,score1)
-                    sign_val2 = np.dot(temp_score2, score2)
-                    sign1 = np.sign(sign_val1)
-                    sign2 = np.sign(sign_val2)
-                    if sign1<0:
-                        score[:,0] =  -score[:,0]
-                    if sign2<0:
-                        score[:,1] = -score[:,1]
-                    for z in range(1, classNum + 1):
-                        class_score = score[class_index_list[z], :]
-                        x_ellipse, y_ellipse = confident_ellipse(class_score[:, 0], class_score[:, 1])
-                        plt.plot(x_ellipse, y_ellipse, color=CLASS_COLOR[z - 1])
-                        plt.fill(x_ellipse, y_ellipse, color=CLASS_COLOR[z - 1], alpha=0.3)
-                        class_Xt = score[class_index_list[z], :]
-                        plt.scatter(class_Xt[:, 0], class_Xt[:, 1], c=CLASS_COLOR[z - 1], marker=CLASS_LABEL[0],
-                                    label='training ' + [k for k,v in class_trans_dict.items() if v == str(z)][0])
-                    # calculating the PCA percentage value
-                    pU, pS, pV = np.linalg.svd(temp_scaled_half_samples)
-                    pca_percentage_val = np.cumsum(pS) / sum(pS)
-                    p2_percentage = pca_percentage_val[0] * 100
-                    p1_percentage = pca_percentage_val[1] * 100
-                    plt.xlabel("PC1(%{0:0.3f}".format(p1_percentage) + ")")
-                    plt.ylabel("PC2 (%{0:0.3f}".format(p2_percentage) + ")")
-                    plt.rcParams.update({'font.size': 10})
-                    plt.legend()
-                    plt.savefig(outputPath + '/animation/' + str(picCounter) + '.png')
-                    plt.figure().clear()
-                    picCounter += 1
+                # if iternum ==0:
+                #     dummyU, dummyS, V = svds(temp_scaled_half_samples, k=2)
+                #     V = V.transpose()
+                #     score = np.dot(temp_scaled_all_samples, V)
+                #     temp_score1 = score[:,0]
+                #     temp_score1 = np.transpose(temp_score1)
+                #     temp_score2 = score[:, 1]
+                #     temp_score2 = np.transpose(temp_score2)
+                #     sign_val1 = np.dot(temp_score1,score1)
+                #     sign_val2 = np.dot(temp_score2, score2)
+                #     sign1 = np.sign(sign_val1)
+                #     sign2 = np.sign(sign_val2)
+                #     if sign1<0:
+                #         score[:,0] =  -score[:,0]
+                #     if sign2<0:
+                #         score[:,1] = -score[:,1]
+                #     for z in range(1, classNum + 1):
+                #         class_score = score[class_index_list[z], :]
+                #         x_ellipse, y_ellipse = confident_ellipse(class_score[:, 0], class_score[:, 1])
+                #         plt.plot(x_ellipse, y_ellipse, color=CLASS_COLOR[z - 1])
+                #         plt.fill(x_ellipse, y_ellipse, color=CLASS_COLOR[z - 1], alpha=0.3)
+                #         class_Xt = score[class_index_list[z], :]
+                #         plt.scatter(class_Xt[:, 0], class_Xt[:, 1], c=CLASS_COLOR[z - 1], marker=CLASS_LABEL[0],
+                #                     label='training ' + [k for k,v in class_trans_dict.items() if v == str(z)][0])
+                #     # calculating the PCA percentage value
+                #     pU, pS, pV = np.linalg.svd(temp_scaled_half_samples)
+                #     pca_percentage_val = np.cumsum(pS) / sum(pS)
+                #     p2_percentage = pca_percentage_val[0] * 100
+                #     p1_percentage = pca_percentage_val[1] * 100
+                #     plt.xlabel("PC1(%{0:0.3f}".format(p1_percentage) + ")")
+                #     plt.ylabel("PC2 (%{0:0.3f}".format(p2_percentage) + ")")
+                #     plt.rcParams.update({'font.size': 10})
+                #     plt.legend()
+                #     plt.savefig(outputPath + '/animation/' + str(picCounter) + '.png')
+                #     plt.figure().clear()
+                #     picCounter += 1
 
         else:
             break
@@ -153,55 +153,55 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
             oldScore = newScore
             print("ADD    , SCORES [new: old] - ["+ str(e_new) + ":"+str(e_old) + "]" )
             # generate the PCA graph for the first iteration and gather together to form a gif  animation
-            if iternum ==0:
-                dummyU, dummyS, V = svds(temp_selected_half_matrix, k=2)
-                V = V.transpose()
-                score = np.dot(temp_selected_all_matrix, V)
-                temp_score1 = score[:, 0]
-                temp_score1 = np.transpose(temp_score1)
-                temp_score2 = score[:, 1]
-                temp_score2 = np.transpose(temp_score2)
-                sign_val1 = np.dot(temp_score1, score1)
-                sign_val2 = np.dot(temp_score2, score2)
-                sign1 = np.sign(sign_val1)
-                sign2 = np.sign(sign_val2)
-                if sign1 < 0:
-                    score[:, 0] = -score[:, 0]
-                if sign2 < 0:
-                    score[:, 1] = -score[:, 1]
-                for z in range(1, classNum + 1):
-                    class_score = score[class_index_list[z], :]
-                    x_ellipse, y_ellipse = confident_ellipse(class_score[:, 0], class_score[:, 1])
-                    plt.plot(x_ellipse, y_ellipse, color=CLASS_COLOR[z - 1])
-                    plt.fill(x_ellipse, y_ellipse, color=CLASS_COLOR[z - 1], alpha=0.3)
-                    class_Xt = score[class_index_list[z], :]
-                    plt.scatter(class_Xt[:, 0], class_Xt[:, 1], c=CLASS_COLOR[z - 1], marker=CLASS_LABEL[0],
-                                label='training ' + [k for k,v in class_trans_dict.items() if v == str(z)][0])
-                # calculating the PCA percentage value
-                pU, pS, pV = np.linalg.svd(temp_selected_half_matrix)
-                pca_percentage_val = np.cumsum(pS) / sum(pS)
-                p2_percentage = pca_percentage_val[0] * 100
-                p1_percentage = pca_percentage_val[1] * 100
-                plt.xlabel("PC1(%{0:0.3f}".format(p1_percentage) + ")")
-                plt.ylabel("PC2 (%{0:0.3f}".format(p2_percentage) + ")")
-                plt.rcParams.update({'font.size': 10})
-                plt.legend()
-                plt.savefig(outputPath + '/animation/' + str(picCounter) + '.png')
-                plt.figure().clear()
-                picCounter += 1
+            # if iternum ==0:
+            #     dummyU, dummyS, V = svds(temp_selected_half_matrix, k=2)
+            #     V = V.transpose()
+            #     score = np.dot(temp_selected_all_matrix, V)
+            #     temp_score1 = score[:, 0]
+            #     temp_score1 = np.transpose(temp_score1)
+            #     temp_score2 = score[:, 1]
+            #     temp_score2 = np.transpose(temp_score2)
+            #     sign_val1 = np.dot(temp_score1, score1)
+            #     sign_val2 = np.dot(temp_score2, score2)
+            #     sign1 = np.sign(sign_val1)
+            #     sign2 = np.sign(sign_val2)
+            #     if sign1 < 0:
+            #         score[:, 0] = -score[:, 0]
+            #     if sign2 < 0:
+            #         score[:, 1] = -score[:, 1]
+            #     for z in range(1, classNum + 1):
+            #         class_score = score[class_index_list[z], :]
+            #         x_ellipse, y_ellipse = confident_ellipse(class_score[:, 0], class_score[:, 1])
+            #         plt.plot(x_ellipse, y_ellipse, color=CLASS_COLOR[z - 1])
+            #         plt.fill(x_ellipse, y_ellipse, color=CLASS_COLOR[z - 1], alpha=0.3)
+            #         class_Xt = score[class_index_list[z], :]
+            #         plt.scatter(class_Xt[:, 0], class_Xt[:, 1], c=CLASS_COLOR[z - 1], marker=CLASS_LABEL[0],
+            #                     label='training ' + [k for k,v in class_trans_dict.items() if v == str(z)][0])
+            #     # calculating the PCA percentage value
+            #     pU, pS, pV = np.linalg.svd(temp_selected_half_matrix)
+            #     pca_percentage_val = np.cumsum(pS) / sum(pS)
+            #     p2_percentage = pca_percentage_val[0] * 100
+            #     p1_percentage = pca_percentage_val[1] * 100
+            #     plt.xlabel("PC1(%{0:0.3f}".format(p1_percentage) + ")")
+            #     plt.ylabel("PC2 (%{0:0.3f}".format(p2_percentage) + ")")
+            #     plt.rcParams.update({'font.size': 10})
+            #     plt.legend()
+            #     plt.savefig(outputPath + '/animation/' + str(picCounter) + '.png')
+            #     plt.figure().clear()
+            #     picCounter += 1
         elif newScore < oldScore:
             finalOutPutIdx.remove(index)
             print("IGNORED, SCORES [new: old] - ["+ str(e_new) + ":"+str(e_old) + "]" )
-    png_dir = outputPath + '/animation/'
-    images = []
-
-    for file_num in range(len(sorted(os.listdir(png_dir)))-1):
-        file_name = str(file_num)+'.png'
-        if file_name.endswith('.png') and file_name != "0.png":
-            file_path = os.path.join(png_dir, file_name)
-            images.append(imageio.imread(file_path))
-    imageio.mimsave(outputPath + '/animation.gif', images)
-    shutil.rmtree(png_dir)
+    # png_dir = outputPath + '/animation/'
+    # images = []
+    #
+    # for file_num in range(len(sorted(os.listdir(png_dir)))-1):
+    #     file_name = str(file_num)+'.png'
+    #     if file_name.endswith('.png') and file_name != "0.png":
+    #         file_path = os.path.join(png_dir, file_name)
+    #         images.append(imageio.imread(file_path))
+    # imageio.mimsave(outputPath + '/animation.gif', images)
+    # shutil.rmtree(png_dir)
     return finalOutPutIdx, sample_training, sample_test, class_training, class_test
 
 # scale samples with the mean and std from previous scaling
