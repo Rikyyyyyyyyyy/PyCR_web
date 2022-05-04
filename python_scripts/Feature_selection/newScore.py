@@ -193,12 +193,17 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
             print("IGNORED, SCORES [new: old] - ["+ str(e_new) + ":"+str(e_old) + "]" )
     png_dir = outputPath + '/animation/'
     images = []
+    print("Test1")
     for file_num in range(len(sorted(os.listdir(png_dir)))-1):
+        print("Test2")
         file_name = str(file_num)+'.png'
         if file_name.endswith('.png') and file_name != "0.png":
             file_path = os.path.join(png_dir, file_name)
+            print("test3")
             images.append(imageio.imread(file_path))
+            print("test4")
     imageio.mimsave(outputPath + '/animation.gif', images)
+    print("test5s")
     shutil.rmtree(png_dir)
     return finalOutPutIdx, sample_training, sample_test, class_training, class_test
 
