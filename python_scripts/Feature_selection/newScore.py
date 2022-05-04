@@ -100,16 +100,21 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
             elif newScore < oldScore:
                 print("KEPT   , SCORES [new: old] - ["+ str(s_new) + ":"+str(s_old) + "]" )
                 finalOutPutIdx.append(idx)
+                print("Test1")
                 # generate the PCA graph for the first iteration and gather together to form a gif  animation
                 if iternum ==0:
                     dummyU, dummyS, V = svds(temp_scaled_half_samples, k=2)
                     V = V.transpose()
+                    print("Test2")
                     score = np.dot(temp_scaled_all_samples, V)
                     temp_score1 = score[:,0]
+                    print("Test3")
                     temp_score1 = np.transpose(temp_score1)
                     temp_score2 = score[:, 1]
+                    print("Test4")
                     temp_score2 = np.transpose(temp_score2)
                     sign_val1 = np.dot(temp_score1,score1)
+                    print("Test5")
                     sign_val2 = np.dot(temp_score2, score2)
                     sign1 = np.sign(sign_val1)
                     sign2 = np.sign(sign_val2)
@@ -117,6 +122,7 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                         score[:,0] =  -score[:,0]
                     if sign2<0:
                         score[:,1] = -score[:,1]
+                    print("Test6")
                     for z in range(1, classNum + 1):
                         class_score = score[class_index_list[z], :]
                         x_ellipse, y_ellipse = confident_ellipse(class_score[:, 0], class_score[:, 1])
@@ -125,6 +131,7 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                         class_Xt = score[class_index_list[z], :]
                         plt.scatter(class_Xt[:, 0], class_Xt[:, 1], c=CLASS_COLOR[z - 1], marker=CLASS_LABEL[0],
                                     label='training ' + [k for k,v in class_trans_dict.items() if v == str(z)][0])
+                    print("Test7")
                     # calculating the PCA percentage value
                     pU, pS, pV = np.linalg.svd(temp_scaled_half_samples)
                     pca_percentage_val = np.cumsum(pS) / sum(pS)
@@ -134,15 +141,14 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                     plt.ylabel("PC2 (%{0:0.3f}".format(p2_percentage) + ")")
                     plt.rcParams.update({'font.size': 10})
                     plt.legend()
+                    print("Test8")
                     plt.savefig(outputPath + '/animation/' + str(picCounter) + '.png')
                     plt.figure().clear()
                     picCounter += 1
                     print("gen animation")
+                    print("Test9")
         else:
-            print("break")
             break
-    print("Test1")
-    print(finalOutPutIdx)
 
     # start forward selection
     for index in endNumList:
@@ -200,15 +206,11 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
     images = []
 
     for file_num in range(len(sorted(os.listdir(png_dir)))-1):
-        print("Test2")
         file_name = str(file_num)+'.png'
         if file_name.endswith('.png') and file_name != "0.png":
             file_path = os.path.join(png_dir, file_name)
-            print("test3")
             images.append(imageio.imread(file_path))
-            print("test4")
     imageio.mimsave(outputPath + '/animation.gif', images)
-    print("test5s")
     shutil.rmtree(png_dir)
     return finalOutPutIdx, sample_training, sample_test, class_training, class_test
 
