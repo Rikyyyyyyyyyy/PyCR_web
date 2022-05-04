@@ -17,7 +17,6 @@ from scipy.stats.distributions import chi2
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import scale
 import warnings
-import time
 from python_scripts.Feature_selection import SelectivityRatio
 from python_scripts.Feature_selection import vipScore
 warnings.filterwarnings('ignore')
@@ -137,8 +136,6 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                     plt.savefig(outputPath + '/animation/' + str(picCounter) + '.png')
                     plt.figure().clear()
                     picCounter += 1
-                    time.sleep(1)
-
         else:
             break
 
@@ -191,7 +188,6 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                 plt.savefig(outputPath + '/animation/' + str(picCounter) + '.png')
                 plt.figure().clear()
                 picCounter += 1
-                time.sleep(1)
         elif newScore < oldScore:
             finalOutPutIdx.remove(index)
             print("IGNORED, SCORES [new: old] - ["+ str(e_new) + ":"+str(e_old) + "]" )
