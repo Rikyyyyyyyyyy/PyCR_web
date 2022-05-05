@@ -191,16 +191,17 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
         elif newScore < oldScore:
             finalOutPutIdx.remove(index)
             print("IGNORED, SCORES [new: old] - ["+ str(e_new) + ":"+str(e_old) + "]" )
-    png_dir = outputPath + '/animation/'
-    images = []
 
-    for file_num in range(len(sorted(os.listdir(png_dir)))-1):
-        file_name = str(file_num)+'.png'
-        if file_name.endswith('.png') and file_name != "0.png":
-            file_path = os.path.join(png_dir, file_name)
-            images.append(imageio.imread(file_path))
-    imageio.mimsave(outputPath + '/animation.gif', images)
-    shutil.rmtree(png_dir)
+    if iternum ==0:
+        png_dir = outputPath + '/animation/'
+        images = []
+        for file_num in range(len(sorted(os.listdir(png_dir)))-1):
+            file_name = str(file_num)+'.png'
+            if file_name.endswith('.png') and file_name != "0.png":
+                file_path = os.path.join(png_dir, file_name)
+                images.append(imageio.imread(file_path))
+        imageio.mimsave(outputPath + '/animation.gif', images)
+        shutil.rmtree(png_dir)
     return finalOutPutIdx, sample_training, sample_test, class_training, class_test
 
 # scale samples with the mean and std from previous scaling
