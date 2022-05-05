@@ -56,7 +56,6 @@ def runSendEmail(user_email, file_path,root_url,userName,taskName,isExternal, Ra
         ValidationData = "with External Dataset"
     else:
         ValidationData = "Without External Dataset"
-    print("Test3")
     send_mail(user_email, url, userName, taskName, ValidationData, RankingAlg, rocType, tupaType, scaleType, iterations,
               survivalRate)
 #

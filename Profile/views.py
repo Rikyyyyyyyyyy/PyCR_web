@@ -5,18 +5,22 @@ from .models import *
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
-from subprocess import run, PIPE
-import sys
 from django.conf import settings
 import os
 from django.urls import reverse
 import base64
-import shutil
+from django.template.loader import render_to_string
 import stripe
-from python_scripts.Feature_selection import PyCR
-from python_scripts import sent_email
+from django.contrib import messages
 from faker import Faker
+from django.contrib.sites.shortcuts import get_current_site
 from python_scripts.Feature_selection.thread import PyCRThread
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnicodeDecodeError
+from django.core.mail import EmailMessage
+from .utils import
+from django.conf import settings
+import threading
 fake = Faker()
 
 
@@ -37,6 +41,16 @@ def projects(request):
 def about(request):
     return render(request, 'about/about.html')
 
+def send_action_email(user, request):
+    cur_site = get_current_site(request)
+    email_subject = "Activate your email"
+    email_body = render_to_string('registration/activate.html',{
+        'user':user,
+        'domain':cur_site,
+        'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+        'token':
+    })
+
 
 def signup(request):
     if request.method == 'POST':
@@ -56,12 +70,38 @@ def signup(request):
                 username=form.cleaned_data['username'],
                 password=form.cleaned_data['password1']
             )
-            login(request, new_user)
+            send_action_email(new_user,request)
             return redirect('index')
     else:
         form = UserCreateForm()
     return render(request, 'registration/signup.html', {'form': form})
 
+def login(request):
+    if request.method == 'POST':
+        context = {'data': request.POST}
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user and not user.is_email_verified:
+            messages.add_message(request, messages.ERROR,
+                                 'Email is not verified, please check your email inbox')
+            return render(request, 'authentication/login.html', context, status=401)
+
+        if not user:
+            messages.add_message(request, messages.ERROR,
+                                 'Invalid credentials, try again')
+            return render(request, 'authentication/login.html', context, status=401)
+
+        login(request, user)
+
+        messages.add_message(request, messages.SUCCESS,
+                             f'Welcome {user.username}')
+
+        return redirect(reverse('home'))
+
+    return render(request, 'registration/login.html')
 
 def profile(request, *args, **kwargs):
     context = {}

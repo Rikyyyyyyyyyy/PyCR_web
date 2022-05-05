@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 
 class Author(models.Model):
+    is_email_verified = models.BooleanField(default=False)
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     userid = models.PositiveIntegerField(default=0,null=True)
     username = models.CharField(max_length=80, null=True)
