@@ -1,3 +1,13 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Activate your email
+From: webmaster@localhost
+To: rikywoohoo@gmail.com
+Date: Thu, 05 May 2022 21:48:39 -0000
+Message-ID: 
+ <165178731997.31537.8490691446013713872@macbook-pro.hitronhub.home>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +16,7 @@
     <meta name="google" content="notranslate" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-{#    <link   rel="stylesheet" href="{% static 'cropperjs/dist/cropper.min.css' %}">#}
+
 
     <title> TMIC</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -49,7 +59,7 @@
     </div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow" id="mainNav">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'index' %}">TMIC</a>
+            <a class="navbar-brand" href="/">TMIC</a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                     aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -57,32 +67,24 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'aboutPage' %}">About</a>
+                            <a class="nav-link text-black font-weight-bold" href="/about/">About</a>
                         </li>
                     <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'buyMeCoffee'%}">Donate</a>
+                            <a class="nav-link text-black font-weight-bold" href="/BuyMeCofee/">Donate</a>
                         </li>
                         <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'feature_task_list' %}">PyCR</a>
+                            <a class="nav-link text-black font-weight-bold" href="/featureselection/task">PyCR</a>
                         </li>
 
-                        {% if user.is_authenticated %}
+                        
                         <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'profile' user_id=request.user.id %}">Account</a>
+                            <a class="nav-link text-black font-weight-bold" href="/signup/">Sign Up</a>
                         </li>
-                         <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'logout' %}">Logout</a>
+                        <li class="nav-item text-black">
+                            <a class="nav-link text-black font-weight-bold" href="/accounts/login/">Sign In</a>
                         </li>
 
-                        {% else %}
-                        <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'signup' %}">Sign Up</a>
-                        </li>
-                        <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'login' %}">Sign In</a>
-                        </li>
-
-                        {% endif %}
+                        
 
                 </ul>
             </div>
@@ -90,26 +92,64 @@
     </nav>
 
 
-    {% block content %}
-     <!--Content Goes Here-->
-    {% endblock content%}
+    
 
-{#    <script type="module" src = "{% static 'cropperjs/dist/cropper.min.js' %}"></script>#}
+<style>
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
 
-{#    <script type="text/javascript">#}
-{#        function displayLoadingSpinner(isDisplayed){#}
-{#            var spinner = document.getElementById("id_loading_spinner")#}
-{#            if (isDisplayed){#}
-{#                spinner.style.display = "block"#}
-{#            }#}
-{#            else{#}
-{#                spinner.style.display = "none"#}
-{#            }#}
-{#        }#}
-{#    </script>#}
+    .head_text{
+        color: white;
+    }
+    header{
+        background-color: #3398E1;
+    }
+
+    .card{
+        box-shadow: 0 16px 48px #E3E7EB;
+    }
+
+</style>
+
+<header class="masthead">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class=" col-md-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h3 class=" site-heading my-4 mt-3 text-white">
+                      Hi Chichi
+                      Please use the link below to verify you account.
+                      http://127.0.0.1:8000/activate-user/MTU/b4z0l3-68783869a2713680122369daac2a2710}
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <footer class="footer py-3 bg-grey shadow">
         <a class="footer_link" href="https://github.com/Rikyyyyyyyyyy/PyCR" style="color: black" > @Check Out on github</a>
     </footer>
 </body>
 </html>
+-------------------------------------------------------------------------------

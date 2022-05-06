@@ -4,6 +4,7 @@
 <div class="container">
     <h2>Login</h2>
     <form method="POST">
+        {% include '_partials/messages.html'%}
         {% csrf_token %}
         {{ form.as_p }}
 <!--        {% for field in form %}-->

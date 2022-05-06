@@ -1,12 +1,8 @@
 from email.mime.multipart import MIMEMultipart
-from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 import smtplib
-import sys
 from email import encoders
-from email.message import Message
 from email.mime.base import MIMEBase
-import zipfile
 
 def send_mail(user_email,file_path, user_name, taskName, validationData,VRankingAlg,RocType,TupaType, scaletype, iterations, survivalRate):
     # Create a multipart message
