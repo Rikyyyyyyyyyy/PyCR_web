@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+import shutil
+import zipfile
 import os
 from django.urls import reverse
 import base64
@@ -268,6 +270,18 @@ def feature_upload_task(request):
 def delete_feature_task(request, pk):
     user_id = request.user.id
     delete_task = Feature_selection.objects.filter(id=pk).first()
+    delete_file_urls = []
+    delete_file_urls.append(delete_task.sample_file)
+    delete_file_urls.append(delete_task.class_file)
+    delete_file_urls.append(delete_task.motaboFile)
+    delete_file_urls.append(delete_task.sampleName_file)
+    delete_file_urls.append(delete_task.variableName_file)
+
+    if delete_task.project_output:
+        os.remove(settings.MEDIA_ROOT+ delete_task.project_output.name)
+    for url in delete_file_urls:
+        if url:
+            shutil.rmtree(settings.MEDIA_ROOT + url.name)
     delete_task.delete()
     tasks = Feature_selection.objects.all()
     user_tasks = []
