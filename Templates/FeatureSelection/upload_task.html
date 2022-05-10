@@ -18,7 +18,9 @@
         font-size: 18px;
         background-color: #fdfdfd;
     }
-
+    header{
+        background-color: #3398E1;
+    }
     .head_text{
         color: white;
     }
@@ -43,6 +45,39 @@
         color: cornflowerblue;
         float: left;
     }
+    .question_mark_container{
+        width : 30px;
+        height : 30px;
+        float: left;
+    }
+
+    .hovertext {
+      position: relative;
+      border-bottom: 1px dotted black;
+    }
+
+    .hovertext:before {
+      content: attr(data-hover);
+      visibility: hidden;
+      opacity: 0;
+      width: 250px;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      padding: 5px 0;
+      transition: opacity 1s ease-in-out;
+
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      top: 110%;
+    }
+
+    .hovertext:hover:before {
+      opacity: 1;
+      visibility: visible;
+}
 
     </style>
 
@@ -68,16 +103,36 @@
             <form class="form-signin" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                     <h6  id="text_task_name" class="mt-4 field-heading">Task Name</h6>
+                    <span class="hovertext" data-hover="Give a name to your task">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <input  type="text" name="task_name" id="id_task_name" class="form-control" placeholder="Task Name"  autofocus value={{form.initial.task_name}}>
                     <h6  class="mt-4 field-heading" id="text_isExternal">Need Validation Dataset</h6>
+                    <span class="hovertext" data-hover="External Validation With External/Without External">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <select id = "id_isExternal" name="isExternal" onchange="ratio_show_hiden(this.options[this.selectedIndex].value)">
                         <option value="false"> -- Please Select -- </option>
                         <option value="false"> No External dataset</option>
                         <option value="true"> With External dataset</option>
                     </select>
                     <h6  style="display: none"  class="mt-4 field-heading" id="text_splitRatio">Riot for Validation Dataset</h6>
+                    <span style="display: none" id="img_splitRatop" class="hovertext" data-hover="Split ratio (External Validation) 0-1">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <input style="display: none"  type="text" id="id_splitRatio" name="splitRatio" >
                     <h6  class="mt-4 field-heading" id="text_rankingAlgorithm">Variable Ranking Algorithm</h6>
+                    <span class="hovertext" data-hover="Metric used to rank variable significance - use of VIP scores or Selectivity Ratios may risk over-fitting.">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <select id="id_rankingAlgorithm" name="rankingAlgorithm" onchange="ranking_algorithm_show_hiden(this.options[this.selectedIndex].value)">
                         <option value = 'fisher'> -- Please Select -- </option>
                         <option value = 'fisher'>Fiser Ratio</option>
@@ -85,14 +140,29 @@
                         <option value = 'selectivity'>Selectvity</option>
                     </select>
                     <h6 style="display: none"  class="mt-4 field-heading" id="text_vipComponent" >number of Component</h6>
+                    <span style="display: none" id="img_vipComponent" class="hovertext" data-hover="Number of latent variables used to assess variable significance">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <input style="display: none" type="text" id="id_vipComponent" name="vipComponent" >
                     <h6  class="mt-4 field-heading" id="text_rocType">ROC Type</h6>
+                    <span class="hovertext" data-hover="Single ROC, or ROCs for binary classes (For 3 or more classes) (Figures 1,2) True/False">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <select id="id_rocType" name="rocType" >
                         <option value="false"> -- Please Select -- </option>
                         <option value="false"> ROC </option>
                         <option value="true"> MICRO </option>
                     </select>
                     <h6  class="mt-4 field-heading" id="text_tupaType">TUPA Type</h6>
+                    <span class="hovertext" data-hover="Total Useful Peak Area (TUPA) normalisation classtupa/tupa/notupa">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <select id="id_tupaType" name="tupaType">
                         <option value = "classtupa"> -- Please Select -- </option>
                         <option value = "classtupa"> Class TUPA</option>
@@ -100,36 +170,86 @@
                         <option value = "notupa"> No TUPA</option>
                     </select>
                     <h6  class="mt-4 field-heading" id="text_scaleType">Scale Type</h6>
+                    <span class="hovertext" data-hover="Desired scaling Autoscale/SVN">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <select id="id_scaleType" name="scaleType">
                         <option value="autoscale"> -- Please Select -- </option>
                         <option value="autoscale"> Auto Scale</option>
                         <option value="SVN"> SVN Scale</option>
                     </select>
                     <h6  class="mt-4 field-heading" id="text_iterations">How Many Iterations</h6>
+                    <span class="hovertext" data-hover="Iterations 0-100">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <input  type="text" id="id_iterations" name="iterations" >
                     <h6  class="mt-4 field-heading" id="text_survivalRate">Survival rate</h6>
+                    <span class="hovertext" data-hover="Variable survival rate 0-1">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <input  type="text" id="id_survivalRate" name="survivalRate" >
                     <h6  class="mt-4 field-heading" id="text_isMotabo">Is MotaboAnalize Dataset?</h6>
+                    <span class="hovertext" data-hover="If using file format as MetaboAnalyst data file">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <select id="id_isMotabo" name="isMotabo" onchange="motabo_show_hiden(this.options[this.selectedIndex].value)">
                         <option value="false"> -- Please Select -- </option>
                         <option value="false"> Not MotaboLab Dataset</option>
                         <option value="true">  MotaboLab Dataset</option>
                     </select>
-                    <h6 style="display: none"  class="mt-4 field-heading" id="text_motaboFile">MotaboAnalize File</h6>
+                    <h6 style="display: none"  class="mt-4 field-heading" id="text_motaboFile">MetaboAnalyst File</h6>
+                    <span style="display: none" id="img_motaboFile" class="hovertext" data-hover="Upload your MetaboAnalyst csv file ">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <input style="display: none" type="file" id="id_motaboFile" name="motaboFile" >
                     <div style="display: none" id="not_motabo_file">
                         <h6  class="mt-4 field-heading" id="text_sample">Sample File</h6>
+                        <span class="hovertext" data-hover="csv file with sample data">
+                            <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                        </span>
                         <input  type="file" id="id_sample" name="sample_file">
                         <h6  class="mt-4 field-heading" id="text_class_file">Class File</h6>
+                        <span class="hovertext" data-hover="csv file with class data">
+                            <div  class="question_mark_container">
+                                <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                            </div>
+                        </span>
                         <input  type="file" id="id_class_file" name="class_file" >
                         <h6  class="mt-4 field-heading" id="text_sampleName_file">Sample Name File</h6>
+                        <span class="hovertext" data-hover="csv file with sample name">
+                            <div  class="question_mark_container">
+                                <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                            </div>
+                        </span>
                         <input  type="file" id="id_sampleName_file" name="sampleName_file" >
                         <h6  class="mt-4 field-heading" id="text_variableName_file">Variable Name File</h6>
+                        <span class="hovertext" data-hover="csv file with variable name">
+                            <div  class="question_mark_container">
+                                <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                            </div>
+                        </span>
                         <input  type="file" id="id_variableName_file" name="variableName_file" >
                     </div>
                     <br>
                     <br>
                     <h6 id="text_sent_email">Sent Output To My Email: <input id="id_sent_email" type="checkbox"  name="sent_email"></h6>
+                    <span class="hovertext" data-hover="Do you want to sent output to your email?">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
                     <br>
                     <button type="submit" class="bt btn-primary">Upload and Run</button>
                 <br>
@@ -144,30 +264,38 @@
     function ratio_show_hiden(selected){
         var ratio_text = document.getElementById("text_splitRatio")
         var ratio_id = document.getElementById("id_splitRatio")
+        var ratio_img = document.getElementById("img_splitRatop")
         if (selected == "true"){
             ratio_text.style.display = "block"
             ratio_id.style.display = "block"
+            ratio_img.style.display = "block"
+
         }
         if (selected == "false"){
             ratio_text.style.display = "none"
             ratio_id.style.display = "none"
+            ratio_img.style.display = "none"
         }
 
     }
     function ranking_algorithm_show_hiden(selected){
         var ranking_algorithm_text = document.getElementById("text_vipComponent")
         var ranking_algorithm_id  = document.getElementById("id_vipComponent")
+        var img_vipComponent  = document.getElementById("img_vipComponent")
         if (selected == "fisher"){
             ranking_algorithm_id.style.display = "none"
             ranking_algorithm_text.style.display = "none"
+            img_vipComponent.style.display = "none"
         }
         if (selected == "vip"){
             ranking_algorithm_id.style.display = "block"
             ranking_algorithm_text.style.display = "block"
+            img_vipComponent.style.display = "block"
         }
         if (selected == "selectivity"){
             ranking_algorithm_id.style.display = "block"
             ranking_algorithm_text.style.display = "block"
+            img_vipComponent.style.display = "block"
         }
 
     }
@@ -178,11 +306,13 @@
         if(selected == "true"){
             motabo_file_text.style.display = "block"
             motabo_file_id.style.display = "block"
+            img_motaboFile.style.display = "block"
             not_motabo_file.style.display = "none"
         }
         if(selected == "false"){
             motabo_file_text.style.display = "none"
             motabo_file_id.style.display = "none"
+            img_motaboFile.style.display = "none"
             not_motabo_file.style.display = "block"
         }
 
