@@ -137,13 +137,16 @@ def export_file(variable, class_list, indice, hori, fileName, label_dic,sampleNa
         class_row.insert(0, "Label")
         writer.writerow(class_row)
         variable = np.array(variable)
+
         variable = variable[:, list(hori)]
         variable = variable[list(indice),:]
+
         variableName = [variableName[i] for i in hori]
         variable = np.transpose(variable)
         temp_vari = np.ndarray.tolist(variable)
         for i in range(len(temp_vari)):
             temp_vari[i].insert(0,str(variableName[i]))
+            writer.writerow(temp_vari[i])
             writer.writerow(temp_vari[i])
 
 

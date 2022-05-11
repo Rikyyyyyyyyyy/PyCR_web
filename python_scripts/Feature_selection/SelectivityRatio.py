@@ -29,6 +29,7 @@ def selrpy(X, y, ncomponents):
 
     for i in range(len(X[0])):
         selrDic[i] = selr[i]
+    X = list(X)
 
     return selrDic
 

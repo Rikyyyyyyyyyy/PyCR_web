@@ -244,11 +244,12 @@ def feature_upload_task(request):
             sent_email = form.cleaned_data['sent_email']
             task = Feature_selection.objects.create(user_id=user_id, task_name=task_name, isExternal=isExternal, splitRatio=splitRatio, rankingAlgorithm=rankingAlgorithm,vipComponent=vipComponent, rocType=rocType, tupaType=tupaType, isMotabo = isMotabo, scaleType=scaleType, iterations= iterations, survivalRate=survivalRate, motaboFile=motaboFile,  sample_file=sample_file, class_file=class_file, sampleName_file=sampleName_file, variableName_file=variableName_file, sent_email=sent_email)
             task.save()
-            if isMotabo == 'False':
+            print(isMotabo)
+            if isMotabo == "false":
                 sample_url = task.sample_file.path
                 class_url = task.class_file.path
                 sampleName_url = task.sampleName_file.path
-                variableName_url = task.sampleName_file.path
+                variableName_url = task.variableName_file.path
                 motabo_url = 'none'
             else:
                 sample_url = 'none'

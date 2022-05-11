@@ -4,10 +4,14 @@ from django.contrib.auth.models import User
 from .models import  Author, Feature_selection
 from django.contrib.auth import get_user_model
 
+iteration_error = {
+    'required': 'This field is required',
+    'invalid': 'Enter a valid value, from 1 to 100'
+}
+
 
 class UserCreateForm(UserCreationForm):
     email = forms.EmailField(required=True, label='Email', error_messages={'exists': 'This already exists;)'})
-
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2')

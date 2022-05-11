@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, User
+from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 
 class Author(models.Model):
@@ -21,15 +22,15 @@ class Feature_selection(models.Model):
     task_name = models.CharField(max_length=89)
 #     variableName_file', 'sent_email')
     isExternal = models.CharField(max_length=40, default="true")
-    splitRatio = models.FloatField(null=True, blank=True, default =0.5)
+    splitRatio = models.FloatField(null=True, blank=True, default =0.5,validators=[MaxValueValidator(1), MinValueValidator(0)])
     rankingAlgorithm = models.CharField(max_length=40, default='fisher')
-    vipComponent = models.IntegerField( null=True,blank = True,default = 0)
+    vipComponent = models.IntegerField( null=True,blank = True,default = 0, validators=[MaxValueValidator(10), MinValueValidator(0)])
     rocType = models.CharField(max_length=40,  default="false")
     tupaType = models.CharField(max_length=40,  default="classtupa")
     isMotabo = models.CharField(max_length=40,  default="true")
     scaleType = models.CharField(max_length=40,  default="autoscale")
-    iterations = models.IntegerField(default = 1)
-    survivalRate = models.FloatField(null=True, blank=True, default =0.85)
+    iterations = models.IntegerField(default = 1,validators=[MaxValueValidator(100), MinValueValidator(1)])
+    survivalRate = models.FloatField(null=True, blank=True, default =0.85, validators=[MaxValueValidator(1), MinValueValidator(0)])
     motaboFile = models.FileField(upload_to='featureSelection/motabo', null=True, blank=True, default=0)
     sample_file = models.FileField(upload_to='featureSelection/sample', null=True, default=0,blank=True)
     class_file = models.FileField(upload_to='featureSelection/class', default=0, blank=True, null=True)

@@ -8,7 +8,7 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
     # Create a multipart message
     msg = MIMEMultipart()
     body_part = MIMEText('Hi '+ user_name+
-                         '\n  here is the output from PyCR, please do not reply.\n'+
+                         '\nhere is the output from PyCR, please do not reply.\n'+
                          '\n'+
                          '\n'+
                          '\n'+

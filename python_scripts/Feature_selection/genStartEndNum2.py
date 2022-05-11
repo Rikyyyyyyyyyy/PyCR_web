@@ -124,10 +124,12 @@ def gaussian_algorithm(classNum,class_list,valList,V_rankingAlgoithm,nComponent,
 
     plt.tight_layout()
     mn, mx = plt.xlim()
-    plt.plot([startNum, startNum], [0, 0.5], color='blue', label="Start Number")
-    plt.plot([endNum, endNum], [0, 0.5], color='red', label="End Number")
-    plt.plot(startNum, 0.5, color='blue')
-    plt.plot(endNum,  0.5, color='red')
+    y_min, y_max = plt.ylim()
+    pos = y_max / 2
+    plt.plot([startNum, startNum], [0, pos], color='blue', label="Start Number")
+    plt.plot([endNum, endNum], [0, pos], color='red', label="End Number")
+    plt.plot(startNum, pos, color='blue')
+    plt.plot(endNum,  pos, color='red')
     plt.legend(loc='best')
     plt.xlim(mn, mx)
     if V_rankingAlgoithm == 'fisher':

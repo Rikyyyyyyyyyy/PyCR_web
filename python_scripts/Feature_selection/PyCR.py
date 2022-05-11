@@ -63,7 +63,6 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     for key in class_trans_dict.keys():
         classList = [sub.replace(key, class_trans_dict[key]) for sub in classList]
     classList = [int(x) for x in classList]
-
     # create label list for plot
     class_num_label = []
     for i in range(1, classNum + 1):
@@ -72,7 +71,6 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     # back up the original sample list and class list
     ori_sample = copy.deepcopy(np.array(sampleList))
     ori_class = classList
-
     #Do class Tupa
     hori_index = []
     indice_list = []
@@ -80,6 +78,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         sampleList = tupa(sampleList,classList)
     elif tupaType.lower()=='classtupa':
         sampleList = class_tupa(sampleList, classList)
+
     for i in range(len(sampleList[0])):
         hori_index.append(i)
     for j in range(len(classList)):
@@ -89,7 +88,6 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     elif tupaType.lower() == 'classtupa':
         file_pkg.export_file(sampleList, ori_class, indice_list, hori_index, OUTPUT_PATH+ '/ClassTupaAllSample.csv', class_trans_dict,sampleName,variableName)
     file_pkg.export_file(ori_sample, ori_class, indice_list, hori_index, OUTPUT_PATH +'/original_file.csv', class_trans_dict,sampleName,variableName)
-
     ## if there is not enough samples to do the external validation no matter what the user says isexternal will be false
     ## use hash table to see how many samples for each class and if countSample < 9 we dont do external
     hash_classCount = [0] * (classNum + 1)
@@ -106,7 +104,6 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
             scale_training_sample, col_mean = SVN_scale_half_data(sampleList)
         else:
             scale_training_sample, scale_training_mean, scale_training_std = scale_half_data(sampleList)
-
 
     if isexternal:
         sampleList, external_validation, classList, external_class, indices_train, indices_test = selectRandom(
@@ -396,8 +393,8 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     pca_percentage_val = np.cumsum(pS) / sum(pS)
     p2_percentage = pca_percentage_val[0] * 100
     p1_percentage = pca_percentage_val[1] * 100
-    plt.xlabel("PC1(%{0:0.3f}".format(p1_percentage) + ")")
-    plt.ylabel("PC2 (%{0:0.3f}".format(p2_percentage) + ")")
+    plt.xlabel("PC1(%{0:0.3f}".format(p1_percentage) + ")",fontsize=15)
+    plt.ylabel("PC2 (%{0:0.3f}".format(p2_percentage) + ")",fontsize=15)
     plt.rcParams.update({'font.size': 10})
     plt.title('PCA training')
     plt.legend()

@@ -43,7 +43,7 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
     endNumList = []
     sorted_fisher_idx = []
     # select all the variable with fisher ration larger than start number as start variables, selecte all the variable with fisher ratio between start and stop number as stop variables.
-
+    print('Test1 ')
     for i in sorted_fisherRatio:
         if i[1] > startNum:
             startNumList.append(i[0])
@@ -58,10 +58,10 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
     else:
         scaled_half_samples, half_mean, half_std = scale_half_data(sample_training)
         scaled_all_samples = scale_all_data(allSampleList, half_mean, half_std)
-
+    print('Test2 ')
     temp_score = calScore(scaled_half_samples[:,startNumList], scaled_all_samples[:,startNumList])
     oldScore = gen_clust.RunClust(temp_score,classList,classNum)
-
+    print('Test3 ')
     # get rid of the variable form teh start variable list and calculate the score again
     # compare with the the old score
     # if the new score is lower than the old score, we need save the variable in selected variable list
@@ -74,14 +74,17 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
         class_index_list[classList[i]].append(i)
     picCounter = 0
 
+
     #  Calculate the first score and get the sign
     sign_scaled_half_samples = scaled_half_samples[:, finalOutPutIdx]
     sign_scaled_all_samples = scaled_all_samples[:, finalOutPutIdx]
+
     dummyU, dummyS, V = svds(sign_scaled_half_samples, k=2)
     V = V.transpose()
     score = np.dot(sign_scaled_all_samples, V)
     score1 = score[:,0]
     score2 = score[:,1]
+
 
     # start the backward selection
     for idx in startNumList:
@@ -138,7 +141,6 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                     picCounter += 1
         else:
             break
-
     # start forward selection
     for index in endNumList:
         finalOutPutIdx.append(index)
