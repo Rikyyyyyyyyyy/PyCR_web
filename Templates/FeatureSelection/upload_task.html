@@ -21,17 +21,6 @@
     header{
         background-color: #3398E1;
     }
-    .head_text{
-        color: white;
-    }
-
-    .card{
-        box-shadow: 0 16px 48px #E3E7EB;
-    }
-    .container{
-        margin-top:15px;
-    }
-
     .image_container{
         width:300px;
         height:300px;
@@ -122,7 +111,7 @@
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
-                    <input  type="text" name="task_name" id="id_task_name" class="form-control" placeholder="Task Name"  autofocus value={{form.initial.task_name}}>
+                    <input  type="text" name="task_name" id="id_task_name"  placeholder="Task Name"  autofocus value={{form.initial.task_name}}>
                     <h6  class="mt-4 field-heading" id="text_isExternal">Need Validation Dataset</h6>
                     <span class="hovertext" data-hover="External Validation With External/Without External">
                         <div  class="question_mark_container">
@@ -258,14 +247,20 @@
                     </div>
                     <br>
                     <br>
-                    <h6 id="text_sent_email">Sent Output To My Email: <input id="id_sent_email" type="checkbox"  name="sent_email"></h6>
-                    <span class="hovertext" data-hover="Do you want to sent output to your email?">
+                    <span class="hovertext"  data-hover="Do you want to sent output to your email?">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
+                    <h6 id="text_sent_email" style="float: left;padding-top: 5px" >Sent Output To My Email: <input id="id_sent_email" type="checkbox"  name="sent_email"></h6>
                     <br>
-                    <button type="submit" class="bt btn-primary">Upload and Run</button>
+                    <div style="padding-top: 25px">
+                        <button  type="submit" class="bt btn-primary">Upload and Run</button>
+                    </div>
+                <br>
+                <br>
+                <br>
+                <br>
                 <br>
                 <br>
                 <br>

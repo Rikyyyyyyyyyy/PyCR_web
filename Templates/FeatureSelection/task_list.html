@@ -47,6 +47,16 @@
         color: cornflowerblue;
         float: left;
     }
+    .PyCR_logo{
+        width: 400px;
+        height: 400px;
+        float: left;
+    }
+    .btn-upload{
+        float: left;
+        padding-top: 100px;
+        padding-left: 100px;
+    }
 
     </style>
 {% if user.is_authenticated %}
@@ -67,9 +77,16 @@
 
 <div class = "container">
     <div class ="personal_info col-md-8 col-md-10 mx-auto">
-        <p>
-            <a href="{% url 'feature_upload_task' %}" class="btn btn-primary">Upload Task</a>
+        <div  class="PyCR_logo">
+            <img class="pycrLogo" src="{{ MEDIA_URL }}/images/PyCR.png">
+
+        </div>
+
+        <p class="btn-upload">
+            <a href="{% url 'feature_upload_task' %}" class="btn btn-primary ">Upload Task</a>
         </p>
+
+
     <table class="table">
         <thead>
             <tr>
