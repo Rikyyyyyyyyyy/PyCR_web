@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 {% extends 'homepage/base.html' %}
 {% load static %}
 {% block content %}
@@ -71,7 +72,8 @@
                             <div class="text" id="id_text">Edit</div>
                         </div>
                     </div>
-                    <form class="form-signin" method="post" enctype="multipart/form-data">{% csrf_token %}
+                    <form class="form-signin" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <input class="d-none" type="file" id="id_profile_image" name="profile_pic" onchange="readURL(this)">
                         <h6 class="mt-4 field-heading">Email</h6>
                         <input type="email" name="email" id="id_input_email" class="form-control" placeholder="Email address" required autofocus value={{form.initial.email}}>
@@ -94,9 +96,6 @@
 </body>
 <script type="text/javascript">
     var cropper;
-    var imageFile;
-    var base64ImageString;
-    var cropX;
     var cropY;
     var cropWidth;
     var cropHeight;
@@ -111,16 +110,6 @@
                var image = e.target.result
                var imageField = document.getElementById("id_profile_image_display")
                imageField.src = image
-               {#cropper = new Cropper(imageField,{#}
-               {#    aspectRatio :1/1,#}
-               {#    crop(event){#}
-               {#        console.log("CROP START")#}
-               {#        console.log("x: "+ event.detail.x)#}
-               {#        console.log("y: "+ event.detail.y)#}
-               {#        console.log("width: "+ event.detail.width)#}
-               {#        console.log("height: "+ event.detail.height)#}
-               {#    }#}
-               {# }) #}
            }
            reader.readAsDataURL(input.files[0]);
        }
