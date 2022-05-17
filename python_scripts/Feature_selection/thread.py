@@ -30,13 +30,18 @@ class PyCRThread(threading.Thread):
 
     def run(self):
         try:
-            PyCR.runPyCR(self.isExternal, self.splitratio, self.rocType, self.tupaType, self.isMotabo, self.motabo_url, self.sample_url, self.class_url, self.sampleName, self.VariableName, self.scaleType, self.iterations, self.survivalRate, self.rankingAlg, self.nComp, self.pk)
+            # PyCR.runPyCR(self.isExternal, self.splitratio, self.rocType, self.tupaType, self.isMotabo, self.motabo_url, self.sample_url, self.class_url, self.sampleName, self.VariableName, self.scaleType, self.iterations, self.survivalRate, self.rankingAlg, self.nComp, self.pk)
             shutil.make_archive('static/images/featureSelection/temp/zipOutput/output' + str(self.task.pk), "zip",
                                 'static/images/featureSelection/temp/output/', 'output' + str(self.task.pk))
             self.task.project_output.name = '/featureSelection/temp/zipOutput/output' + str(self.task.pk) + ".zip"
             self.task.save()
             if self.isSentEmail:
                 sent_email.runSendEmail(self.cur_user.email,'/static/images/featureSelection/temp/zipOutput/output'+str(self.task.pk)+'.zip',self.base_dir,self.cur_user.username,self.task.task_name, self.task.isExternal, self.task.rankingAlgorithm, self.task.rocType, self.task.tupaType, self.task.scaleType,self.task.iterations,self.task.survivalRate)
+            # return False
         except Exception as e:
-            print("ERROR MESSGAE:")
+            print("ERROR MESSAGE")
+            erro_message = str(e)
             print(e)
+            self.task.erro_message = erro_message
+            self.task.save()
+            # return return_err

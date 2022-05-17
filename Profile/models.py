@@ -39,6 +39,7 @@ class Feature_selection(models.Model):
     project_output = models.FileField(upload_to='featureSelection/out', blank=True, null=True)
     sent_email = models.BooleanField(default=False)
     graph1 = models.ImageField(upload_to='featureSelection/graph1',default=0)
+    erro_message = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return self.task_name

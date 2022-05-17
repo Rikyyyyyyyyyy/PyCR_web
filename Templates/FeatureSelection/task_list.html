@@ -108,14 +108,25 @@
                                 <a href= "{% url 'delete_feature_task' pk=task.pk %}" class="btn btn-primary btn-sm">Delete</a>
                             </td>
                         {% else %}
-                            <td>Generating...</td>
+                            {% if task.erro_message %}
+                                <td style="color: red">{{task.erro_message}}</td>
+                            {% else %}
+                                <td>Generating...</td>
+                            {% endif %}
+                            <td>
+                                <a href= "{% url 'delete_feature_task' pk=task.pk %}" class="btn btn-primary btn-sm">Delete</a>
+                            </td>
                         {% endif %}
-
                 </tr>
             {% endfor %}
-
         </tbody>
     </table>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
     </div>
 
 </div>

@@ -18,137 +18,238 @@ warnings.filterwarnings('ignore')
 matplotlib.use('agg')
 def gaussian_algorithm(classNum,class_list,valList,V_rankingAlgoithm,nComponent,output_path):
     ITERATIONS = 100
+    AVG_ITERATIONS = 50
     sample_matrix = np.array(valList)
     k = 0
     true_means = []
     null_means = []
     # get the list of fisher ratio mean for tru and null distribution
-    while k < ITERATIONS:
-        # get the half random sample and half random variables list
-        half_rand_matrix, sample_ind_list = selectHalfRandom(sample_matrix)
-        half_rand_class_list = []
-        for z in sample_ind_list:
-            half_rand_class_list.append(class_list[z])
-        classNum_list = []
-        for i in range(classNum):
-            classNum_list.append(i + 1)
-        # create true distribution with the original class number
-        true_dist_classNum = copy.deepcopy(half_rand_class_list)
-        # create null distribution with the randomly assigned class number
-        null_dist_classNum = []
-        for i in range(len(half_rand_class_list)):
-            null_dist_classNum.append(random.choice(classNum_list))
-        # calculate the tru and null fisher ratio
-        if V_rankingAlgoithm == "fisher":
-            true_fisherRatio = cal_fish_ratio(half_rand_matrix, true_dist_classNum, classNum)
-            null_fisherRatio = cal_fish_ratio(half_rand_matrix, null_dist_classNum, classNum)
-        elif V_rankingAlgoithm == 'vip':
-            true_fisherRatio = vipScore_in.vipy(half_rand_matrix, true_dist_classNum, nComponent)
-            null_fisherRatio = vipScore_in.vipy(half_rand_matrix, null_dist_classNum, nComponent)
-        elif V_rankingAlgoithm == 'selectivity':
-            true_fisherRatio = SelectivityRatio_in.selrpy(half_rand_matrix, true_dist_classNum, nComponent)
-            null_fisherRatio = SelectivityRatio_in.selrpy(half_rand_matrix, null_dist_classNum, nComponent)
-        # generate the Theoretical and observed distribution of F values
-        if k == 0 and V_rankingAlgoithm == 'fisher':
-            dfn = classNum-1
-            dfd = len(sample_matrix) - classNum
-
-            x = np.linspace(f.ppf(0.01, dfn, dfd),
-                            f.ppf(0.99, dfn, dfd), 100)
-            plt.plot(x,f.pdf(x, dfn, dfd),
-                    '--', color='#3468eb', lw=2, alpha=0.6, label='F pdf')
-            plt.hist(true_fisherRatio, density=True, color="#3468eb", alpha=.95, label="observed F values",
-                     range=(0, max(x)), bins=60)
-            mn, mx = plt.xlim()
-            y_min, y_max = plt.ylim()
-            fisher_startNum = f.ppf(q=0.95, dfn=dfn, dfd=dfd)
-            fisher_endNum = f.ppf(q=0.5, dfn=dfn, dfd=dfd)
-            pos = y_max/2
-            plt.plot([fisher_startNum, fisher_startNum], [0, pos], color='blue', label="Start Number")
-            plt.plot([fisher_endNum, fisher_endNum], [0, pos], color='red', label="End Number")
-            plt.plot(fisher_startNum, pos, color='blue',label="Start Number")
-            plt.plot(fisher_endNum, pos, color='red', label="End Number")
-            plt.legend(loc='best')
-            plt.xlim(mn, mx)
-            plt.title("Theoretical and observed distribution of F values")
-            plt.savefig(output_path + '/Theoretical_and_observed_distribution_of_F_values.png', bbox_inches="tight")
-            plt.figure().clear()
-        true_mean_fisher_ratio = np.mean(true_fisherRatio)
-        null_mean_fisher_ratio = np.mean(null_fisherRatio)
-        true_means.append(true_mean_fisher_ratio)
-        null_means.append(null_mean_fisher_ratio)
-        k = k + 1
-    for i in range(len(true_means)):
-        if true_means[i] == np.inf:
-            true_means[i] = 0
-    for i in range(len(null_means)):
-        if null_means[i] == np.inf:
-            null_means[i] = 0
-    true_fisher_mean = np.mean(true_means)
-    true_fisher_std = np.std(true_means)
-    null_fisher_mean = np.mean(null_means)
-    null_fisher_std = np.std(null_means)
-
-    # generate the CLT distribution
-    # replace the inf in mean with the largest number in original matrix
-    max_range = max(max(true_means),max(null_means))
-    # start the true and null gaussian
-    true_n, true_bins, true_patches = plt.hist(true_means, density=True,color="#3468eb",alpha=.6, label="true mean", range=(0,max_range),bins = 35)
-    null_n, null_bins, null_patches = plt.hist(null_means, density=True, color="#34ebba", alpha=.6, label=" null mean", range=(0,max_range), bins=35)
-    true_mean, true_std = norm.fit(true_means)
-    null_mean, null_std = norm.fit(null_means)
-    # true_y = ((1 / (np.sqrt(2 * np.pi) * true_fisher_std)) * np.exp(-0.5 * (1 / true_fisher_std * (true_bins - true_fisher_mean)) ** 2))
-    true_y = ((1 / (np.sqrt(2 * np.pi) * true_std)) * np.exp(
-        -0.5 * (1 / true_std * (true_bins - true_mean)) ** 2))
-    plt.plot(true_bins, true_y, '--', color="#3468eb")
-    # null_y = ((1 / (np.sqrt(2 * np.pi) * null_fisher_std)) * np.exp(
-    #     -0.5 * (1 / null_fisher_std * (null_bins - null_fisher_mean)) ** 2))
-    null_y = ((1 / (np.sqrt(2 * np.pi) * null_std)) * np.exp(
-        -0.5 * (1 / null_std * (null_bins - null_mean)) ** 2))
-
-    ## Calculate the overlapping between two normalization
-    u1 = null_mean
-    u2 = true_mean
-    a1 = null_std
-    a2 = true_std
-    c_upper = u2*a1**2 - a2*(u1*a2+a1*math.sqrt((u1-u2)**2+(2*(a1**2 - a2**2) * math.log(a1/a2))))
-    c_bottom = a1**2-a2**2
-    c = c_upper / c_bottom
-    x1 = (c-u1)/(math.sqrt(2)*a1)
-    x2 = (c-u2)/(math.sqrt(2)*a2)
-    P = 1-0.5*special.erf(x1)+ 0.5*special.erf(x2)
-    startNum = statistics.NormalDist(mu=true_fisher_mean, sigma=true_fisher_std).inv_cdf(0.90)
-    endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf((1-P))
-    ## Draw the graph
-    plt.plot(null_bins, null_y, '--', color="#34ebba")
-
-    plt.tight_layout()
-    mn, mx = plt.xlim()
-    y_min, y_max = plt.ylim()
-    pos = y_max / 2
-    plt.plot([startNum, startNum], [0, pos], color='blue', label="Start Number")
-    plt.plot([endNum, endNum], [0, pos], color='red', label="End Number")
-    plt.plot(startNum, pos, color='blue')
-    plt.plot(endNum,  pos, color='red')
-    plt.legend(loc='best')
-    plt.xlim(mn, mx)
+    ############################ fisher###########################
+    # get the list of fisher ratio mean for tru and null distribution
     if V_rankingAlgoithm == 'fisher':
+        while k < ITERATIONS:
+            # get the half random sample and half random variables list
+            half_rand_matrix, sample_ind_list = selectHalfRandom(sample_matrix)
+            half_rand_class_list = []
+            for z in sample_ind_list:
+                half_rand_class_list.append(class_list[z])
+            classNum_list = []
+            for i in range(classNum):
+                classNum_list.append(i + 1)
+            # create true distribution with the original class number
+            true_dist_classNum = copy.deepcopy(half_rand_class_list)
+            # create null distribution with the randomly assigned class number
+            null_dist_classNum = []
+            for i in range(len(half_rand_class_list)):
+                null_dist_classNum.append(random.choice(classNum_list))
+            # calculate the tru and null fisher ratio
+            if V_rankingAlgoithm == "fisher":
+                true_fisherRatio = cal_fish_ratio(half_rand_matrix, true_dist_classNum, classNum)
+                null_fisherRatio = cal_fish_ratio(half_rand_matrix, null_dist_classNum, classNum)
+            # generate the Theoretical and observed distribution of F values
+            if k == 0:
+                dfn = classNum - 1
+                dfd = len(sample_matrix) - classNum
+
+                x = np.linspace(f.ppf(0.01, dfn, dfd),
+                                f.ppf(0.99, dfn, dfd), 100)
+                plt.plot(x, f.pdf(x, dfn, dfd),
+                         '--', color='#3468eb', lw=2, alpha=0.6, label='F pdf')
+                plt.hist(true_fisherRatio, density=True, color="#3468eb", alpha=.95, label="observed F values",
+                         range=(0, max(x)), bins=60)
+                mn, mx = plt.xlim()
+                y_min, y_max = plt.ylim()
+                fisher_startNum = f.ppf(q=0.95, dfn=dfn, dfd=dfd)
+                fisher_endNum = f.ppf(q=0.5, dfn=dfn, dfd=dfd)
+                pos = y_max / 2
+                plt.plot([fisher_startNum, fisher_startNum], [0, pos], color='blue', label="Start Number")
+                plt.plot([fisher_endNum, fisher_endNum], [0, pos], color='red', label="End Number")
+                plt.plot(fisher_startNum, pos, color='blue', label="Start Number")
+                plt.plot(fisher_endNum, pos, color='red', label="End Number")
+                plt.legend(loc='best')
+                plt.xlim(mn, mx)
+                plt.title("Theoretical and observed distribution of F values")
+                plt.savefig(output_path + '/Theoretical_and_observed_distribution_of_F_values.png', bbox_inches="tight")
+                plt.figure().clear()
+            true_mean_fisher_ratio = np.mean(true_fisherRatio)
+            null_mean_fisher_ratio = np.mean(null_fisherRatio)
+            true_means.append(true_mean_fisher_ratio)
+            null_means.append(null_mean_fisher_ratio)
+            k = k + 1
+        for i in range(len(true_means)):
+            if true_means[i] == np.inf:
+                true_means[i] = 0
+        for i in range(len(null_means)):
+            if null_means[i] == np.inf:
+                null_means[i] = 0
+        true_fisher_mean = np.mean(true_means)
+        true_fisher_std = np.std(true_means)
+        null_fisher_mean = np.mean(null_means)
+        null_fisher_std = np.std(null_means)
+
+        # generate the CLT distribution
+        # replace the inf in mean with the largest number in original matrix
+        max_range = max(max(true_means), max(null_means))
+        # start the true and null gaussian
+        true_n, true_bins, true_patches = plt.hist(true_means, density=True, color="#3468eb", alpha=.6,
+                                                   label="true mean", range=(0, max_range), bins=35)
+        null_n, null_bins, null_patches = plt.hist(null_means, density=True, color="#34ebba", alpha=.6,
+                                                   label=" null mean", range=(0, max_range), bins=35)
+        true_mean, true_std = norm.fit(true_means)
+        null_mean, null_std = norm.fit(null_means)
+        # true_y = ((1 / (np.sqrt(2 * np.pi) * true_fisher_std)) * np.exp(-0.5 * (1 / true_fisher_std * (true_bins - true_fisher_mean)) ** 2))
+        true_y = ((1 / (np.sqrt(2 * np.pi) * true_std)) * np.exp(
+            -0.5 * (1 / true_std * (true_bins - true_mean)) ** 2))
+        plt.plot(true_bins, true_y, '--', color="#3468eb")
+        # null_y = ((1 / (np.sqrt(2 * np.pi) * null_fisher_std)) * np.exp(
+        #     -0.5 * (1 / null_fisher_std * (null_bins - null_fisher_mean)) ** 2))
+        null_y = ((1 / (np.sqrt(2 * np.pi) * null_std)) * np.exp(
+            -0.5 * (1 / null_std * (null_bins - null_mean)) ** 2))
+
+        ## Calculate the overlapping between two normalization
+        u1 = null_mean
+        u2 = true_mean
+        a1 = null_std
+        a2 = true_std
+        c_upper = u2 * a1 ** 2 - a2 * (
+                    u1 * a2 + a1 * math.sqrt((u1 - u2) ** 2 + (2 * (a1 ** 2 - a2 ** 2) * math.log(a1 / a2))))
+        c_bottom = a1 ** 2 - a2 ** 2
+        c = c_upper / c_bottom
+        x1 = (c - u1) / (math.sqrt(2) * a1)
+        x2 = (c - u2) / (math.sqrt(2) * a2)
+        P = 1 - 0.5 * special.erf(x1) + 0.5 * special.erf(x2)
+        startNum = statistics.NormalDist(mu=true_fisher_mean, sigma=true_fisher_std).inv_cdf(0.90)
+        endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf((1 - P))
+        ## Draw the graph
+        plt.plot(null_bins, null_y, '--', color="#34ebba")
+
+        plt.tight_layout()
+        mn, mx = plt.xlim()
+        y_min, y_max = plt.ylim()
+        pos = y_max / 2
+        plt.plot([startNum, startNum], [0, pos], color='blue', label="Start Number")
+        plt.plot([endNum, endNum], [0, pos], color='red', label="End Number")
+        plt.plot(startNum, pos, color='blue')
+        plt.plot(endNum, pos, color='red')
+        plt.legend(loc='best')
+        plt.xlim(mn, mx)
         plt.ylabel("Likelihood")
         plt.xlabel("Mean of Fisher ratio")
         plt.title("Start and stop number determination via CLT")
         plt.savefig(output_path + '/FisherMean.png', bbox_inches="tight")
-    elif V_rankingAlgoithm == 'vip':
-        plt.ylabel("Likelihood")
-        plt.xlabel("Mean of Vip ratio")
-        plt.title("Start and stop number determination via CLT")
-        plt.savefig(output_path + '/VipMean.png', bbox_inches="tight")
-    elif V_rankingAlgoithm == "selectivity":
-        plt.ylabel("Likelihood")
-        plt.xlabel("Mean of Selectivity ratio")
-        plt.title("Start and stop number determination via CLT")
-        plt.savefig(output_path + '/SelectivityMean.png', bbox_inches="tight")
-    plt.figure().clear()
+        plt.figure().clear()
+
+    ############################ vip selectivity ###########################
+    else:
+        startNum_list = []
+        stopNum_list = []
+        for i in range(AVG_ITERATIONS):
+            while k < ITERATIONS:
+                # get the half random sample and half random variables list
+                half_rand_matrix, sample_ind_list = selectHalfRandom(sample_matrix)
+                half_rand_class_list = []
+                for z in sample_ind_list:
+                    half_rand_class_list.append(class_list[z])
+                classNum_list = []
+                for i in range(classNum):
+                    classNum_list.append(i + 1)
+                # create true distribution with the original class number
+                true_dist_classNum = copy.deepcopy(half_rand_class_list)
+                # create null distribution with the randomly assigned class number
+                null_dist_classNum = []
+                for i in range(len(half_rand_class_list)):
+                    null_dist_classNum.append(random.choice(classNum_list))
+                # calculate the tru and null fisher ratio
+                if V_rankingAlgoithm == 'vip':
+                    true_fisherRatio = vipScore_in.vipy(half_rand_matrix, true_dist_classNum, nComponent)
+                    null_fisherRatio = vipScore_in.vipy(half_rand_matrix, null_dist_classNum, nComponent)
+                elif V_rankingAlgoithm == 'selectivity':
+                    true_fisherRatio = SelectivityRatio_in.selrpy(half_rand_matrix, true_dist_classNum, nComponent)
+                    null_fisherRatio = SelectivityRatio_in.selrpy(half_rand_matrix, null_dist_classNum, nComponent)
+                # generate the Theoretical and observed distribution of F values
+                true_mean_fisher_ratio = np.mean(true_fisherRatio)
+                null_mean_fisher_ratio = np.mean(null_fisherRatio)
+                true_means.append(true_mean_fisher_ratio)
+                null_means.append(null_mean_fisher_ratio)
+                k = k + 1
+            for i in range(len(true_means)):
+                if true_means[i] == np.inf:
+                    true_means[i] = 0
+            for i in range(len(null_means)):
+                if null_means[i] == np.inf:
+                    null_means[i] = 0
+            true_fisher_mean = np.mean(true_means)
+            true_fisher_std = np.std(true_means)
+            null_fisher_mean = np.mean(null_means)
+            null_fisher_std = np.std(null_means)
+
+            # generate the CLT distribution
+            # replace the inf in mean with the largest number in original matrix
+            max_range = max(max(true_means), max(null_means))
+            max_range *= 1.25
+            # start the true and null gaussian
+            true_n, true_bins, true_patches = plt.hist(true_means, density=True, color="#3468eb", alpha=.6,
+                                                       label="true mean", range=(0, max_range), bins=35)
+            null_n, null_bins, null_patches = plt.hist(null_means, density=True, color="#34ebba", alpha=.6,
+                                                       label=" null mean", range=(0, max_range), bins=35)
+            true_mean, true_std = norm.fit(true_means)
+            null_mean, null_std = norm.fit(null_means)
+            # true_y = ((1 / (np.sqrt(2 * np.pi) * true_fisher_std)) * np.exp(-0.5 * (1 / true_fisher_std * (true_bins - true_fisher_mean)) ** 2))
+            true_y = ((1 / (np.sqrt(2 * np.pi) * true_std)) * np.exp(
+                -0.5 * (1 / true_std * (true_bins - true_mean)) ** 2))
+
+            # null_y = ((1 / (np.sqrt(2 * np.pi) * null_fisher_std)) * np.exp(
+            #     -0.5 * (1 / null_fisher_std * (null_bins - null_fisher_mean)) ** 2))
+            null_y = ((1 / (np.sqrt(2 * np.pi) * null_std)) * np.exp(
+                -0.5 * (1 / null_std * (null_bins - null_mean)) ** 2))
+
+            ## Calculate the overlapping between two normalization
+            u1 = null_mean
+            u2 = true_mean
+            a1 = null_std
+            a2 = true_std
+            c_upper = u2 * a1 ** 2 - a2 * (
+                        u1 * a2 + a1 * math.sqrt((u1 - u2) ** 2 + (2 * (a1 ** 2 - a2 ** 2) * math.log(a1 / a2))))
+            c_bottom = a1 ** 2 - a2 ** 2
+            c = c_upper / c_bottom
+            x1 = (c - u1) / (math.sqrt(2) * a1)
+            x2 = (c - u2) / (math.sqrt(2) * a2)
+            P = 1 - 0.5 * special.erf(x1) + 0.5 * special.erf(x2)
+            temp_startNum = statistics.NormalDist(mu=true_fisher_mean, sigma=true_fisher_std).inv_cdf(0.80)
+            temp_endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf((1 - P))
+            startNum_list.append(temp_startNum)
+            stopNum_list.append(temp_endNum)
+            plt.figure().clear()
+        plt.hist(true_means, density=True, color="#3468eb", alpha=.6, label="true mean", range=(0, max_range), bins=35)
+        plt.hist(null_means, density=True, color="#34ebba", alpha=.6, label=" null mean", range=(0, max_range), bins=35)
+        startNum = np.median(startNum_list)
+        endNum = np.median(stopNum_list)
+        ## Draw the graph
+        plt.plot(true_bins, true_y, '--', color="#3468eb")
+        plt.plot(null_bins, null_y, '--', color="#34ebba")
+        plt.tight_layout()
+        mn, mx = plt.xlim()
+        y_min, y_max = plt.ylim()
+        pos = y_max / 2
+        plt.plot([startNum, startNum], [0, pos], color='blue', label="Start Number")
+        plt.plot([endNum, endNum], [0, pos], color='red', label="End Number")
+        plt.plot(startNum, pos, color='blue')
+        plt.plot(endNum, pos, color='red')
+        plt.legend(loc='best')
+        plt.xlim(mn, mx)
+        if V_rankingAlgoithm == 'vip':
+            plt.ylabel("Likelihood")
+            plt.xlabel("Mean of Vip ratio")
+            plt.title("Start and stop number determination via CLT")
+            plt.savefig(output_path + '/VipMean.png', bbox_inches="tight")
+        elif V_rankingAlgoithm == "selectivity":
+            plt.ylabel("Likelihood")
+            plt.xlabel("Mean of Selectivity ratio")
+            plt.title("Start and stop number determination via CLT")
+            plt.savefig(output_path + '/SelectivityMean.png', bbox_inches="tight")
+        plt.figure().clear()
     return startNum, endNum
+
 
 
 # randomly get half sample, half variable matrix
