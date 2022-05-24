@@ -29,7 +29,7 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
     CLASS_LABEL = ["o", "x", "4", "*", "+", "D", "8", "s", "p"]
     allSampleList = np.array(allSampleList)
     #get the half randomly selected sample and calculate the fisher ration
-    sample_training, sample_test, class_training, class_test = selectRandom(allSampleList, classList,howMuchSplit)
+    sample_training, sample_test, class_training, class_test = selectRandom(allSampleList, classList,0.5)
     if V_rankingAlgorithm == 'fisher':
         fisherRatio = fisherRatio_in.cal_ratio(sample_training, class_training, classNum)
     elif V_rankingAlgorithm == 'vip':

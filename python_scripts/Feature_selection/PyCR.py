@@ -100,6 +100,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
             isexternal = False
 
     if not isexternal:
+        indices_train = indice_list
         if scale_type == 'SVN':
             scale_training_sample, col_mean = SVN_scale_half_data(sampleList)
         else:
@@ -158,13 +159,14 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
                                               OUTPUT_PATH + '/external_stat_report_class_' +
                                               [k for k, v in class_trans_dict.items() if v == str(c + 1)][
                                                   0] + '_no_FS.csv')
-    # output the splited training and external variables(if meet the external requirement) in special format
-    index_indices_train = [x-1 for x in indices_train]
-    index_indices_test = [x-1 for x in indices_test]
+    # output the splited training and external variables(if meet the external requirement) in special form
     if isexternal:
+        index_indices_train = [x - 1 for x in indices_train]
+        index_indices_test = [x - 1 for x in indices_test]
         file_pkg.export_file(ori_sample, ori_class, index_indices_train, hori_index, OUTPUT_PATH + '/training_variables.csv', class_trans_dict, sampleName,variableName)
         file_pkg.export_file(ori_sample, ori_class, index_indices_test, hori_index, OUTPUT_PATH + '/external_variables.csv', class_trans_dict, sampleName,variableName)
     else:
+        index_indices_train = [x - 1 for x in indices_train]
         file_pkg.export_file(ori_sample, ori_class, index_indices_train, hori_index, OUTPUT_PATH + '/training_variables.csv', class_trans_dict, sampleName,variableName)
         external_variables_wb = xlsxwriter.Workbook(OUTPUT_PATH + '/external_variables.xlsx')
         external_variables_ws = external_variables_wb.add_worksheet()
@@ -342,40 +344,45 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
                                           [k for k, v in class_trans_dict.items() if v == str(c + 1)][
                                               0] + '_with_FS.csv')
     # for external
-    class_pred_external = clf_FS.predict(scaled_external[:, valid_idx])
-    classofic_report_external = classification_report(external_class, class_pred_external)
-    report_lines_external = classofic_report_external.split('\n')
-    report_lines_external = report_lines_external[2:]
-    # generate the statistic report
-    for c in range(0, classNum):
-        stat_num_external = report_lines_external[c].split(' ')
-        stat_num_external = [i for i in stat_num_external if i != ""]
-        class_stat_list_external_noCutoff[c].append(stat_num_external[1:])
-    for c in range(classNum):
-        file_pkg.gen_file_by_class_matrix(["Selectivity", "Sensitivity", "Accuracy"],
-                                          class_stat_list_external_noCutoff[c][:3],
-                                          OUTPUT_PATH + '/external_stat_report_class_' +
-                                          [k for k, v in class_trans_dict.items() if v == str(c + 1)][
-                                              0] + '_with_FS.csv')
+    if isexternal:
+        class_pred_external = clf_FS.predict(scaled_external[:, valid_idx])
+        classofic_report_external = classification_report(external_class, class_pred_external)
+        report_lines_external = classofic_report_external.split('\n')
+        report_lines_external = report_lines_external[2:]
+        # generate the statistic report
+        for c in range(0, classNum):
+            stat_num_external = report_lines_external[c].split(' ')
+            stat_num_external = [i for i in stat_num_external if i != ""]
+            class_stat_list_external_noCutoff[c].append(stat_num_external[1:])
+        for c in range(classNum):
+            file_pkg.gen_file_by_class_matrix(["Selectivity", "Sensitivity", "Accuracy"],
+                                              class_stat_list_external_noCutoff[c][:3],
+                                              OUTPUT_PATH + '/external_stat_report_class_' +
+                                              [k for k, v in class_trans_dict.items() if v == str(c + 1)][
+                                                  0] + '_with_FS.csv')
     ####################################  START GRAPH CODE ###################################
     # scale data
-    if scale_type == 'SNV':
-        scale_training_sample, col_mean= SVN_scale_half_data(sampleList)
-        scaled_external, col_mean= SVN_scale_half_data(external_validation)
-    else:
-        scale_training_sample, scale_training_mean, scale_training_std = scale_half_data(sampleList)
-        scaled_external, scale_training_mean, scale_training_std = scale_half_data(external_validation)
+    # if scale_type == 'SNV':
+    #     scale_training_sample, col_mean= SVN_scale_half_data(sampleList)
+    #     scaled_external, col_mean= SVN_scale_half_data(external_validation)
+    # else:
+    #     scale_training_sample, scale_training_mean, scale_training_std = scale_half_data(sampleList)
+    #     scaled_external, scale_training_mean, scale_training_std = scale_half_data(external_validation)
 
     # group different sample index by different class
     class_index_list = []
     external_class_index_list = []
     for i in range(classNum+1):
         class_index_list.append([])
-        external_class_index_list.append([])
     for i in range(len(classList)):
         class_index_list[classList[i]].append(i)
-    for i in range(len(external_class)):
-        external_class_index_list[external_class[i]].append(i)
+
+
+    if isexternal:
+        for i in range(classNum+1):
+            external_class_index_list.append([])
+        for i in range(len(external_class)):
+            external_class_index_list[external_class[i]].append(i)
 
     # calculaye the score for PCA, generate the PCA graph for traning and external
     class_variables = scale_training_sample[:, valid_idx]
@@ -444,13 +451,14 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
                       scale_training_sample, ROC_COLOR, OUTPUT_PATH + '/rocTrainNoFS/rocTrainNoFS',isMicro,'ROC Training, No Feature Selection ', class_trans_dict)
 
     # graph 2: validation without feature selection
-    gen_pca(scaled_external, classNum, external_class_index_list, CLASS_COLOR, CLASS_LABEL, OUTPUT_PATH + '/PCAValiNoFS.png','PCA Validation, No Feature Selection ',class_trans_dict)
-    # generate predict ROC
-    if classNum == 2:
-        gen_roc_graph(scale_training_sample,classList,scaled_external,external_class,OUTPUT_PATH + '/rocValiNoFS/rocValiNoFS.png', 'ROC Validation, No Feature Selection ')
-    else:
-        mul_roc_graph(classNum, class_num_label, classList, external_class, scale_training_sample,
-                      scaled_external, ROC_COLOR, OUTPUT_PATH + '/rocValiNoFS/rocValiNoFS',isMicro,'ROC Validation, No Feature Selection ', class_trans_dict)
+    if isexternal:
+        gen_pca(scaled_external, classNum, external_class_index_list, CLASS_COLOR, CLASS_LABEL, OUTPUT_PATH + '/PCAValiNoFS.png','PCA Validation, No Feature Selection ',class_trans_dict)
+        # generate predict ROC
+        if classNum == 2:
+            gen_roc_graph(scale_training_sample,classList,scaled_external,external_class,OUTPUT_PATH + '/rocValiNoFS/rocValiNoFS.png', 'ROC Validation, No Feature Selection ')
+        else:
+            mul_roc_graph(classNum, class_num_label, classList, external_class, scale_training_sample,
+                          scaled_external, ROC_COLOR, OUTPUT_PATH + '/rocValiNoFS/rocValiNoFS',isMicro,'ROC Validation, No Feature Selection ', class_trans_dict)
 
 
     # graph 3: training with feature selection
@@ -464,15 +472,16 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
 
 
     # graph 4: validation with feature selection
-    gen_pca(scaled_external[:, valid_idx], classNum, external_class_index_list, CLASS_COLOR, CLASS_LABEL,
-            OUTPUT_PATH + '/PCAValiWithFS.png','PCA Validation, With Feature Selection ',class_trans_dict)
+    if isexternal:
+        gen_pca(scaled_external[:, valid_idx], classNum, external_class_index_list, CLASS_COLOR, CLASS_LABEL,
+                OUTPUT_PATH + '/PCAValiWithFS.png','PCA Validation, With Feature Selection ',class_trans_dict)
 
-    # generate predict ROC
-    if classNum == 2:
-        gen_roc_graph(scale_training_sample[:,valid_idx],classList,scaled_external[:,valid_idx],external_class,OUTPUT_PATH + '/rocValiFS/rocValiFS.png', 'ROC Validation, With Feature Selection ' )
-    else:
-        mul_roc_graph(classNum, class_num_label, classList, external_class, scale_training_sample[:, valid_idx],
-                      scaled_external[:, valid_idx], ROC_COLOR,OUTPUT_PATH + '/rocValiFS/rocValiFS',isMicro, 'ROC Validation, With Feature Selection ', class_trans_dict)
+        # generate predict ROC
+        if classNum == 2:
+            gen_roc_graph(scale_training_sample[:,valid_idx],classList,scaled_external[:,valid_idx],external_class,OUTPUT_PATH + '/rocValiFS/rocValiFS.png', 'ROC Validation, With Feature Selection ' )
+        else:
+            mul_roc_graph(classNum, class_num_label, classList, external_class, scale_training_sample[:, valid_idx],
+                          scaled_external[:, valid_idx], ROC_COLOR,OUTPUT_PATH + '/rocValiFS/rocValiFS',isMicro, 'ROC Validation, With Feature Selection ', class_trans_dict)
 
     # graph 5: PCA with Internal and external without FS
     class_variables_no_FS = scale_training_sample
@@ -503,7 +512,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     plt.title('PCA Training , Validation, No Feature Selection')
     plt.rcParams.update({'font.size': 10})
     plt.legend()
-    plt.savefig(OUTPUT_PATH + '/pca_external_No_FS.png',bbox_inches="tight" )
+    plt.savefig(OUTPUT_PATH + '/pca_No_FS.png',bbox_inches="tight" )
     plt.figure().clear()
 
     return
