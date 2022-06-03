@@ -1,0 +1,96 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+
+    .head_text{
+        color: white;
+    }
+    header{
+        background-color: #3398E1;
+    }
+
+    .container_contri{
+        padding: 60px;
+    }
+    .container_contri2{
+        padding: 60px;
+        float: left;
+    }
+
+
+</style>
+
+<header class="masthead">
+    <div class="overlay"></div>
+        <div class="row">
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
+              Contributor
+            </h3>
+        </div>
+</header>
+
+<body>
+<div class="container_contri">
+    <div class="w3-quarter w3-container">
+      <div class="w3-topbar w3-border-blue">
+        <img src="/images/aboutPage/contributors/James.jpeg" style="width:100%">
+        <h2>James Harynuk </h2>
+        <p>Principal Investigator</p>
+      </div>
+    </div>
+    <div class="w3-quarter w3-container">
+      <div class="w3-topbar w3-border-blue">
+        <img src="/images/aboutPage/contributors/Paulina.jpg" style="width:100%">
+        <h2>Paulina de la Mata</h2>
+        <p>Research Associate</p>
+        </div>
+    </div>
+
+    <div class="w3-quarter w3-container">
+      <div class="w3-topbar w3-border-blue">
+        <img src="/images/aboutPage/contributors/Michael.png" style="width:100%">
+        <h2>Michael Sorochan Armstrong</h2>
+        <p>PhD Alumnus (machine learning)</p>
+      </div>
+    </div>
+
+    <div class="w3-quarter w3-container">
+      <div class="w3-topbar w3-border-blue">
+        <img src="/images/aboutPage/contributors/wenwenLi.jpg" style="width:100%">
+        <h2>Wenwen Li</h2>
+        <p>Software Developer (cloud computing and web development)</p>
+      </div>
+    </div>
+
+
+</div>
+<div class="container_contri2" >
+    <div class="w3-third w3-container">
+      <div class="w3-topbar w3-border-blue">
+        <img src="/images/aboutPage/contributors/Nikolai.jpeg" style="width:100%">
+        <h2>Nikolai Sinkov</h2>
+        <p>PhD Alumnus (chemometrics and machine learning)</p>
+      </div>
+    </div>
+
+    <div class="w3-third w3-container">
+      <div class="w3-topbar w3-border-blue">
+        <img src="/images/aboutPage/contributors/lawance.jpeg" style="width:100%">
+        <h2>lawrence asamoah adutwum</h2>
+        <p>PhD Alumnus (chemometrics and machine learning)</p>
+      </div>
+    </div>
+
+</div>
+</body>
+
+{%endblock%}

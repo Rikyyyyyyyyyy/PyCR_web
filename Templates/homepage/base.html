@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
      <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
     <meta name="google" content="notranslate" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 {#    <link   rel="stylesheet" href="{% static 'cropperjs/dist/cropper.min.css' %}">#}
@@ -16,28 +17,16 @@
         body{
             font-family: "Roboto", sans-serif;
             font-size: 17px;
-            background-color: #fdfdfd;
+            background-color: #ffffff;
 
-        }
-
-        .footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            background-color: #fdfdfd;
-            color: white;
-            text-align: left;
         }
 
         .shadow {
             box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.1);
         }
-
-
-
-
-
+        .tmic_logo{
+            padding-bottom: 10px;
+        }
     </style>
     <!-- Navigation -->
     <div class="container" id="id_loading_spinner" style="display: none;">
@@ -49,7 +38,10 @@
     </div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow" id="mainNav">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'index' %}">TMIC</a>
+            <div class="tmic_container">
+                <a href="https://metabolomicscentre.ca/"><img  class="tmic_logo" style="padding-top: 5px" width="100" height="50" src="/images/logos/tmic_logo.png" ></a>
+            </div>
+
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                     aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -57,8 +49,14 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'aboutPage' %}">About</a>
+                            <a class="nav-link text-black font-weight-bold" href="{% url 'index' %}">Home</a>
                         </li>
+                    <li class="nav-item text-black">
+                            <a class="nav-link text-black font-weight-bold" href="https://spaces.facsci.ualberta.ca/harynuk/">Harynuk Group</a>
+                        </li>
+<!--                    <li class="nav-item text-black">-->
+<!--                            <a class="nav-link text-black font-weight-bold" href="{% url 'aboutPage' %}">About</a>-->
+<!--                        </li>-->
                     <li class="nav-item text-black">
                             <a class="nav-link text-black font-weight-bold" href="{% url 'buyMeCoffee'%}">Donate</a>
                         </li>
@@ -94,22 +92,5 @@
      <!--Content Goes Here-->
     {% endblock content%}
 
-{#    <script type="module" src = "{% static 'cropperjs/dist/cropper.min.js' %}"></script>#}
-
-{#    <script type="text/javascript">#}
-{#        function displayLoadingSpinner(isDisplayed){#}
-{#            var spinner = document.getElementById("id_loading_spinner")#}
-{#            if (isDisplayed){#}
-{#                spinner.style.display = "block"#}
-{#            }#}
-{#            else{#}
-{#                spinner.style.display = "none"#}
-{#            }#}
-{#        }#}
-{#    </script>#}
-
-    <footer class="footer py-3 bg-grey shadow">
-        <a class="footer_link" href="https://github.com/Rikyyyyyyyyyy/PyCR" style="color: black" > @Check Out on github</a>
-    </footer>
 </body>
 </html>

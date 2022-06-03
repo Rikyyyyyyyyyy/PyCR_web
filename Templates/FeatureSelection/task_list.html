@@ -62,24 +62,18 @@
 {% if user.is_authenticated %}
     {% csrf_token %}
 <header class="masthead">
-    <div class="container">
+    <div class="overlay"></div>
         <div class="row">
-            <div class=" col-md-8 col-md-10 mx-auto">
-                <div class="site-heading">
-                    <h3 class=" site-heading my-4 mt-3 text-white">
-                        PyCR
-                    </h3>
-                </div>
-            </div>
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
+              PyCR
+            </h3>
         </div>
-    </div>
 </header>
 
 <div class = "container">
     <div class ="personal_info col-md-8 col-md-10 mx-auto">
         <div  class="PyCR_logo">
             <img class="pycrLogo" src="{{ MEDIA_URL }}/images/PyCR.png">
-
         </div>
 
         <p class="btn-upload">

@@ -49,6 +49,18 @@ def projects(request):
 def about(request):
     return render(request, 'about/about.html')
 
+def about_cite(request):
+    return render(request, 'about/about_cite.html')
+
+def about_contributor(request):
+    return render(request, 'about/about_contributor.html')
+
+def about_project(request):
+    return render(request, 'about/about_project.html')
+
+def about_support(request):
+    return render(request, 'about/about_support.html')
+
 def send_activate_email(user, request):
     msg = MIMEMultipart()
     cur_site = get_current_site(request)

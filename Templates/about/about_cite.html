@@ -1,0 +1,58 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <style>
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+
+    .cite_container{
+        padding: 80px;
+        padding-left: 250px;
+    }
+    header{
+        background-color: #3398E1;
+    }
+
+
+
+</style>
+
+<header class="masthead">
+    <div class="overlay"></div>
+        <div class="row">
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
+              Cite
+            </h3>
+        </div>
+</header>
+
+<body>
+<div class="w3-row w3-padding-64 cite_container">
+    <div class="w3-twothird w3-container">
+      <h1 class="w3-text-teal">Citation</h1>
+      <p id="cite_text">Here is the citation for the project</p>
+    </div>
+    <div class="w3-third w3-container">
+      <!-- The button used to copy the text -->
+        <button onclick="copyToClipboard(document.getElementById('cite_text').innerHTML)" class="bt btn-primary">Copy Cite</button>
+    </div>
+  </div>
+</body>
+
+<script type="application/javascript">
+
+    function copyToClipboard(text) {
+        window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+    }
+</script>
+
+
+{%endblock%}

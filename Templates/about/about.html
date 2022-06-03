@@ -1,50 +1,106 @@
 {% extends 'homepage/base.html' %}
 {% load static %}
 {% block content %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
     body {
         font-family: "Roboto", sans-serif;
         font-size: 18px;
         background-color: #fdfdfd;
     }
-
-    .head_text{
-        color: white;
-    }
     header{
         background-color: #3398E1;
     }
 
-    .card{
-        box-shadow: 0 16px 48px #E3E7EB;
+    .sta_text{
+      color: #ffffff;
     }
-    .group_pic{
-        max-height: 500px;
-        height: 70%;
-        width: auto;
+    .promo_background{
+      background-color: #f2f8fc;
     }
+
 
 
 </style>
 
 <header class="masthead">
     <div class="overlay"></div>
-    <div class="container">
         <div class="row">
-            <div class=" col-md-8 col-md-10 mx-auto">
-                <div class="site-heading">
-                    <h3 class=" site-heading my-4 mt-3 text-white">
-                      About
-                    </h3>
-                </div>
-            </div>
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
+              About
+            </h3>
         </div>
-    </div>
 </header>
 <body>
-    <div class ="image_container">
-        <img class ="group_pic" src="/images/aboutPage/Group_Photo_2021.jpg">
+<!-- Promo Section - "We know design" -->
+<div class="w3-container promo_background" style="padding:128px 16px">
+  <div class="w3-row-padding" >
+    <div class="w3-col " align="center" >
+      <img class="w3-image w3-round-large" src="/images/PyCR.png" alt="Buildings" width="450" height="200"  >
     </div>
+    <div class="w3-col " align="center">
+      <h3 style="color: #465c99">PyCR</h3>
+    </div>
+  </div>
+</div>
+    <!-- About Section -->
+<div class="w3-container" style="padding:128px 16px" id="about">
+  <h3 class="w3-center">ABOUT THE TEAM</h3>
+  <p class="w3-center w3-large">Key features of TMIC</p>
+  <div class="w3-row-padding w3-center" style="margin-top:64px">
+    <div class="w3-quarter">
+      <a href="{% url 'about_projectPage' %}" >
+        <i class="fa fa-desktop w3-margin-bottom w3-jumbo w3-center"></i>
+      </a>
+      <p class="w3-large">Projects</p>
+      <p>Latest papers, PyCR, FSCR. </p>
+    </div>
+    <div class="w3-quarter">
+      <a href="{% url 'about_contributorPage' %}"  >
+        <i class="fa fa-handshake-o w3-margin-bottom w3-jumbo"></i>
+      </a>
+      <p class="w3-large">Contributors</p>
+      <p>People include with PyCR.</p>
+    </div>
+    <div class="w3-quarter">
+      <a href="{% url 'about_citePage' %}" >
+        <i class="fa  fa-file-code-o w3-margin-bottom w3-jumbo"></i>
+      </a>
+      <p class="w3-large">Cite</p>
+      <p>Please cite me the following papers in your article.</p>
+    </div>
+    <div class="w3-quarter">
+      <a href="{% url 'about_supportPage' %}" >
+        <i class="fa fa-cog w3-margin-bottom w3-jumbo"></i>
+      </a>
+      <p class="w3-large">Support</p>
+      <p>Contact us if you have trouble or want to report an error.</p>
+    </div>
+  </div>
+</div>
+<!-- Promo Section "Statistics" -->
+<div class="w3-container w3-row w3-center w3-padding-64 " style="background-color: #3398E1;">
+  <div class="w3-quarter sta_text">
+    <span class="w3-xxlarge ">10+</span>
+    <br >Users
+  </div>
+  <div class="w3-quarter sta_text">
+    <span class="w3-xxlarge ">22+</span>
+    <br >Projects Done
+  </div>
+  <div class="w3-quarter sta_text">
+    <span class="w3-xxlarge ">12+</span>
+    <br >Instruments
+  </div>
+  <div class="w3-quarter sta_text">
+    <span class="w3-xxlarge ">15+</span>
+    <br >Papers
+  </div>
+</div>
+
+
 </body>
 
 {%endblock%}

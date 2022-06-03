@@ -72,17 +72,12 @@
 
     {% csrf_token %}
 <header class="masthead">
-    <div class="container">
+    <div class="overlay"></div>
         <div class="row">
-            <div class=" col-md-8 col-md-10 mx-auto">
-                <div class="site-heading">
-                    <h3 class=" site-heading my-4 mt-3 text-white">
-                        Upload Task
-                    </h3>
-                </div>
-            </div>
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
+              Upload Task
+            </h3>
         </div>
-    </div>
 </header>
 
 <div class = "container">
@@ -138,7 +133,7 @@
                     </span>
                     <select id="id_rankingAlgorithm" name="rankingAlgorithm" onchange="ranking_algorithm_show_hiden(this.options[this.selectedIndex].value)">
                         <option value = 'fisher'> -- Please Select -- </option>
-                        <option value = 'fisher'>Fiser Ratio</option>
+                        <option value = 'fisher'>Fisher Ratio</option>
                         <option value = 'vip'>VIP Score</option>
                         <option value = 'selectivity'>Selectvity</option>
                     </select>
@@ -205,8 +200,8 @@
                     </span>
                     <select id="id_isMotabo" name="isMotabo" onchange="motabo_show_hiden(this.options[this.selectedIndex].value)">
                         <option value="false"> -- Please Select -- </option>
-                        <option value="false"> Not MotaboLab Dataset</option>
-                        <option value="true">  MotaboLab Dataset</option>
+                        <option value="false"> Not MetaboAnalyst Dataset</option>
+                        <option value="true">  MetaboAnalyst Dataset</option>
                     </select>
                     <h6 style="display: none"  class="mt-4 field-heading" id="text_motaboFile">MetaboAnalyst File</h6>
                     <span style="display: none" id="img_motaboFile" class="hovertext" data-hover="Upload your MetaboAnalyst csv file ">

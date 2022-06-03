@@ -33,6 +33,10 @@ urlpatterns = [
     path('BuyMeCofee/charge', views.stripe_charge, name='charge'),
     path('BuyMeCofee/success/<str:args>/', views.stripe_success, name='success'),
     path('about/', views.about, name='aboutPage'),
+    path('about/cite', views.about_cite, name='about_citePage'),
+    path('about/contributor', views.about_contributor, name='about_contributorPage'),
+    path('about/support', views.about_support, name='about_supportPage'),
+    path('about/project', views.about_project, name='about_projectPage'),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
