@@ -1,7 +1,7 @@
 {% extends 'homepage/base.html' %}
 {% load static %}
 {% block content %}
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
      <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
@@ -41,6 +41,13 @@
         float: left;
     }
 
+    .template_icon_container{
+        width : 30px;
+        height : 30px;
+        float: left;
+
+    }
+
     .hovertext {
       position: relative;
       border-bottom: 1px dotted black;
@@ -68,6 +75,28 @@
       opacity: 1;
       visibility: visible;
 }
+    #metabo_template_poster{
+        float: right;
+    }
+    #metabo_template_poster_container{
+        width: 400px;
+        height: 400px;
+        float: right;
+    }
+    #not_metabo_template_poster{
+        float: right;
+    }
+    #not_metabo_template_poster_container{
+        width: 400px;
+        height: 400px;
+        float: right;
+    }
+    #lengend_container{
+        width: 400px;
+        height: 400px;
+        float: right;
+
+    }
 
     </style>
 
@@ -101,6 +130,8 @@
                         </div>
                     {% endfor %}
                 {% endif %}
+                    <div id="lengend_container"><img src="{{ MEDIA_URL }}/images/template_posters/legend.png"></div>
+
                     <h6  id="text_task_name" class="mt-4 field-heading">Task Name</h6>
                     <span class="hovertext" data-hover="Give a name to your task">
                         <div  class="question_mark_container">
@@ -205,19 +236,28 @@
                         <option value="true">  MetaboAnalyst Dataset</option>
                     </select>
                     <h6 style="display: none"  class="mt-4 field-heading" id="text_motaboFile">MetaboAnalyst File</h6>
+                    <div style="display: none" id="metabo_template_poster_container"><img id="metabo_template_poster" src="{{ MEDIA_URL }}/images/template_posters/metabo.png"></div>
                     <span style="display: none" id="img_motaboFile" class="hovertext" data-hover="Upload your MetaboAnalyst csv file ">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
+                    <div style="display: none" id="template_motaboFile"  class="template_icon_container">
+                        <a href="{{ MEDIA_URL }}/images/file_templates/mota_data.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
+                    </div>
+
                     <input style="display: none" type="file" id="id_motaboFile" name="motaboFile" >
                     <div style="display: none" id="not_motabo_file">
+                        <div id="not_metabo_template_poster_container"><img id="not_metabo_template_poster" src="{{ MEDIA_URL }}/images/template_posters/notMetabo.png"></div>
                         <h6  class="mt-4 field-heading" id="text_sample">Sample File</h6>
                         <span class="hovertext" data-hover="csv file with sample data">
                             <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                         </span>
+                        <div class="template_icon_container">
+                            <a href="{{ MEDIA_URL }}/images/file_templates/data_algae.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
+                        </div>
                         <input  type="file" id="id_sample" name="sample_file">
                         <h6  class="mt-4 field-heading" id="text_class_file">Class File</h6>
                         <span class="hovertext" data-hover="csv file with class data">
@@ -225,6 +265,9 @@
                                 <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                             </div>
                         </span>
+                        <div class="template_icon_container">
+                            <a href="{{ MEDIA_URL }}/images/file_templates/class_algae_string.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
+                        </div>
                         <input  type="file" id="id_class_file" name="class_file" >
                         <h6  class="mt-4 field-heading" id="text_sampleName_file">Sample Name File</h6>
                         <span class="hovertext" data-hover="csv file with sample name">
@@ -232,6 +275,9 @@
                                 <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                             </div>
                         </span>
+                        <div  class="template_icon_container">
+                            <a href="{{ MEDIA_URL }}/images/file_templates/S_name.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
+                        </div>
                         <input  type="file" id="id_sampleName_file" name="sampleName_file" >
                         <h6  class="mt-4 field-heading" id="text_variableName_file">Variable Name File</h6>
                         <span class="hovertext" data-hover="csv file with variable name">
@@ -239,6 +285,9 @@
                                 <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                             </div>
                         </span>
+                        <div class="template_icon_container">
+                            <a href="{{ MEDIA_URL }}/images/file_templates/v_name.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
+                        </div>
                         <input  type="file" id="id_variableName_file" name="variableName_file" >
                     </div>
                     <br>
@@ -312,12 +361,18 @@
             motabo_file_text.style.display = "block"
             motabo_file_id.style.display = "block"
             img_motaboFile.style.display = "block"
+            template_motaboFile.style.display = "block"
+            metabo_template_poster_container.style.display = "block"
             not_motabo_file.style.display = "none"
+
+
         }
         if(selected == "false"){
             motabo_file_text.style.display = "none"
             motabo_file_id.style.display = "none"
             img_motaboFile.style.display = "none"
+            template_motaboFile.style.display = "none"
+            metabo_template_poster_container.style.display = "none"
             not_motabo_file.style.display = "block"
         }
 

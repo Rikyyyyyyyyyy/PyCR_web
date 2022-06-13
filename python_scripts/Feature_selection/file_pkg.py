@@ -149,6 +149,14 @@ def export_file(variable, class_list, indice, hori, fileName, label_dic,sampleNa
             writer.writerow(temp_vari[i])
             writer.writerow(temp_vari[i])
 
-
+def clearGenerateErrorMessage(msgs,path):
+    shutil.rmtree(path)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(path + '/ErrorMessage.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        # write multiple rows
+        for msg in msgs:
+            writer.writerow(msg)
 
 

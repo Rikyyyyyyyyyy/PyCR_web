@@ -192,94 +192,102 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
             auc_table.append([])
 
     # start Iterations
+    erro_iterations = 0
     for k in range(ITERATION):
-        print("################## ITERATION "+ str(k)+" ##################")
-        # Start Feature Selection
-        return_idx, sample_taining, sample_test, class_training, class_test = newScore.setNumber(int(classNum), classList, sampleList, startNum, endNum, howMuchSplit,k, class_trans_dict, scale_type, V_rankingAlgorithm, nComponent,OUTPUT_PATH)
-        # calculate the probability of selection for each variables
-        # valid index is the probability of variable that over the survival rate
-        for j in return_idx:
-            hash_list[j] = hash_list[j]+1
-        if k == 0:
-            valid_idx = return_idx
-        else:
-            valid_idx = []
-            # calculate the show-up ratio for each variable
-            for i in range(len(hash_list)):
-                prob = float(hash_list[i])/float(k+1)
-                # we are only taking the ratio more than 30%
-                if prob >= survivalRate:
-                    valid_idx.append(i)
+        if erro_iterations < ceil(ITERATION, 2):
+            print("################## ITERATION "+ str(k)+" ##################")
+            try:
+                # Start Feature Selection
+                return_idx, sample_taining, sample_test, class_training, class_test = newScore.setNumber(int(classNum), classList, sampleList, startNum, endNum, howMuchSplit,k, class_trans_dict, scale_type, V_rankingAlgorithm, nComponent,OUTPUT_PATH)
+                # calculate the probability of selection for each variables
+                # valid index is the probability of variable that over the survival rate
+                for j in return_idx:
+                    hash_list[j] = hash_list[j]+1
+                if k == 0:
+                    valid_idx = return_idx
+                else:
+                    valid_idx = []
+                    # calculate the show-up ratio for each variable
+                    for i in range(len(hash_list)):
+                        prob = float(hash_list[i])/float(k+1)
+                        # we are only taking the ratio more than 30%
+                        if prob >= survivalRate:
+                            valid_idx.append(i)
 
-        if len(valid_idx) <2:
-            errorMessage = notEnoughtSelectedVariableErrorMessage(hash_list,survivalRate,variableName,ITERATION)
-            sys.exit(errorMessage)
-        selectedVariables = sample_taining[:, valid_idx]
+                selectedVariables = sample_taining[:, valid_idx]
 
-        # scale the data
-        if scale_type == 'SNV':
-            scaled_sample_training,col_mean = SVN_scale_half_data(sample_taining)
-            scaled_all_sample = SNV_scale_all_data(sampleList,col_mean)
-        else:
-            scaled_sample_training,train_mean,train_std = scale_half_data(sample_taining)
-            scaled_all_sample = scale_all_data(sampleList,train_mean,train_std)
+                # scale the data
+                if scale_type == 'SNV':
+                    scaled_sample_training,col_mean = SVN_scale_half_data(sample_taining)
+                    scaled_all_sample = SNV_scale_all_data(sampleList,col_mean)
+                else:
+                    scaled_sample_training,train_mean,train_std = scale_half_data(sample_taining)
+                    scaled_all_sample = scale_all_data(sampleList,train_mean,train_std)
 
-        # Train and predict the class
-        clf = svm.SVC(kernel='linear', random_state=0, probability=True)
-        clf.fit(selectedVariables, class_training)
-        class_pred = clf.predict(sample_test[:, valid_idx])
-        classofic_report = classification_report(class_test, class_pred)
-        report_lines = classofic_report.split('\n')
-        report_lines = report_lines[2:]
-        # generate the ROC curve
-        if classNum == 2:
-            class_pred = clf.predict_proba(sample_test[:, valid_idx])
-            class_pred = class_pred[:, 1]
-            auc_num = metrics.roc_auc_score(class_test, class_pred)
-            auc_table.append(auc_num)
-            fpr, tpr, _ = metrics.roc_curve(class_test, class_pred, pos_label=2)
-            plt.plot(fpr, tpr, color=str(ROC_COLOR[k]))
-            plt.rcParams.update({'font.size': 10})
-            plt.title('ROC ' + str(ITERATION) + ' iterations')
-        else:
-            training_class = label_binarize(class_training, classes=class_num_label)
-            predict_class = label_binarize(class_test, classes=class_num_label)
-            classifier = OneVsRestClassifier(
-                svm.SVC(kernel="linear", probability=True, random_state=0)
-            )
-            y_score = classifier.fit(selectedVariables, training_class).decision_function(sample_test[:,valid_idx])
-
-            # Compute ROC curve and ROC area for each class
-            fpr = dict()
-            tpr = dict()
-            roc_auc = dict()
-            for i in range(classNum):
-                fpr[i], tpr[i], _ = metrics.roc_curve(predict_class[:, i], y_score[:, i])
-                roc_auc[i] = auc(fpr[i], tpr[i])
-            # Compute micro-average ROC curve and ROC area
-            fpr["micro"], tpr["micro"], _ = roc_curve(predict_class.ravel(), y_score.ravel())
-            roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
-
-            if isMicro:
-                plt.plot(
-                    fpr["micro"],
-                    tpr["micro"],
-                    label="micro-average ROC curve (area = {0:0.2f})".format(roc_auc["micro"]),
-                    color=str(ROC_COLOR[k]),
-                )
-                auc_table.append(roc_auc["micro"])
-                plt.rcParams.update({'font.size':10 })
-                plt.title('ROC ' + str(ITERATION) + ' iterations')
-            else:
-                for i in range(classNum):
-                    auc_table[i].append(roc_auc[i])
-                    figPlot[i][1].plot(
-                        fpr[i],
-                        tpr[i],
-                        color=str(ROC_COLOR[k]),
+                # Train and predict the class
+                clf = svm.SVC(kernel='linear', random_state=0, probability=True)
+                clf.fit(selectedVariables, class_training)
+                class_pred = clf.predict(sample_test[:, valid_idx])
+                classofic_report = classification_report(class_test, class_pred)
+                report_lines = classofic_report.split('\n')
+                report_lines = report_lines[2:]
+                # generate the ROC curve
+                if classNum == 2:
+                    class_pred = clf.predict_proba(sample_test[:, valid_idx])
+                    class_pred = class_pred[:, 1]
+                    auc_num = metrics.roc_auc_score(class_test, class_pred)
+                    auc_table.append(auc_num)
+                    fpr, tpr, _ = metrics.roc_curve(class_test, class_pred, pos_label=2)
+                    plt.plot(fpr, tpr, color=str(ROC_COLOR[k]))
+                    plt.rcParams.update({'font.size': 10})
+                    plt.title('ROC ' + str(ITERATION) + ' iterations')
+                else:
+                    training_class = label_binarize(class_training, classes=class_num_label)
+                    predict_class = label_binarize(class_test, classes=class_num_label)
+                    classifier = OneVsRestClassifier(
+                        svm.SVC(kernel="linear", probability=True, random_state=0)
                     )
+                    y_score = classifier.fit(selectedVariables, training_class).decision_function(sample_test[:,valid_idx])
+
+                    # Compute ROC curve and ROC area for each class
+                    fpr = dict()
+                    tpr = dict()
+                    roc_auc = dict()
+                    for i in range(classNum):
+                        fpr[i], tpr[i], _ = metrics.roc_curve(predict_class[:, i], y_score[:, i])
+                        roc_auc[i] = auc(fpr[i], tpr[i])
+                    # Compute micro-average ROC curve and ROC area
+                    fpr["micro"], tpr["micro"], _ = roc_curve(predict_class.ravel(), y_score.ravel())
+                    roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+
+                    if isMicro:
+                        plt.plot(
+                            fpr["micro"],
+                            tpr["micro"],
+                            label="micro-average ROC curve (area = {0:0.2f})".format(roc_auc["micro"]),
+                            color=str(ROC_COLOR[k]),
+                        )
+                        auc_table.append(roc_auc["micro"])
+                        plt.rcParams.update({'font.size':10 })
+                        plt.title('ROC ' + str(ITERATION) + ' iterations')
+                    else:
+                        for i in range(classNum):
+                            auc_table[i].append(roc_auc[i])
+                            figPlot[i][1].plot(
+                                fpr[i],
+                                tpr[i],
+                                color=str(ROC_COLOR[k]),
+                            )
+                        plt.rcParams.update({'font.size': 10})
                 plt.rcParams.update({'font.size': 10})
-        plt.rcParams.update({'font.size': 10})
+            except:
+                k -= 1
+                erro_iterations += 1
+                pass
+        else:
+            badRankingErrorMessage(OUTPUT_PATH)
+            return
+
 
     # save the roc graph for N iterations
     if classNum ==2 or isMicro:
@@ -317,8 +325,8 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
             valid_idx.append(i)
 
     if len(valid_idx) < 2:
-        errorMessage = notEnoughtSelectedVariableErrorMessage(hash_list, survivalRate, variableName, ITERATION)
-        sys.exit(errorMessage)
+        notEnoughtSelectedVariableErrorMessage(hash_list, survivalRate, variableName, ITERATION, OUTPUT_PATH)
+        return
 
     class_stat_list_noCutoff = []
     class_stat_list_external_noCutoff = []
@@ -758,16 +766,23 @@ def tupa(X,Y):
         return_sampleList.append(temp_div.tolist())
     return return_sampleList
 
-def notEnoughtSelectedVariableErrorMessage(hash_list,survivalRate,variableName,iterations):
+
+def notEnoughtSelectedVariableErrorMessage(hash_list,survivalRate,variableName,iterations,path):
     hash_list = list(map(lambda x: x/iterations, hash_list))
     sorted_index = [i[0] for i in sorted(enumerate(hash_list), key=lambda x: x[1])]
     sorted_index.reverse()
-    return_str = ""
-    return_str += "Sorry, the survival rate your pick is not work, here is the top five variable survival rate:\n"
+    return_str = []
+    return_str.append("Sorry, the survival rate your pick is not work, here is the top five variable survival rate:\n")
     for i in range(5):
-        return_str += "[" + variableName[sorted_index[i]][0] +":" + str(hash_list[sorted_index[i]]) +"]\n"
-    return_str += "We suggest you pick a survival rate lower than above.\n"
-    return return_str
+        return_str .append ("[" + variableName[sorted_index[i]][0] +":" + str(hash_list[sorted_index[i]]) +"]\n")
+    return_str.append( "We suggest you pick a survival rate lower than above.\n")
+    file_pkg.clearGenerateErrorMessage(return_str,path)
+
+def badRankingErrorMessage(path):
+    file_pkg.clearGenerateErrorMessage(['Indeterminate start number. Please select a different variable ranking metric.'], path)
+
+def ceil(a, b):
+    return -1 * (-a // b)
 
 
 # isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFileName,ClassFileName,sampleNameFile,variableNameFile
