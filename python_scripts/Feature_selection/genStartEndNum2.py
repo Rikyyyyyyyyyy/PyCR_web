@@ -121,6 +121,8 @@ def gaussian_algorithm(classNum,class_list,valList,V_rankingAlgoithm,nComponent,
         startNum = statistics.NormalDist(mu=true_fisher_mean, sigma=true_fisher_std).inv_cdf(0.90)
         if P == 0:
             endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf(0.999)
+        elif P == 1:
+            endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf(0.001)
         else:
             endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf((1 - P))
         ## Draw the graph
@@ -219,7 +221,12 @@ def gaussian_algorithm(classNum,class_list,valList,V_rankingAlgoithm,nComponent,
             x2 = (c - u2) / (math.sqrt(2) * a2)
             P = 1 - 0.5 * special.erf(x1) + 0.5 * special.erf(x2)
             temp_startNum = statistics.NormalDist(mu=true_fisher_mean, sigma=true_fisher_std).inv_cdf(0.80)
-            temp_endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf((1 - P))
+            if P == 0:
+                temp_endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf(0.999)
+            elif P == 1:
+                temp_endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf(0.001)
+            else:
+                temp_endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf((1 - P))
             startNum_list.append(temp_startNum)
             stopNum_list.append(temp_endNum)
             plt.figure().clear()
