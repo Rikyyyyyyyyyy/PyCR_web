@@ -61,6 +61,12 @@ def about_project(request):
 def about_support(request):
     return render(request, 'about/about_support.html')
 
+def about_license(request):
+    return render(request, 'about/about_license.html')
+
+def about_privacy(request):
+    return render(request, 'about/about_privacy.html')
+
 def send_activate_email(user, request):
     msg = MIMEMultipart()
     cur_site = get_current_site(request)
@@ -101,13 +107,10 @@ def signup(request):
                 email=new_user.email,
             )
 
-            # new_user = authenticate(
-            #     username=form.cleaned_data['username'],
-            #     password=form.cleaned_data['password1']
-            # )
+
             send_activate_email(new_user,request)
             messages.add_message(request,messages.SUCCESS,
-                                 'We sent you an email to verify tour account.')
+                                 'We sent you an email to verify tour account. If you did not receive a confirmation email, please check your spam folder.')
             return redirect('login')
     else:
         form = UserCreateForm()
@@ -124,7 +127,7 @@ def login(request):
 
         if user and not current_user.is_email_verified:
             messages.add_message(request, messages.ERROR,
-                                 'Email is not verified, please check your email inbox')
+                                 'Email is not verified, please check your email inbox/spam folder')
             return render(request, 'authentication/login.html', context, status=401)
 
         if not user:

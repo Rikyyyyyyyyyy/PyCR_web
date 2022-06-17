@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
     <meta name="google" content="notranslate" />
 	<link rel="icon" href="images/logos/python.png">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
@@ -234,11 +235,13 @@
 					{% csrf_token %}
 					<div class="form-field-12">
 						<label for="amount">Choose Amount:</label>
-						<select required name="amount" id="amount">
-						  <option selected value="5">$5 --- Here's a coffee, on me :)</option>
-						  <option value="10">$10 --- You helped me, so I am going to help you</option>
-						  <option value="25">$25 --- I love your work!</option>
-						</select>
+						<select  name="amount" id="amount" onchange="if(this.options[this.selectedIndex].value=='customOption'){toggleField(this,this.nextSibling); this.selectedIndex='1';}">
+							<option value = 0></option>
+							<option value="customOption">Type a custom value</option>
+						  	<option selected value="5">$5 --- Here's a coffee, on me :)</option>
+						  	<option value="10">$10 --- You helped me, so I am going to help you</option>
+						  	<option value="25">$25 --- I love your work!</option>
+						</select><input name="amount" style="display:none;" disabled="disabled" onblur="if(this.value==''){toggleField(this,this.previousSibling);}">
 					</div>
 
 				  <div >
@@ -260,7 +263,13 @@
 
 			</div>
 		</div>
+		<div class="w3-col m6 w3-padding-large">
+      <h1 class="w3-center">Notice</h1><br>
+      <p class="w3-large">The PyCR project is a research tool that is being provided to the academic community free of charge. However, the project is not free to operate. We have ongoing expenses associated with hosting and maintaining the web platform. If you find the tool useful, we hope that you will consider donating to support the project. All donations will go towards the ongoing maintenance and development of the web and command line versions of the PyCR project.
+      <p class="w3-large w3-text-grey w3-hide-medium">All donations are processed securely by Stripe Payments Canada.</p>
+    </div>
 	</div>
+
 {% else %}
     <header class="masthead">
     <div class="container">
@@ -281,7 +290,7 @@
     <script src="https://js.stripe.com/v3/"></script>
 	<script>
 		// Create a Stripe client.
-		var stripe = Stripe('pk_live_51KnxtvHQJUMmcE1Es7Qdw38Oszj5QIvNIbJlr9Hw0qjO0ILtKYpBM5buU7Y12etyBTOOttUxmSPDW2Fo6vZ4NiSi00dtD1Aedx');
+		var stripe = Stripe('pk_test_51KnxtvHQJUMmcE1ErtSPzqbL5WUwmqXV9DjMJ7aEQaN1SYdnYaptWNiwW6uAgHAUICj3kZvEC4uyhyYRmZfDpEs300T3m4rKzQ');
 
 		// Create an instance of Elements.
 		var elements = stripe.elements();
@@ -349,6 +358,13 @@
 
 		  // Submit the form
 		  form.submit();
+		}
+		function toggleField(hideObj,showObj){
+			hideObj.disabled=true;
+		 	hideObj.style.display='none';
+		 	showObj.disabled=false;
+		 	showObj.style.display='block';
+		 	showObj.focus();
 		}
 	</script>
     {%endblock%}

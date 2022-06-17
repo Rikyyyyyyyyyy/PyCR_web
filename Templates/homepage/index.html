@@ -21,6 +21,13 @@
     .promo_background{
       background-color: #f2f8fc;
     }
+    #instruction_btn {
+      float: left;
+    }
+    
+    #start_btn{
+      float: right;
+    }
 
 
 
@@ -36,7 +43,7 @@
 </header>
 <body>
 <!-- Promo Section - "We know design" -->
-<div class="w3-container promo_background" style="padding:128px 16px">
+<div class="w3-container promo_background" style="padding:100px 16px">
   <div class="w3-row-padding" >
     <div class="w3-col " align="center" >
       <img class="w3-image w3-round-large" src="/images/PyCR.png" alt="Buildings" width="450" height="200"  >
@@ -44,6 +51,12 @@
     <div class="w3-col " align="center">
       <h3 style="color: #465c99">PyCR</h3>
     </div>
+  </div>
+  <div class="" style="padding-left: 200px">
+    <a href="https://github.com/Rikyyyyyyyyyy/PyCR/blob/main/README.pdf" target="_blank"><button id="instruction_btn" class="w3-btn w3-xlarge  w3-hover-light-grey"  style="font-weight:1000; background-color: #5b9bd5; color: white">Instructions</button></a>
+  </div>
+  <div class="" style="padding-right: 200px">
+    <a href="{% url 'feature_task_list' %}"><button id="start_btn" class="w3-btn w3-xlarge  w3-hover-light-grey"  style="font-weight:1000; background-color: #5b9bd5; color: white">Start Project</button></a>
   </div>
 </div>
     <!-- About Section -->

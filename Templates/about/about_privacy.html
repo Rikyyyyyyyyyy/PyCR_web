@@ -1,0 +1,53 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+ <link rel="icon" href="images/logos/python.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+    header{
+        background-color: #3398E1;
+    }
+
+    p {
+        padding-right: 200px;
+        padding-left: 200px;
+        padding-top: 25px;
+    }
+    .top_one{
+        padding-top: 50px;
+    }
+
+
+
+
+</style>
+
+<header class="masthead">
+    <div class="overlay"></div>
+        <div class="row">
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
+              Privacy
+            </h3>
+        </div>
+</header>
+<body>
+  <dive>
+    <p class="w3-large top_one" style="font-weight: bold">PyCR Data Security and Privacy.</p>
+      <p>We strive to ensure the security of our users’ data and information. Information and data are collected so that we may process your data and communicate with you to provide results to you.  Data submitted to PyCR and results of feature selection are only held on our servers for seven days, after which they are deleted. We will not share specific details about our users or their projects with other parties. However, we will share aggregate data (total numbers of users, jobs, etc.) with funding agencies and to promote the PyCR project, and will maintain records of metadata related to jobs processed (numbers of samples / variables, processing times, etc.) for the purposes of monitoring improvements and system performance.</p>
+      <p>If your data is highly sensitive, we recommend that you encode your variable and sample names with random labels prior to uploading and keep the decoding key to yourselves. Alternately, you could download and use the command line version of PyCR to run on your own system.</p>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+  </dive>
+</body>
+
+{%endblock%}

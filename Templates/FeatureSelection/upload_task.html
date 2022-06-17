@@ -236,7 +236,7 @@
                         <option value="true">  MetaboAnalyst Dataset</option>
                     </select>
                     <h6 style="display: none"  class="mt-4 field-heading" id="text_motaboFile">MetaboAnalyst File</h6>
-                    <div style="display: none" id="metabo_template_poster_container"><img id="metabo_template_poster" src="{{ MEDIA_URL }}/images/template_posters/metabo.png"></div>
+<!--                    <div style="display: none" id="metabo_template_poster_container"><img id="metabo_template_poster" src="{{ MEDIA_URL }}/images/template_posters/metabo.png"></div>-->
                     <span style="display: none" id="img_motaboFile" class="hovertext" data-hover="Upload your MetaboAnalyst csv file ">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
@@ -248,7 +248,7 @@
 
                     <input style="display: none" type="file" id="id_motaboFile" name="motaboFile" >
                     <div style="display: none" id="not_motabo_file">
-                        <div id="not_metabo_template_poster_container"><img id="not_metabo_template_poster" src="{{ MEDIA_URL }}/images/template_posters/notMetabo.png"></div>
+<!--                        <div id="not_metabo_template_poster_container"><img id="not_metabo_template_poster" src="{{ MEDIA_URL }}/images/template_posters/notMetabo.png"></div>-->
                         <h6  class="mt-4 field-heading" id="text_sample">Sample File</h6>
                         <span class="hovertext" data-hover="csv file with sample data">
                             <div  class="question_mark_container">
@@ -362,7 +362,7 @@
             motabo_file_id.style.display = "block"
             img_motaboFile.style.display = "block"
             template_motaboFile.style.display = "block"
-            metabo_template_poster_container.style.display = "block"
+            // metabo_template_poster_container.style.display = "block"
             not_motabo_file.style.display = "none"
 
 
@@ -372,7 +372,7 @@
             motabo_file_id.style.display = "none"
             img_motaboFile.style.display = "none"
             template_motaboFile.style.display = "none"
-            metabo_template_poster_container.style.display = "none"
+            // metabo_template_poster_container.style.display = "none"
             not_motabo_file.style.display = "block"
         }
 

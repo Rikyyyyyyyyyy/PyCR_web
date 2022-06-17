@@ -23,7 +23,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import scale
 from python_scripts.Feature_selection import file_pkg
 import warnings
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score,precision_score,recall_score
 import sys
 import matplotlib
 
@@ -127,7 +127,12 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         clf.fit(scale_training_sample, classList)
         class_pred = clf.predict(scale_training_sample)
         classofic_report = classification_report(classList, class_pred)
-        acc_score_internal = accuracy_score(classList, class_pred)
+        internal_stat_acc = accuracy_score(classList, class_pred)
+        internal_stat_sel = precision_score(classList, class_pred)
+        internal_stat_sen = recall_score(classList, class_pred)
+        file_pkg.gen_file_by_class_matrix(["Selectivity", "Sensitivity", "Accuracy"],
+                                          [internal_stat_sel, internal_stat_sen, internal_stat_acc],
+                                          OUTPUT_PATH + '/training_stat_report_no_FS.csv')
 
         report_lines = classofic_report.split('\n')
         report_lines = report_lines[2:]
@@ -144,7 +149,12 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         # for external
         class_pred_external = clf.predict(scaled_external)
         classofic_report_external = classification_report(external_class, class_pred_external)
-        acc_score_validation = accuracy_score(external_class, class_pred_external)
+        external_stat_acc = accuracy_score(external_class, class_pred_external)
+        external_stat_sel = precision_score(external_class, class_pred_external)
+        external_stat_sen = recall_score(external_class, class_pred_external)
+        file_pkg.gen_file_by_class_matrix(["Selectivity", "Sensitivity", "Accuracy"],
+                                          [external_stat_sel, external_stat_sen, external_stat_acc],
+                                          OUTPUT_PATH + '/external_stat_report_no_FS.csv')
 
         report_lines_external = classofic_report_external.split('\n')
         report_lines_external = report_lines_external[2:]
@@ -339,6 +349,14 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     clf_FS.fit(scale_training_sample[:, valid_idx], classList)
     class_pred = clf_FS.predict(scale_training_sample[:, valid_idx])
     classofic_report = classification_report(classList, class_pred)
+    internal_stat_acc_w_FS = accuracy_score(classList, class_pred)
+    internal_stat_sel_w_FS = precision_score(classList, class_pred)
+    internal_stat_sen_w_FS = recall_score(classList, class_pred)
+    file_pkg.gen_file_by_class_matrix(["Selectivity", "Sensitivity", "Accuracy"],
+                                      [internal_stat_sel_w_FS, internal_stat_sen_w_FS, internal_stat_acc_w_FS],
+                                      OUTPUT_PATH + '/training_stat_report_with_FS.csv')
+
+
     report_lines = classofic_report.split('\n')
     report_lines = report_lines[2:]
     # generate the statistic report
@@ -355,6 +373,12 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     if isexternal:
         class_pred_external = clf_FS.predict(scaled_external[:, valid_idx])
         classofic_report_external = classification_report(external_class, class_pred_external)
+        external_stat_acc_w_FS = accuracy_score(external_class, class_pred_external)
+        external_stat_sel_w_FS = precision_score(external_class, class_pred_external)
+        external_stat_sen_w_FS = recall_score(external_class, class_pred_external)
+        file_pkg.gen_file_by_class_matrix(["Selectivity", "Sensitivity", "Accuracy"],
+                                          [external_stat_sel_w_FS, external_stat_sen_w_FS, external_stat_acc_w_FS],
+                                          OUTPUT_PATH + '/external_stat_report_with_FS.csv')
         report_lines_external = classofic_report_external.split('\n')
         report_lines_external = report_lines_external[2:]
         # generate the statistic report

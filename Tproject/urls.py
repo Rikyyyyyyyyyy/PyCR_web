@@ -37,6 +37,8 @@ urlpatterns = [
     path('about/contributor', views.about_contributor, name='about_contributorPage'),
     path('about/support', views.about_support, name='about_supportPage'),
     path('about/project', views.about_project, name='about_projectPage'),
+    path('about/license', views.about_license, name='about_licensePage'),
+    path('about/privacy', views.about_privacy, name='about_privacyPage'),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

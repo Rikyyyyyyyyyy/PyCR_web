@@ -18,6 +18,10 @@
     .second_header{
         background-color: #f2f8fc;
     }
+    .first-word-uppercase-p::first-letter {
+      font-size: 40px;
+      font-weight: bold;
+    }
 
 </style>
 
@@ -35,10 +39,10 @@
 
 <!-- Header -->
 <dev class="second_header">
-    <dev class="w3-container w3-theme w3-padding " id="myHeader">
+    <dev class="w3-container w3-theme  " id="myHeader">
         <br>
         <div class="w3-center">
-            <h4>HARYNUK GROUP</h4>
+            <p class="first-word-uppercase-p w3-text-grey " style="padding-left: 300px; padding-right: 300px">Do you need help with PyCR? Do you have requests for features or suggestions for improving PyCR? Are you wondering about licensing PyCR for industrial / commercial purposes? Regardless of the reasons, please feel free to contact us.</p>
             <h1 class="w3-xxxlarge w3-animate-bottom">WE ARE HERE</h1>
             <div class="w3-padding-32">
                 <a href="https://spaces.facsci.ualberta.ca/harynuk/"><button class="w3-btn w3-xlarge "  style="font-weight:900; background-color: #5cb1ed">LEARN MORE</button></a>
@@ -47,59 +51,48 @@
     </dev>
 </dev>
 
-<!-- Modal -->
-<!--<div id="id01" class="w3-modal">-->
-<!--    <div class="w3-modal-content w3-card-4 w3-animate-top">-->
-<!--      <header class="w3-container w3-theme-l1">-->
-<!--        <span onclick="document.getElementById('id01').style.display='none'"-->
-<!--        class="w3-button w3-display-topright">×</span>-->
-<!--        <h4>Oh snap! We just showed you a modal..</h4>-->
-<!--        <h5>Because we can <i class="fa fa-smile-o"></i></h5>-->
-<!--      </header>-->
-<!--      <div class="w3-padding">-->
-<!--        <p>Cool huh? Ok, enough teasing around..</p>-->
-<!--        <p>Go to our <a class="w3-btn" href="/w3css/default.asp">W3.CSS Tutorial</a> to learn more!</p>-->
-<!--      </div>-->
-<!--      <footer class="w3-container w3-theme-l1">-->
-<!--        <p>Modal footer</p>-->
-<!--      </footer>-->
-<!--    </div>-->
-<!--</div>-->
 
 <div class="w3-row-padding w3-center w3-margin-top">
-<div class="w3-third">
+<div class="w3-quarter">
   <div class="w3-card w3-container" style="min-height:400px">
-  <h3>contact </h3><br>
-      <a href="mailto:wenwenli.ws@gmail.com"><i class="fa fa-desktop w3-margin-bottom w3-text-theme" style="font-size:120px"></i></a>
-  <p>Email</p>
+  <h3> contact </h3><br>
+       <a href="mailto:pycr@ualberta.ca"><i class="fa fa-desktop w3-margin-bottom w3-text-theme" style="font-size:120px"></i><p>Email US</p></a>
+
   </div>
 </div>
 
-<div class="w3-third">
+<div class="w3-quarter">
   <div class="w3-card w3-container" style="min-height:400px">
   <h3>github link</h3><br>
-  <a href="https://github.com/Rikyyyyyyyyyy/PyCR.git"><i class="fa fa-github w3-margin-bottom w3-text-theme" style="font-size:120px"></i></a>
-  <p>Github</p>
+  <a href="https://github.com/Rikyyyyyyyyyy/PyCR.git"><i class="fa fa-github w3-margin-bottom w3-text-theme" style="font-size:120px"></i> <p>Github</p></a>
+
 
   </div>
 </div>
 
-<div class="w3-third">
+<div class="w3-quarter">
   <div class="w3-card w3-container" style="min-height:400px">
-  <h3>More</h3><br>
-      <a href="https://metabolomicscentre.ca/"><i class="fa fa-question w3-margin-bottom w3-text-theme" style="font-size:120px"></i></a>
-  <p>More about TIMIC</p>
+  <h3>License</h3><br>
+      <a href="{% url 'about_licensePage' %}"><i class="fa fa-copy w3-margin-bottom w3-text-theme" style="font-size:120px"></i><p>Check License</p></a>
+
   </div>
-    <br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+</div>
+
+<div class="w3-quarter">
+    <div class="w3-card w3-container" style="min-height:400px">
+    <h3>Privacy</h3><br>
+      <a href="{% url 'about_privacyPage' %}"><i class="fa fa-file-zip-o w3-margin-bottom w3-text-theme" style="font-size:120px"></i><p>Check Privacy</p></a>
+    </div>
 </div>
 
 </div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 
 </body>
 {%endblock%}
