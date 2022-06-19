@@ -55,13 +55,16 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
     if scale_type == 'SVN':
         scaled_half_samples, col_mean = SVN_scale_half_data(sample_training)
         scaled_all_samples = SVN_scale_all_data(allSampleList, col_mean)
-    else:
+    elif scale_type == "autoscale":
         scaled_half_samples, half_mean, half_std = scale_half_data(sample_training)
         scaled_all_samples = scale_all_data(allSampleList, half_mean, half_std)
-    print('Test2 ')
+    else:
+        scaled_half_samples = sample_training
+        scaled_all_samples = allSampleList
+
     temp_score = calScore(scaled_half_samples[:,startNumList], scaled_all_samples[:,startNumList])
     oldScore = gen_clust.RunClust(temp_score,classList,classNum)
-    print('Test3 ')
+
     # get rid of the variable form teh start variable list and calculate the score again
     # compare with the the old score
     # if the new score is lower than the old score, we need save the variable in selected variable list

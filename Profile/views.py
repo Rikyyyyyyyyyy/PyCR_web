@@ -67,6 +67,9 @@ def about_license(request):
 def about_privacy(request):
     return render(request, 'about/about_privacy.html')
 
+def about_instruction(request):
+    return render(request, 'about/about_instruction.html')
+
 def send_activate_email(user, request):
     msg = MIMEMultipart()
     cur_site = get_current_site(request)
@@ -78,16 +81,15 @@ def send_activate_email(user, request):
         'token': generate_token.make_token(user)
     })
     msg['Subject'] = email_subject
-    msg['From'] = "wenwenli.ws@gmail.com"
+    msg['From'] = "pycr@ualberta.ca"
     msg['To'] = user.email
     msg.attach(MIMEText(email_body))
 
     smtp_obj = smtplib.SMTP('smtp.gmail.com', port=587)
     smtp_obj.starttls()
     # Login to the server
-    smtp_obj.login(user="wenwenli.ws@gmail.com", password='cfhbpowzjkabdnks')
+    smtp_obj.login(user="pycr@ualberta.ca", password='Tmic2022tmic')
     # Convert the message to a string and send it
-    print(msg)
     smtp_obj.sendmail(msg['From'], msg['To'], msg.as_string())
     smtp_obj.quit()
 

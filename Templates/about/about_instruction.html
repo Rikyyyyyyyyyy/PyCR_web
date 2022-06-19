@@ -1,0 +1,176 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+ <link rel="icon" href="images/logos/python.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+    header{
+        background-color: #3398E1;
+    }
+
+    p.reg_p{
+        padding-right: 200px;
+        padding-left: 200px;
+        padding-top: 25px;
+    }
+    div.indent_ul {
+        padding-right: 200px;
+        padding-left: 260px;
+        padding-top: 25px;
+    }
+    div.indent_ul_2 {
+        padding-right: 200px;
+        padding-left: 230px;
+        padding-top: 25px;
+    }
+    .top_one{
+        padding-top: 50px;
+    }
+
+    p.indent_subtitle {
+    text-indent: 30px;
+    }
+    p.indent_sub_P{
+        padding-right: 200px;
+        padding-left: 230px;
+        padding-top: 25px;
+
+    }
+
+
+
+</style>
+
+<header class="masthead">
+    <div class="overlay"></div>
+        <div class="row">
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
+              Instruction
+            </h3>
+        </div>
+</header>
+<body>
+  <div>
+    <p class="top_one" style="font-weight: bold; font-size: 30px; text-align: center" >PyCR Web Instruction Manual</p>
+    <p class="name_p" style="font-size: 20px; text-align: center" >Wenwen Li</p>
+    <p class="name_p" style="font-size: 20px; text-align: center" >Michael Sorochan Armstrong</p>
+    <p class="name_p" style="font-size: 20px; text-align: center" >A. Paulina de la Mata </p>
+    <p class="name_p" style="font-size: 20px; text-align: center" >James J. Harynuk</p>
+    <p class="name_p" style="font-size: 20px; text-align: center" >June 2022</p>
+    <p class="reg_p" style="font-weight: bold;font-size: 25px"> 1.  Introduction</p>
+    <p class="reg_p">PyCR (Cluster Resolution in Python) is a variable selection algorithm that examines the effect of each variable in a dataset within the context of highly-ranked variables by measuring the maximum confidence interval over which two or more clusters are separable within principal component space. This measurement is defined as cluster resolution (ξ for binary class problems, or Ξ for 3 or more classes).2</p>
+      <p class="reg_p">The algorithm works by taking the training data and splitting it into a training set and an optimization set.  The training set is used to train the model, and the optimization set is used to test the model during the initial model construction. If an external validation set is provided, this will be used to test the final, optimized model which is constructed using the selected features across the combined training and optimization sets. </p>
+      <P class="reg_p">Feature selection proceeds by pre-ranking all variables in the training/optimization data according to some metric (e.g. Fisher Ratio, VIP scores) and then taking a fraction of top-ranked variables for a preliminary model. During backwards-elimination, variables are individually removed from the list of variables being considered. If cluster resolution improves when a variable is discarded, it is removed for the entire iteration of the algorithm. Once the last highly-ranked variable has been considered, poorly ranked variables are individually tested for inclusion. If inclusion of a variable improves cluster resolution during this forward-selection step, it remains in the model for the iteration of feature selection.4 This forward-selection step proceeds until a statistically informed threshold is reached.</P>
+      <p class="reg_p">The algorithm can be iterated multiple times, after which those variables that are selected in more than some minimum fraction of the iterations (the survival rate) are included for selection in the final model. PyCR also automatically provides critical statistics and graphics illustrating the performance of an SVM classifier before, during, and after feature selection.</p>
+      <p class="reg_p" style="font-weight: bold;font-size: 25px"> 2.	Submitting a Data Set</p>
+      <p class="reg_p">Once you are registered for PyCR Web, you can view your submitted jobs by choosing “PyCR” from the menu on the top of the page or selecting “Start Project” on the main screen. If you have no tasks, you can submit a new one by selecting “Upload Task” beside the PyCR logo on the task list screen.</p>
+      <p class="reg_p">On the upload task page, you select the options for processing your data and upload your data files. The blue question marks will give you tips for what to do enter for each option.  The text file icons will allow you to download template files for each type of file to be uploaded, and there is also an option to download a .zip file containing a data set that you can use as practice data.</p>
+      <p class="reg_p indent_subtitle" style="font-weight: bold;font-size: 20px"> 2.1.	Description of Inputs</p>
+      <div class="indent_ul">
+          <ul>
+              <li style="font-weight: bold">Task Name:</li>
+              <p>Provide a name for your task so that you can identify it.</p>
+              <li style="font-weight: bold">Type of Validation:</li>
+              <p>Do you want to use internal / cross-validation only, or external validation?</p>
+              <ul>
+                  <li>Internal / cross-validation:</li>
+                  <p>On each iteration, your data will be split evenly between a training set and an optimization set. As variables are removed (added), training set data will be used to define the PCA space where CR is calculated. All data will be projected into the space and used to calculate the CR of the model with the currently considered variables. Optimization set data are projected back into the model defined by training set data for validation. On each permutation, the samples are reassigned randomly to the training and optimization set.</p>
+                  <li>External validation:</li>
+                  <p>You specify a fraction of the samples to use for training/optimization (as above) and the remainder will be reserved for use as an external validation set. The reserved samples will not be seen by the optimization process and the permutation of the optimization process and will only be projected into the model to assess its performance once the optimization is complete.</p>
+              </ul>
+              <li style="font-weight: bold">Ratio for Data Split Training:Validation:</li>
+              <p>This menu option is only visible if External validation is chosen. This is the fraction (training:validation) of the data to be retained for training. Value should be between 0.5 and 1.0; 0.67 is recommended. </p>
+              <li style="font-weight: bold">Variable Ranking Algorithm:</li>
+              <p>Choose the algorithm to be used for the initial ranking of the variables. </p>
+              <ul>
+                  <li>Fisher Ratio:</li>
+                  <p>Rank the variables in descending order by their F-ratio.</p>
+                  <li>VIP Scores:</li>
+                  <p>Use all data to calculate a preliminary n-class PLS-DA model and rank the variables in descending order by their VIP score.</p>
+                  <li>Selectivity Ratio:</li>
+                  <p>Calculate the selectivity ratio for each variable according to the method of Kvalheim, and rank the variables in descending order by SR.</p>
+
+              </ul>
+              <li style="font-weight: bold">ROC Type:</li>
+              <p>Choose the way for ROC curves to be prepared. Single ROC will prepare a single ROC curve for the model and is suitable for two-class problems. Multi-ROC will calculate all pair-wise ROCs for the data and is suitable for problems with more than two classes.</p>
+              <li style="font-weight: bold">TUPA Type:</li>
+              <p>Total Useful Peak Area (TUPA)3 is a normalization method that normalizes the response of each sample based on the cumulative sum of areas for all compounds that are present in all samples. Class-based TUPA (cTUPA)1 uses the same concepts, but samples are normalized based on the sum of peak areas consistently present across a single class of compounds. If you do not want to use TUPA-based normalization, select No TUPA.</p>
+              <li style="font-weight: bold">Scale Type:</li>
+              <p>How do you want the data scaled? </p>
+              <ul>
+                  <li>Autoscale:</li>
+                  <p>Subtract the mean of each variable across the data set from each variable (mean centre) and then divide by standard deviation of each variable. End result, each variable has a mean of 0 and a standard deviation of 1. Commonly used in chemometrics</p>
+                  <li>Standard Normal Variate (SNV):</li>
+                  <p>Subtract the mean of each sample from each value for a sample and then divide by standard deviation of each sample. Following SNV, data are also mean centred. End result, each sample has a mean of 0 and a standard deviation of 1. Additionally, each variable has a mean of 0. </p>
+                  <li>None:</li>
+                  <p>Apply no scaling.  This is not recommended unless you have already scaled your data using one of these, or an alternate method prior to uploading the data.</p>
+              </ul>
+              <li style="font-weight: bold">How Many Iterations:</li>
+              <p>How many times should the Training/Optimization data be reshuffled and the feature selection repeated.  This depends a bit on how many samples you have, how noisy your data is.  If you want a quick look, choose 1. In most cases 10-20 iterations is sufficient to identify a core set of reliable features.</p>
+              <li style="font-weight: bold">Survival Rate:</li>
+              <p>When performing multiple iterations of the feature selection, sometimes a variable may not be chosen in an iteration for some reason (random variation in the data combined with how the data happened to be split between training and optimization in a particular iteration), or a variable that is almost never chosen, shows up in one or two iterations. A survival rate of 1.0 is very strict and you want to keep only those variables that are selected in every iteration of the feature selection. This is often too strict. 0.5 means you keep variables selected 50% of the time, which is often too relaxed. 0.8 is usually a good value to start with.</p>
+              <li style="font-weight: bold">Data Set Format:</li>
+              <p>PyCR will accept data files in either MetaboAnalyst format (single file containing sample names, classifications (i.e. case vs. control), sample names, and data) or as individual .csv files.  If uploading individual files (not MetaboAnalyst) please ensure that the <b>X-block data</b> is a matrix with only the data (no sample names, classifications, etc). The data must be arranged with the variables in columns and the samples in rows. <b>Y-block data</b> is a single column of data having the same number of rows as the X-block, containing the class assignments for the samples, in the same order as in the X-block. <b>Sample name file</b> is a single column of data having the same number of rows as the X-block and containing the names of each sample in the data set. Feel free to encode these however you want if you are nervous about sharing the actual sample names/codes used in your study. <b>Variable name file</b> is a single row of data having the same number of columns as the X-block and containing the names of each variable in the data set. Feel free to encode these however you want if you do not want to share the actual variable names used in your study. Templates for all files are available for download, and there is the example data set.</p>
+              <li style="font-weight: bold">Send output to my email</li>
+              <p>Checking this option will have us deliver your data directly to your email when the task is done. Data will also remain on our servers for one week after completing the job, after which it will be deleted. You will receive an email when your job is done, and an email reminding you of jobs that are soon to be deleted 48 hours prior to the deletion of your old data.  Please watch for emails from pycr@ualberta.ca which is our official email address for this project.</p>
+          </ul>
+
+      </div>
+      <p class="reg_p indent_subtitle" style="font-weight: bold;font-size: 20px">Key points to remember:</p>
+      <div class="indent_ul_2">
+          <ul>
+              <li>In the current implementation, you can only upload a single file containing all of your data (training and validation) and then specify a fraction of the entire data set to be randomly held back as external validation data. If you wish to have your own set of validation data where you control which data are used for validation, run PyCR using only your training data and choose the internal/cross validation option.  Then, when you get your results back, use the features selected by PyCR from your training data to build your model using your favourite classifier (PLS-DA, oPLS, SIMCA, SVM, whatever) in your favourite chemometrics package. Then use the selected features from your validation data and project them into your model.</li>
+              <li>When preparing your data for uploading into PyCR, you must complete your data curation and preparation ahead of the feature selection (alignment of spectra / peak tables, zero filling, etc.). We offer normalization by TUPA/cTUPA and we offer Autoscale and SNV scaling. If you wish to use other scaling or normalization tools, you currently need to apply these yourself ahead of time</li>
+          </ul>
+      </div>
+      <p class="reg_p" style="font-weight: bold;font-size: 25px"> 3.	Outputs</p>
+      <P class="reg_p">This package is designed to generate all of the necessary plots and analyses for the validation of an untargeted metabolomics experiment. Output information includes the following files and directories:</P>
+      <p class="reg_p indent_sub_P">The folder: <em><u>animation.gif</u></em> contains a video summary of the first iteration of the feature selection algorithm. A new frame is recorded each time a variable is either removed or added. </p>
+      <p  class="reg_p indent_sub_P"><em><u>rocExternal</u></em> is a directory containing the ROC curves for the external validation set.</p>
+      <p  class="reg_p indent_sub_P"><em><u>rocIterations</u></em> is a directory containing the ROC curves for the internal validation within the training set.</p>
+      <p  class="reg_p indent_sub_P"><em><u>rocTrainFS</u></em> contains ROC curves for the training set using the selected features.</p>
+      <p  class="reg_p indent_sub_P"><em><u>rocTrainNoFS</u></em> contains the ROC curves for the training set using all features. This is to determine if the feature selection has improved the performance of the linear Support Vector Machine (SVM) classifier on the training data.</p>
+      <p  class="reg_p indent_sub_P"><em><u>rocValiFS</u></em> contains the ROC curves for the validation, or test set using the selected features.</p>
+      <p  class="reg_p indent_sub_P"><em><u>rocValiNoFS</u></em> contains the ROC curves for the validation set using all features. Again, this is to help determine if the feature selection step has helped the predictive performance of the model. </p>
+      <p  class="reg_p indent_sub_P"><em><u>auc_table_class_X.csv</u></em> contains the area under the curve value for class X against all other classes for each iteration in the training set. </p>
+      <p  class="reg_p indent_sub_P"><em><u>ClassTupaAllSample.csv</u></em> contains the TUPA normalization values. </p>
+      <p  class="reg_p indent_sub_P"><em><u>confusion_matrix.csv</u></em> contains the information on the predicted and true classes for the external set using the selected features.</p>
+      <p  class="reg_p indent_sub_P"><em><u>confusion_matrix_no_FS.csv</u></em> contains the information on the predicted and true classes for the external set using all of the features. This is to determine if the feature selection step has helped the classification performance.</p>
+      <p  class="reg_p indent_sub_P"><em><u>external_stat_report_class_X</u></em> contains the critical statistics for classification performance for class X against all other classes.</p>
+      <p  class="reg_p indent_sub_P"><em><u>external_variables.csv</u></em> contains the external validation set with the all variables in MetaboAnalyst format.</p>
+      <p  class="reg_p indent_sub_P"><em><u>FisherMean.png</u></em> displays a graphical summary of the determination of the start and stop num- bers.</p>
+      <p  class="reg_p indent_sub_P"><em><u>original_file.csv</u></em> contains the original data in MetaboAnalyst format.</p>
+      <p  class="reg_p indent_sub_P"><em><u>pca_external.png</u></em> contains the principal component scores of the training and validation sets using the selected features.</p>
+      <p  class="reg_p indent_sub_P"><em><u>pca_external_No_FS.png</u></em> contains the principal component scores of the training and validation sets using all of the features. Useful for determining whether or not the feature selection step has helped the model.</p>
+      <p  class="reg_p indent_sub_P"><em><u>PCATrainNoFS.png</u></em> is a plot of the principal component scores without feature selection only using samples in the training set.</p>
+      <p  class="reg_p indent_sub_P"><em><u>PCATrainWithFS.png</u></em> is a plot of the principal component scores with feature selection using only samples in the training set.</p>
+      <p  class="reg_p indent_sub_P"><em><u>PCAValiNoFS.png</u></em> is a plot of the principal component scores of the validation set with all features.</p>
+      <p  class="reg_p indent_sub_P"><em><u>PCAValiWithFS.png</u></em> is a plot of the principal component scores of the validation set with the selected features.</p>
+      <p  class="reg_p indent_sub_P"><em><u>selected_external_variables.csv</u></em> contains the external validation dataset in MetaboAnalyst format with the selected variables.</p>
+      <p  class="reg_p indent_sub_P"><em><u>selected_training_variables.csv</u></em> contains the training dataset in MetaboAnalyst format with the selected variables.</p>
+      <p  class="reg_p indent_sub_P"><em><u>Theoretical_and_observed_distribution_of_F_values.png</u></em> contains the observed distribution of F values overlaid on a plot of the theoretical distribution with the corresponding degrees of freedom.</p>
+      <p  class="reg_p indent_sub_P"><em><u>training_stat_report_class_X.csv</u></em> contains the classification statistics for the training set of class X versus all other classes.</p>
+      <p  class="reg_p indent_sub_P"><em><u>training_variables.csv</u></em> contains the training set with all variables in MetaboAnalyst format.</p>
+      <p class="reg_p">Users may want to input selected_external_variables.csv and selected_training_variables.csv directly into MetaboAnalyst for further analysis as the test and training sets, respectively. It is however recommended that users abstain from using Variable Importance in Projection (VIP) scores for further variable significance testing, since VIP scores are a relative measure of variable significance scaled to the contributions of all variables in the dataset. In short, output variables from PyCR may not be marked as significant following a subsequent analysis with VIP scores.</p>
+      <p class="reg_p" style="font-weight: bold;font-size: 25px">4.	References</p>
+      <p class="reg_p">Please cite the following papers that are relevant to the FS-CR algorithm and normalization to the total useful peak area (TUPA):</p>
+      <p class="reg_p indent_sub_P">[1]	Michael D Sorochan Armstrong et al. “Global metabolome analysis of Dunaliella tertiolecta, Phaeobacter italicus R11 Co-cultures using thermal desorption-comprehensive two-dimensional gas chromatography-time-of-flight mass spectrometry (TD-GC×GC-TOFMS), Phytochemistry 195 (2022), p. 113052.</p>
+      <p class="reg_p indent_sub_P">[2]	Michael Sorochan Armstrong, A Paulina de la Mata, and James J Harynuk. An efficient and accurate numerical determination of the cluster resolution metric in two dimensions, Journal of Chemometrics 35.7-8 (2021), e3346.</p>
+      <p class="reg_p indent_sub_P">[3]	Seo Lin Nam et al. Towards standardization of data normalization strategies to improve urinary metabolomics studies by GC×GC-TOFMS, Metabolites 10.9 (2020), p. 376.</p>
+      <p class="reg_p indent_sub_P">[4]	Nikolai A Sinkov and James J Harynuk. Cluster resolution: A metric for automated, objective and optimized feature selection in chemometric modeling, Talanta 83.4 (2011), pp. 1079– 1087.</p>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+  </div>
+</body>
+
+{%endblock%}

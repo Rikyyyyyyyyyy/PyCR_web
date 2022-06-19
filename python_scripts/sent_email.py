@@ -23,7 +23,7 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
                          'Survival Rate: ' + str(survivalRate) + '\n'
                          , 'plain')
     msg['Subject'] = "output"
-    msg['From'] = "wenwenli.ws@gmail.com"
+    msg['From'] = "pycr@ualberta.ca"
     msg['To'] = user_email
     # Add body to email
     msg.attach(body_part)
@@ -40,7 +40,7 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
     smtp_obj = smtplib.SMTP('smtp.gmail.com', port=587)
     smtp_obj.starttls()
     # Login to the server
-    smtp_obj.login(user="wenwenli.ws@gmail.com", password='cfhbpowzjkabdnks')
+    smtp_obj.login(user="pycr@ualberta.ca", password='Tmic2022tmic')
     # Convert the message to a string and send it
     smtp_obj.sendmail(msg['From'], msg['To'], msg.as_string())
     smtp_obj.quit()
@@ -54,25 +54,4 @@ def runSendEmail(user_email, file_path,root_url,userName,taskName,isExternal, Ra
         ValidationData = "Without External Dataset"
     send_mail(user_email, url, userName, taskName, ValidationData, RankingAlg, rocType, tupaType, scaleType, iterations,
               survivalRate)
-#
-# def main():
-#     user_email = sys.argv[1]
-#     file_path = sys.argv[2]
-#     root_url = sys.argv[3]
-#     userName = sys.argv[4]
-#     taskName = sys.argv[5]
-#     isExternal = sys.argv[6]
-#     RankingAlg = sys.argv[7]
-#     rocType = sys.argv[8]
-#     tupaType = sys.argv[9]
-#     scaleType = sys.argv[10]
-#     iterations = sys.argv[11]
-#     survivalRate = sys.argv[12]
-#
-#     url = root_url + file_path
-#     if isExternal:
-#         ValidationData = "with External Dataset"
-#     else:
-#         ValidationData = "Without External Dataset"
-#     send_mail(user_email, url,userName,taskName,ValidationData, RankingAlg,rocType,tupaType,scaleType,iterations,survivalRate)
-# main()
+

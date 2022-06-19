@@ -49,32 +49,32 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'index' %}">Home</a>
+                            <a class="nav-link  font-weight-bold" href="{% url 'index' %}">Home</a>
                         </li>
                     <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="https://spaces.facsci.ualberta.ca/harynuk/" target="_blank">Harynuk Group</a>
+                            <a class="nav-link  font-weight-bold" href="https://spaces.facsci.ualberta.ca/harynuk/" target="_blank">Harynuk Group</a>
                         </li>
                     <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'buyMeCoffee'%}">Donate</a>
+                            <a class="nav-link  font-weight-bold" href="{% url 'buyMeCoffee'%}">Donate</a>
                         </li>
                         <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'feature_task_list' %}">PyCR</a>
+                            <a class="nav-link  font-weight-bold" href="{% url 'feature_task_list' %}">PyCR</a>
                         </li>
 
                         {% if user.is_authenticated %}
                         <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'profile' user_id=request.user.id %}">Account</a>
+                            <a class="nav-link  font-weight-bold" href="{% url 'profile' user_id=request.user.id %}">Account</a>
                         </li>
                          <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'logout' %}">Logout</a>
+                            <a class="nav-link  font-weight-bold" href="{% url 'logout' %}">Logout</a>
                         </li>
 
                         {% else %}
                         <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'signup' %}">Sign Up</a>
+                            <a class="nav-link  font-weight-bold" href="{% url 'signup' %}">Sign Up</a>
                         </li>
                         <li class="nav-item text-black">
-                            <a class="nav-link text-black font-weight-bold" href="{% url 'login' %}">Sign In</a>
+                            <a class="nav-link  font-weight-bold" href="{% url 'login' %}">Sign In</a>
                         </li>
 
                         {% endif %}

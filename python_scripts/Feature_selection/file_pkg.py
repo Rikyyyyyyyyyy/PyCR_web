@@ -81,6 +81,13 @@ def gen_file_by_class_matrix(header,matrix,fileName):
         for row in matrix:
             writer.writerow(row)
 
+def gen_file_by_line(header,line,fileName):
+    with open(fileName, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        # write multiple rows
+        writer.writerow(line)
+
 # generate file by the input matrix by list (one dimension) by row
 # INPUT : data header, list, output file name
 # OUTPUT : None

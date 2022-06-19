@@ -103,8 +103,10 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         indices_train = indice_list
         if scale_type == 'SVN':
             scale_training_sample, col_mean = SVN_scale_half_data(sampleList)
-        else:
+        elif scale_type == "autoscale":
             scale_training_sample, scale_training_mean, scale_training_std = scale_half_data(sampleList)
+        else:
+            scale_training_sample = sampleList
 
     if isexternal:
         sampleList, external_validation, classList, external_class, indices_train, indices_test = selectRandom(
@@ -113,9 +115,13 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         if scale_type == 'SVN':
             scale_training_sample, col_mean = SVN_scale_half_data(sampleList)
             scaled_external, col_mean = SVN_scale_half_data(external_validation)
-        else:
+        elif scale_type == "autoscale":
             scale_training_sample, scale_training_mean, scale_training_std = scale_half_data(sampleList)
             scaled_external, scale_training_mean, scale_training_std = scale_half_data(external_validation)
+        else:
+            scale_training_sample = sampleList
+            scaled_external = external_validation
+
         class_stat_list_noCutoff = []
         class_stat_list_external_noCutoff = []
         for classNum in range(1, int(classNum) + 1):
@@ -130,7 +136,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         internal_stat_acc = accuracy_score(classList, class_pred)
         internal_stat_sel = precision_score(classList, class_pred)
         internal_stat_sen = recall_score(classList, class_pred)
-        file_pkg.gen_file_by_class_matrix(["Selectivity", "Sensitivity", "Accuracy"],
+        file_pkg.gen_file_by_line(["Selectivity", "Sensitivity", "Accuracy"],
                                           [internal_stat_sel, internal_stat_sen, internal_stat_acc],
                                           OUTPUT_PATH + '/training_stat_report_no_FS.csv')
 
@@ -152,7 +158,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         external_stat_acc = accuracy_score(external_class, class_pred_external)
         external_stat_sel = precision_score(external_class, class_pred_external)
         external_stat_sen = recall_score(external_class, class_pred_external)
-        file_pkg.gen_file_by_class_matrix(["Selectivity", "Sensitivity", "Accuracy"],
+        file_pkg.gen_file_by_line(["Selectivity", "Sensitivity", "Accuracy"],
                                           [external_stat_sel, external_stat_sen, external_stat_acc],
                                           OUTPUT_PATH + '/external_stat_report_no_FS.csv')
 
@@ -230,9 +236,13 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
                 if scale_type == 'SNV':
                     scaled_sample_training,col_mean = SVN_scale_half_data(sample_taining)
                     scaled_all_sample = SNV_scale_all_data(sampleList,col_mean)
-                else:
+                elif scale_type == "autoscale":
                     scaled_sample_training,train_mean,train_std = scale_half_data(sample_taining)
                     scaled_all_sample = scale_all_data(sampleList,train_mean,train_std)
+                else:
+                    scaled_sample_training = sample_taining
+                    scaled_all_sample = sampleList
+
 
                 # Train and predict the class
                 clf = svm.SVC(kernel='linear', random_state=0, probability=True)
@@ -352,7 +362,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     internal_stat_acc_w_FS = accuracy_score(classList, class_pred)
     internal_stat_sel_w_FS = precision_score(classList, class_pred)
     internal_stat_sen_w_FS = recall_score(classList, class_pred)
-    file_pkg.gen_file_by_class_matrix(["Selectivity", "Sensitivity", "Accuracy"],
+    file_pkg.gen_file_by_line(["Selectivity", "Sensitivity", "Accuracy"],
                                       [internal_stat_sel_w_FS, internal_stat_sen_w_FS, internal_stat_acc_w_FS],
                                       OUTPUT_PATH + '/training_stat_report_with_FS.csv')
 
@@ -376,7 +386,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         external_stat_acc_w_FS = accuracy_score(external_class, class_pred_external)
         external_stat_sel_w_FS = precision_score(external_class, class_pred_external)
         external_stat_sen_w_FS = recall_score(external_class, class_pred_external)
-        file_pkg.gen_file_by_class_matrix(["Selectivity", "Sensitivity", "Accuracy"],
+        file_pkg.gen_file_by_line(["Selectivity", "Sensitivity", "Accuracy"],
                                           [external_stat_sel_w_FS, external_stat_sen_w_FS, external_stat_acc_w_FS],
                                           OUTPUT_PATH + '/external_stat_report_with_FS.csv')
         report_lines_external = classofic_report_external.split('\n')

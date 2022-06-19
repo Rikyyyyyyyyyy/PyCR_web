@@ -91,11 +91,16 @@
         height: 400px;
         float: right;
     }
+
     #lengend_container{
         width: 400px;
         height: 400px;
         float: right;
 
+    }
+    .legend_container{
+        width: 200px;
+        height: 200px;
     }
 
     </style>
@@ -130,7 +135,15 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-                    <div id="lengend_container"><img src="{{ MEDIA_URL }}/images/template_posters/legend.png"></div>
+                    <div id="lengend_container" >
+                        <div class="legend_container">
+                            <img  src="{{ MEDIA_URL }}/images/template_posters/legends.png">
+                        </div>
+                        <div style="padding-left:20px">
+                            <a href="{{ MEDIA_URL }}/images/file_templates/Demo_dataset.zip" class="btn btn-primary ">Download demo data</a>
+                        </div>
+                    </div>
+
 
                     <h6  id="text_task_name" class="mt-4 field-heading">Task Name</h6>
                     <span class="hovertext" data-hover="Provide a name for this task">
@@ -209,6 +222,7 @@
                         <option value="autoscale"> -- Please Select -- </option>
                         <option value="autoscale"> Auto Scale</option>
                         <option value="SVN"> SVN</option>
+                        <option value="None">None(mean-centred)</option>
                     </select>
                     <h6  class="mt-4 field-heading" id="text_iterations">How Many Iterations</h6>
                     <span class="hovertext" data-hover="How many iterations of feature selection do you want to run? Multiple iterations shuffle the training/optimization data and help ensure that the selected panel of variables does not contain spurious results. (1-100)">
