@@ -112,7 +112,7 @@ def signup(request):
 
             send_activate_email(new_user,request)
             messages.add_message(request,messages.SUCCESS,
-                                 'We sent you an email to verify tour account. If you did not receive a confirmation email, please check your spam folder.')
+                                 'We sent you an email to verify your account. If you did not receive a confirmation email, please check your spam folder.')
             return redirect('login')
     else:
         form = UserCreateForm()
