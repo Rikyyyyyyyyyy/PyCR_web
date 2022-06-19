@@ -134,8 +134,8 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         class_pred = clf.predict(scale_training_sample)
         classofic_report = classification_report(classList, class_pred)
         internal_stat_acc = accuracy_score(classList, class_pred)
-        internal_stat_sel = precision_score(classList, class_pred)
-        internal_stat_sen = recall_score(classList, class_pred)
+        internal_stat_sel = precision_score(classList, class_pred, average='micro')
+        internal_stat_sen = recall_score(classList, class_pred, average='micro')
         file_pkg.gen_file_by_line(["Selectivity", "Sensitivity", "Accuracy"],
                                           [internal_stat_sel, internal_stat_sen, internal_stat_acc],
                                           OUTPUT_PATH + '/training_stat_report_no_FS.csv')
@@ -156,8 +156,8 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         class_pred_external = clf.predict(scaled_external)
         classofic_report_external = classification_report(external_class, class_pred_external)
         external_stat_acc = accuracy_score(external_class, class_pred_external)
-        external_stat_sel = precision_score(external_class, class_pred_external)
-        external_stat_sen = recall_score(external_class, class_pred_external)
+        external_stat_sel = precision_score(external_class, class_pred_external, average='micro')
+        external_stat_sen = recall_score(external_class, class_pred_external, average='micro')
         file_pkg.gen_file_by_line(["Selectivity", "Sensitivity", "Accuracy"],
                                           [external_stat_sel, external_stat_sen, external_stat_acc],
                                           OUTPUT_PATH + '/external_stat_report_no_FS.csv')
@@ -209,6 +209,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
 
     # start Iterations
     erro_iterations = 0
+    error_msg = []
     for k in range(ITERATION):
         if erro_iterations < ceil(ITERATION, 2):
             print("################## ITERATION "+ str(k)+" ##################")
@@ -300,15 +301,16 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
                             )
                         plt.rcParams.update({'font.size': 10})
                 plt.rcParams.update({'font.size': 10})
-            except:
+            except Exception as e:
                 k -= 1
                 erro_iterations += 1
+                error_msg.append(e)
                 pass
         else:
             badRankingErrorMessage(OUTPUT_PATH)
             return
 
-
+    print(error_msg)
     # save the roc graph for N iterations
     if classNum ==2 or isMicro:
         plt.savefig(OUTPUT_PATH + '/rocIterations/roc ' + str(ITERATION) +'.png')
@@ -360,8 +362,8 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     class_pred = clf_FS.predict(scale_training_sample[:, valid_idx])
     classofic_report = classification_report(classList, class_pred)
     internal_stat_acc_w_FS = accuracy_score(classList, class_pred)
-    internal_stat_sel_w_FS = precision_score(classList, class_pred)
-    internal_stat_sen_w_FS = recall_score(classList, class_pred)
+    internal_stat_sel_w_FS = precision_score(classList, class_pred, average='micro')
+    internal_stat_sen_w_FS = recall_score(classList, class_pred, average='micro')
     file_pkg.gen_file_by_line(["Selectivity", "Sensitivity", "Accuracy"],
                                       [internal_stat_sel_w_FS, internal_stat_sen_w_FS, internal_stat_acc_w_FS],
                                       OUTPUT_PATH + '/training_stat_report_with_FS.csv')
@@ -384,8 +386,8 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         class_pred_external = clf_FS.predict(scaled_external[:, valid_idx])
         classofic_report_external = classification_report(external_class, class_pred_external)
         external_stat_acc_w_FS = accuracy_score(external_class, class_pred_external)
-        external_stat_sel_w_FS = precision_score(external_class, class_pred_external)
-        external_stat_sen_w_FS = recall_score(external_class, class_pred_external)
+        external_stat_sel_w_FS = precision_score(external_class, class_pred_external, average='micro')
+        external_stat_sen_w_FS = recall_score(external_class, class_pred_external, average='micro')
         file_pkg.gen_file_by_line(["Selectivity", "Sensitivity", "Accuracy"],
                                           [external_stat_sel_w_FS, external_stat_sen_w_FS, external_stat_acc_w_FS],
                                           OUTPUT_PATH + '/external_stat_report_with_FS.csv')
@@ -856,7 +858,8 @@ def runPyCR(isexternal,rateSplit,isMicro,tupaType,isMotabo,motaboFileName,dataFi
         nComponent = int(nComponent)
     except:
         nComponent = 0
-    rateSplit = (1-rateSplit)
+    if rateSplit:
+        rateSplit = (1-rateSplit)
     main(isexternal, rateSplit, isMicro, tupaType, isMotabo, motaboFileName, dataFileName, classFileName,
          sampleNameFileName, variableNameFileName, scaleType, howManyIteration, survivalrate, V_rankingAlgorithm,
          nComponent, task_pk)
