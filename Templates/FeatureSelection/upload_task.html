@@ -133,32 +133,32 @@
                     <div id="lengend_container"><img src="{{ MEDIA_URL }}/images/template_posters/legend.png"></div>
 
                     <h6  id="text_task_name" class="mt-4 field-heading">Task Name</h6>
-                    <span class="hovertext" data-hover="Give a name to your task">
+                    <span class="hovertext" data-hover="Provide a name for this task">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
                     <input  type="text" name="task_name" id="id_task_name"  placeholder="Task Name"  autofocus value={{form.initial.task_name}}>
-                    <h6  class="mt-4 field-heading" id="text_isExternal">Need Validation Dataset</h6>
-                    <span class="hovertext" data-hover="External Validation With External/Without External">
+                    <h6  class="mt-4 field-heading" id="text_isExternal">Type of validation</h6>
+                    <span class="hovertext" data-hover="Internal cross validation:  Data are split 50:50 into training and optimization sets.&#10;Training data used to define PCA space, all data used to calculate CR, and optimization data used to validate final model. External validation:  A set fraction of the data is kept for training/optimization (as above) and the remaining fraction is kept external to this process for final model validation.">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
                     <select id = "id_isExternal" name="isExternal" onchange="ratio_show_hiden(this.options[this.selectedIndex].value)">
                         <option value="false"> -- Please Select -- </option>
-                        <option value="false"> No External dataset</option>
-                        <option value="true"> With External dataset</option>
+                        <option value="false"> Internal/cross-validation</option>
+                        <option value="true">  External validation</option>
                     </select>
-                    <h6  style="display: none"  class="mt-4 field-heading" id="text_splitRatio">Riot for Validation Dataset</h6>
-                    <span style="display: none" id="img_splitRatop" class="hovertext" data-hover="Split ratio (External Validation) 0-1">
+                    <h6  style="display: none"  class="mt-4 field-heading" id="text_splitRatio">Ratio for data split training:validation</h6>
+                    <span style="display: none" id="img_splitRatop" class="hovertext" data-hover="Ratio of training and optimization to external validation (0.5-1; 0.67 recommended). External validation is pulled randomly from the uploaded data.">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
                     <input style="display: none"  type="text" id="id_splitRatio" name="splitRatio" >
                     <h6  class="mt-4 field-heading" id="text_rankingAlgorithm">Variable Ranking Algorithm</h6>
-                    <span class="hovertext" data-hover="Metric used to rank variable significance - use of VIP scores or Selectivity Ratios may risk over-fitting.">
+                    <span class="hovertext" data-hover="Metric used for ranking variable significance. Fisher Ratio is recommended. Use of PLS-DA VIP scores or Selectivity Ratios may risk over-fitting.">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
@@ -167,7 +167,7 @@
                         <option value = 'fisher'> -- Please Select -- </option>
                         <option value = 'fisher'>Fisher Ratio</option>
                         <option value = 'vip'>VIP Score</option>
-                        <option value = 'selectivity'>Selectvity</option>
+                        <option value = 'selectivity'>Selectvity Ratio</option>
                     </select>
                     <h6 style="display: none"  class="mt-4 field-heading" id="text_vipComponent" >number of Component</h6>
                     <span style="display: none" id="img_vipComponent" class="hovertext" data-hover="Number of latent variables used to assess variable significance">
@@ -177,30 +177,30 @@
                     </span>
                     <input style="display: none" type="text" id="id_vipComponent" name="vipComponent" >
                     <h6  class="mt-4 field-heading" id="text_rocType">ROC Type</h6>
-                    <span class="hovertext" data-hover="Single ROC, or ROCs for binary classes (For 3 or more classes) (Figures 1,2) True/False">
+                    <span class="hovertext" data-hover="Single ROC, or multiple ROCs for binary pairings with 3 or more classes">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
                     <select id="id_rocType" name="rocType" >
                         <option value="false"> -- Please Select -- </option>
-                        <option value="false"> ROC </option>
-                        <option value="true"> MICRO </option>
+                        <option value="false"> Multi-ROC </option>
+                        <option value="true"> Single ROC </option>
                     </select>
                     <h6  class="mt-4 field-heading" id="text_tupaType">TUPA Type</h6>
-                    <span class="hovertext" data-hover="Total Useful Peak Area (TUPA) normalisation classtupa/tupa/notupa">
+                    <span class="hovertext" data-hover="Normalize by total useful peak area (TUPA), Class-based TUPA (cTUPA), or no TUPA normalization">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
                     <select id="id_tupaType" name="tupaType">
                         <option value = "classtupa"> -- Please Select -- </option>
-                        <option value = "classtupa"> Class TUPA</option>
+                        <option value = "classtupa"> cTUPA</option>
                         <option value = "tupa"> TUPA</option>
                         <option value = "notupa"> No TUPA</option>
                     </select>
                     <h6  class="mt-4 field-heading" id="text_scaleType">Scale Type</h6>
-                    <span class="hovertext" data-hover="Desired scaling Autoscale/SVN">
+                    <span class="hovertext" data-hover="How do you want your data scaled? Autoscale/SNV">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
@@ -208,24 +208,24 @@
                     <select id="id_scaleType" name="scaleType">
                         <option value="autoscale"> -- Please Select -- </option>
                         <option value="autoscale"> Auto Scale</option>
-                        <option value="SVN"> SVN Scale</option>
+                        <option value="SVN"> SVN</option>
                     </select>
                     <h6  class="mt-4 field-heading" id="text_iterations">How Many Iterations</h6>
-                    <span class="hovertext" data-hover="Iterations 0-100">
+                    <span class="hovertext" data-hover="How many iterations of feature selection do you want to run? Multiple iterations shuffle the training/optimization data and help ensure that the selected panel of variables does not contain spurious results. (1-100)">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
                     <input  type="text" id="id_iterations" name="iterations" >
                     <h6  class="mt-4 field-heading" id="text_survivalRate">Survival rate</h6>
-                    <span class="hovertext" data-hover="Variable survival rate 0-1">
+                    <span class="hovertext" data-hover="In what fraction of iterations must a variable be selected in order for it to survive and be included in the final list (0-1; recommended 0.8)">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
                     <input  type="text" id="id_survivalRate" name="survivalRate" >
                     <h6  class="mt-4 field-heading" id="text_isMotabo">Is MetaboAnalyst Dataset?</h6>
-                    <span class="hovertext" data-hover="If using file format as MetaboAnalyst data file">
+                    <span class="hovertext" data-hover="Are you uploading a single data file in MetaboAnalyst format, or multiple single text files?">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
@@ -249,8 +249,8 @@
                     <input style="display: none" type="file" id="id_motaboFile" name="motaboFile" >
                     <div style="display: none" id="not_motabo_file">
 <!--                        <div id="not_metabo_template_poster_container"><img id="not_metabo_template_poster" src="{{ MEDIA_URL }}/images/template_posters/notMetabo.png"></div>-->
-                        <h6  class="mt-4 field-heading" id="text_sample">Sample File</h6>
-                        <span class="hovertext" data-hover="csv file with sample data">
+                        <h6  class="mt-4 field-heading" id="text_sample">X-Block Data</h6>
+                        <span class="hovertext" data-hover="csv file with the response data for each variable in each sample. See template for example">
                             <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
@@ -259,8 +259,8 @@
                             <a href="{{ MEDIA_URL }}/images/file_templates/data_algae.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
                         </div>
                         <input  type="file" id="id_sample" name="sample_file">
-                        <h6  class="mt-4 field-heading" id="text_class_file">Class File</h6>
-                        <span class="hovertext" data-hover="csv file with class data">
+                        <h6  class="mt-4 field-heading" id="text_class_file">Y-Block Data</h6>
+                        <span class="hovertext" data-hover="csv file containing class identifications for each sample in the data file.">
                             <div  class="question_mark_container">
                                 <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                             </div>
@@ -270,7 +270,7 @@
                         </div>
                         <input  type="file" id="id_class_file" name="class_file" >
                         <h6  class="mt-4 field-heading" id="text_sampleName_file">Sample Name File</h6>
-                        <span class="hovertext" data-hover="csv file with sample name">
+                        <span class="hovertext" data-hover="csv file containing unique names / identifiers for each sample in the data set. This is used so that you can link the results to your original data.">
                             <div  class="question_mark_container">
                                 <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                             </div>
@@ -280,7 +280,7 @@
                         </div>
                         <input  type="file" id="id_sampleName_file" name="sampleName_file" >
                         <h6  class="mt-4 field-heading" id="text_variableName_file">Variable Name File</h6>
-                        <span class="hovertext" data-hover="csv file with variable name">
+                        <span class="hovertext" data-hover="csv file with unique identifiers for each variable in the data set. This ensures that you can link the results back to your original data">
                             <div  class="question_mark_container">
                                 <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                             </div>
@@ -292,12 +292,12 @@
                     </div>
                     <br>
                     <br>
-                    <span class="hovertext"  data-hover="Do you want to sent output to your email?">
+                    <span class="hovertext"  data-hover="Do you want us to automatically send the output to your email when complete?">
                         <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
-                    <h6 id="text_sent_email" style="float: left;padding-top: 5px" >Sent Output To My Email: <input id="id_sent_email" type="checkbox"  name="sent_email"></h6>
+                    <h6 id="text_sent_email" style="float: left;padding-top: 5px" >Sent output to my email: <input id="id_sent_email" type="checkbox"  name="sent_email"></h6>
                     <br>
                     <div style="padding-top: 25px">
                         <button  type="submit" class="bt btn-primary">Upload and Run</button>
