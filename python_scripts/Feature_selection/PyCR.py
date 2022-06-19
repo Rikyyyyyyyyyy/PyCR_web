@@ -856,6 +856,7 @@ def runPyCR(isexternal,rateSplit,isMicro,tupaType,isMotabo,motaboFileName,dataFi
         nComponent = int(nComponent)
     except:
         nComponent = 0
+    rateSplit = (1-rateSplit)
     main(isexternal, rateSplit, isMicro, tupaType, isMotabo, motaboFileName, dataFileName, classFileName,
          sampleNameFileName, variableNameFileName, scaleType, howManyIteration, survivalrate, V_rankingAlgorithm,
          nComponent, task_pk)
