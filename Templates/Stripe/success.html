@@ -13,6 +13,10 @@
        header{
         background-color: #3398E1;
     }
+       p{
+           padding: 50px;
+           font-size: 25px;
+       }
 
 
 </style>
@@ -20,10 +24,13 @@
 <header class="masthead">
     <div class="overlay"></div>
         <div class="row">
-            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
-              Thank you for your contribution of ${{ amount }}!
-            </h3>
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px"> Successfully donated ${{amount}}</h3>
         </div>
 </header>
+<body>
+    <div >
+    <img width="100%" src="/images/stripe/Thank_donation.png">
+    </div>
+</body>
 
 {%endblock%}

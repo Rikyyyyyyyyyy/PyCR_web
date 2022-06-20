@@ -8,8 +8,8 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
     # Create a multipart message
     msg = MIMEMultipart()
     body_part = MIMEText('Hi '+ user_name+
-                         '\nhere is the output from PyCR, please do not reply.\n'+
-                         '\n'+
+                         '\nPyCR is finished processing your job. Your results are contained in the attached .zip file, and are also available for download from the pycr.dev website in your task list.\n'+
+                         '\nPlease note that your results will be deleted from our servers in seven days. Details about this task are as follows:'+
                          '\n'+
                          '\n'+
                          '################### Details ################\n'+
@@ -20,7 +20,9 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
                          'Tupa Type: ' + TupaType + '\n' +
                          'Scale Type: ' + scaletype + '\n' +
                          'How Many Iteration: ' + str(iterations)+ '\n' +
-                         'Survival Rate: ' + str(survivalRate) + '\n'
+                         'Survival Rate: ' + str(survivalRate) + '\n' +
+                         '\n Thank you for using PyCR.'
+                         '\n Please do not reply to this email.'
                          , 'plain')
     msg['Subject'] = "output"
     msg['From'] = "pycr@ualberta.ca"

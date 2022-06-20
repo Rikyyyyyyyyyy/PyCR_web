@@ -221,7 +221,7 @@
     <div class="overlay"></div>
         <div class="row">
             <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
-              Buy us a Coffee
+              Donate to PyCR
             </h3>
         </div>
 </header>
@@ -237,10 +237,10 @@
 						<label for="amount">Choose Amount:</label>
 						<select  name="amount" id="amount" onchange="if(this.options[this.selectedIndex].value=='customOption'){toggleField(this,this.nextSibling); this.selectedIndex='1';}">
 							<option value = 0></option>
-							<option value="customOption">Type a custom value</option>
-						  	<option selected value="5">$5 --- Here's a coffee, on me :)</option>
-						  	<option value="10">$10 --- You helped me, so I am going to help you</option>
-						  	<option value="25">$25 --- I love your work!</option>
+							<option value="customOption">Other amount</option>
+						  	<option selected value="10">$10 --- I am using this once in a while</option>
+						  	<option value="25">$25 --- I am using this reasonably often and it really helps me</option>
+						  	<option value="50">$50 --- I love PyCR and use it all the time!</option>
 						</select><input name="amount" style="display:none;" disabled="disabled" onblur="if(this.value==''){toggleField(this,this.previousSibling);}">
 					</div>
 
