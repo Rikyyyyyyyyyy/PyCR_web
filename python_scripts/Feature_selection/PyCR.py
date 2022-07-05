@@ -194,7 +194,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     # create a file to save the generate statistical number(accuracy, sensitivity, selectivity)
 
     # create a hash table to take count for the show up times for each variables
-    hash_list = [0]*(len(sampleList[0])+1)
+    hash_list = [0]*(len(sampleList[0]))
 
     # create a list of plot when there are more than 2 classes
     # create a AUC number list to collect all the AUC numbers during the iterations
@@ -328,15 +328,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         for j in range(classNum):
             file_pkg.gen_file_by_list(["Auc Number"],auc_table[i],OUTPUT_PATH + '/auc_table_class_' + [k for k,v in class_trans_dict.items() if v == str(j+1)][0] + '.csv')
 
-    # generate file for selected training and selected validation in special format
-    if isexternal:
-        file_pkg.export_file(ori_sample, ori_class, index_indices_train, valid_idx, OUTPUT_PATH + '/selected_training_variables.csv', class_trans_dict, sampleName,variableName)
-        file_pkg.export_file(ori_sample, ori_class, index_indices_test, valid_idx, OUTPUT_PATH + '/selected_external_variables.csv', class_trans_dict, sampleName,variableName)
-    else:
-        file_pkg.export_file(ori_sample, ori_class,index_indices_train,valid_idx, OUTPUT_PATH + '/selected_training_variables.csv', class_trans_dict, sampleName,variableName)
-        external_variables_wb = xlsxwriter.Workbook(OUTPUT_PATH + '/selected_external_variables.xlsx')
-        external_variables_ws = external_variables_wb.add_worksheet()
-        external_variables_ws.write(0, 0, "There is not enough samples to have external validation.")
+
 
     valid_idx = []
     # calculate the show-up ratio for each variable
@@ -349,6 +341,22 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     if len(valid_idx) < 2:
         notEnoughtSelectedVariableErrorMessage(hash_list, survivalRate, variableName, ITERATION, OUTPUT_PATH)
         return
+
+    # generate file for selected training and selected validation in special format
+    if isexternal:
+        file_pkg.export_file(ori_sample, ori_class, index_indices_train, valid_idx,
+                             OUTPUT_PATH + '/selected_training_variables.csv', class_trans_dict, sampleName,
+                             variableName)
+        file_pkg.export_file(ori_sample, ori_class, index_indices_test, valid_idx,
+                             OUTPUT_PATH + '/selected_external_variables.csv', class_trans_dict, sampleName,
+                             variableName)
+    else:
+        file_pkg.export_file(ori_sample, ori_class, index_indices_train, valid_idx,
+                             OUTPUT_PATH + '/selected_training_variables.csv', class_trans_dict, sampleName,
+                             variableName)
+        external_variables_wb = xlsxwriter.Workbook(OUTPUT_PATH + '/selected_external_variables.xlsx')
+        external_variables_ws = external_variables_wb.add_worksheet()
+        external_variables_ws.write(0, 0, "There is not enough samples to have external validation.")
 
     class_stat_list_noCutoff = []
     class_stat_list_external_noCutoff = []

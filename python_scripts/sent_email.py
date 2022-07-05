@@ -42,7 +42,7 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
     smtp_obj = smtplib.SMTP('smtp.gmail.com', port=587)
     smtp_obj.starttls()
     # Login to the server
-    smtp_obj.login(user="pycr@ualberta.ca", password='Tmic2022tmic')
+    smtp_obj.login(user="pycr@ualberta.ca", password='tmic2022Tmic')
     # Convert the message to a string and send it
     smtp_obj.sendmail(msg['From'], msg['To'], msg.as_string())
     smtp_obj.quit()
