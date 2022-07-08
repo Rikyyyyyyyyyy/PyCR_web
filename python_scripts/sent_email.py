@@ -3,6 +3,7 @@ from email.mime.text import MIMEText
 import smtplib
 from email import encoders
 from email.mime.base import MIMEBase
+from django.conf import settings
 
 def send_mail(user_email,file_path, user_name, taskName, validationData,VRankingAlg,RocType,TupaType, scaletype, iterations, survivalRate):
     # Create a multipart message
