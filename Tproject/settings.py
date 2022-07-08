@@ -144,6 +144,7 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_FROM_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
+EMAIL_PSW = 'tmic2022Tmic'
 
 
 # AWS bucket S3 setting
