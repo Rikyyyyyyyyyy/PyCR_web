@@ -2,6 +2,9 @@ import threading
 from python_scripts.Feature_selection import PyCR
 from faker import Faker
 import shutil
+import boto3
+from django.conf import settings
+import os
 from python_scripts import sent_email
 fake = Faker()
 class PyCRThread(threading.Thread):
@@ -29,19 +32,27 @@ class PyCRThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        try:
+        # try:
+            s3 = boto3.resource('s3')
+            BUCKET = "pycr-wwb"
             PyCR.runPyCR(self.isExternal, self.splitratio, self.rocType, self.tupaType, self.isMotabo, self.motabo_url, self.sample_url, self.class_url, self.sampleName, self.VariableName, self.scaleType, self.iterations, self.survivalRate, self.rankingAlg, self.nComp, self.pk)
             shutil.make_archive('static/images/featureSelection/temp/zipOutput/output' + str(self.task.pk), "zip",
                                 'static/images/featureSelection/temp/output/', 'output' + str(self.task.pk))
-            self.task.project_output.name = '/featureSelection/temp/zipOutput/output' + str(self.task.pk) + ".zip"
+
+            self.task.project_output.name = "featureSelection/temp/zipOutput/output"+ str(self.task.pk) + ".zip"
+            folder_name = settings.MEDIA_ROOT + '/featureSelection/temp/output/'+ 'output' + str(self.task.pk)
+            zipName = settings.MEDIA_ROOT + '/featureSelection/temp/zipOutput/output' + str(self.task.pk) + ".zip"
+            s3.Bucket(BUCKET).upload_file(zipName, "featureSelection/temp/zipOutput/output"+ str(self.task.pk) + ".zip")
+            shutil.rmtree(folder_name)
+            os.remove(zipName)
             self.task.save()
             if self.isSentEmail:
                 sent_email.runSendEmail(self.cur_user.email,'/static/images/featureSelection/temp/zipOutput/output'+str(self.task.pk)+'.zip',self.base_dir,self.cur_user.username,self.task.task_name, self.task.isExternal, self.task.rankingAlgorithm, self.task.rocType, self.task.tupaType, self.task.scaleType,self.task.iterations,self.task.survivalRate)
             # return False
-        except Exception as e:
-            print("ERROR MESSAGE")
-            erro_message = str(e)
-            print(e)
-            self.task.erro_message = erro_message
-            self.task.save()
-            # return return_err
+        # except Exception as e:
+        #     print("ERROR MESSAGE")
+        #     erro_message = str(e)
+        #     print(e)
+        #     self.task.erro_message = erro_message
+        #     self.task.save()
+        #     # return return_err

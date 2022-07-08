@@ -40,6 +40,7 @@ urlpatterns = [
     path('about/license', views.about_license, name='about_licensePage'),
     path('about/privacy', views.about_privacy, name='about_privacyPage'),
     path('about/instruction', views.about_instruction, name='about_instructionPage'),
+    path('featureselection/download/<int:pk>/', views.create_presigned_url, name='presign_url'),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

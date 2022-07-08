@@ -310,7 +310,6 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
             badRankingErrorMessage(OUTPUT_PATH)
             return
 
-    print(error_msg)
     # save the roc graph for N iterations
     if classNum ==2 or isMicro:
         plt.savefig(OUTPUT_PATH + '/rocIterations/roc ' + str(ITERATION) +'.png')

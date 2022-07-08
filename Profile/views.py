@@ -5,9 +5,6 @@ from .models import *
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
-from django.conf import settings
-import shutil
-import zipfile
 import os
 from django.urls import reverse
 import base64
@@ -19,10 +16,11 @@ from django.contrib.sites.shortcuts import get_current_site
 from python_scripts.Feature_selection.thread import PyCRThread
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
-from django.core.mail import EmailMessage
 from .gentoken import generate_token
 from django.conf import settings
-import threading
+import logging
+from botocore.exceptions import ClientError
+import boto3
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -236,7 +234,6 @@ def feature_task_list(request):
 
 
 def feature_upload_task(request):
-
     if request.method == 'POST':
         form = FeatureSelectionForm(request.POST, request.FILES)
         print(form.errors)
@@ -261,19 +258,18 @@ def feature_upload_task(request):
             sent_email = form.cleaned_data['sent_email']
             task = Feature_selection.objects.create(user_id=user_id, task_name=task_name, isExternal=isExternal, splitRatio=splitRatio, rankingAlgorithm=rankingAlgorithm,vipComponent=vipComponent, rocType=rocType, tupaType=tupaType, isMotabo = isMotabo, scaleType=scaleType, iterations= iterations, survivalRate=survivalRate, motaboFile=motaboFile,  sample_file=sample_file, class_file=class_file, sampleName_file=sampleName_file, variableName_file=variableName_file, sent_email=sent_email)
             task.save()
-            print(isMotabo)
             if isMotabo == "false":
-                sample_url = task.sample_file.path
-                class_url = task.class_file.path
-                sampleName_url = task.sampleName_file.path
-                variableName_url = task.variableName_file.path
+                sample_url = task.sample_file.name
+                class_url = task.class_file.name
+                sampleName_url = task.sampleName_file.name
+                variableName_url = task.variableName_file.name
                 motabo_url = 'none'
             else:
                 sample_url = 'none'
                 class_url = 'none'
                 sampleName_url = 'none'
                 variableName_url = 'none'
-                motabo_url = task.motaboFile.path
+                motabo_url = task.motaboFile.name
             # out = run([sys.executable, '//Users//wenwenli//Desktop//TMIC//PyCRWEB//python_scripts//Feature_selection//PyCR.py',isExternal, str(splitRatio), rocType, tupaType, isMotabo, motabo_url, sample_url, class_url,sampleName_url, variableName_url, scaleType, str(iterations),str(survivalRate),rankingAlgorithm, str(vipComponent), str(task.pk)], shell=False, stdout=PIPE)
             current_user = request.user
             current_user = Author.objects.get(userid=current_user.id)
@@ -289,6 +285,8 @@ def delete_feature_task(request, pk):
     user_id = request.user.id
     delete_task = Feature_selection.objects.filter(id=pk).first()
     delete_file_urls = []
+    s3 = boto3.resource('s3')
+    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
     if delete_task.isMotabo:
         delete_file_urls.append(delete_task.motaboFile)
     else:
@@ -298,19 +296,20 @@ def delete_feature_task(request, pk):
         delete_file_urls.append(delete_task.variableName_file)
 
     if delete_task.project_output:
-        os.remove(settings.MEDIA_ROOT + delete_task.project_output.name)
+        s3.Object(bucket_name, delete_task.project_output.name).delete()
     for url in delete_file_urls:
         if url:
-            os.remove(settings.MEDIA_ROOT +'/'+ url.name)
+            s3.Object(bucket_name, url.name).delete()
     delete_task.delete()
     tasks = Feature_selection.objects.all()
     user_tasks = []
     for i in tasks:
         if getattr(i, 'user_id') == str(user_id):
             user_tasks.append(i)
-    return render(request, 'FeatureSelection/task_list.html', {
-        'tasks': user_tasks
-    })
+    return redirect('feature_task_list')
+    # return render(request, 'FeatureSelection/task_list.html', {
+    #     'tasks': user_tasks
+    # })
 
 def buyMeCoffee(request):
     return render(request, 'Stripe/buyMeCoffee.html')
@@ -358,3 +357,30 @@ def activate_user(request,uidb64, token):
         return redirect(reverse('login'))
 
     return render(request, 'registration/activate-failed.html', {"user": user})
+
+
+def create_presigned_url(request, pk ):
+    """Generate a presigned URL to share an S3 object
+
+    :param bucket_name: string
+    :param object_name: string
+    :param expiration: Time in seconds for the presigned URL to remain valid
+    :return: Presigned URL as string. If error, returns None.
+    """
+    task = Feature_selection.objects.filter(id=pk).first()
+    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+    object_name = task.project_output.url
+    expiration = settings.AWS_BUCKET_EXPIRE_TIME
+
+    # Generate a presigned URL for the S3 object
+    s3_client = boto3.client('s3')
+    try:
+        response = s3_client.generate_presigned_url('get_object',
+                                                    Params={'Bucket': bucket_name,
+                                                            'Key': object_name},
+                                                    ExpiresIn=expiration)
+    except ClientError as e:
+        logging.error(e)
+        return None
+    # The response contains the presigned URL
+    return render(request,object_name)

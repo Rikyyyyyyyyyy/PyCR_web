@@ -2,13 +2,15 @@ import pandas as pd
 import csv
 import os
 import numpy as np
-import glob
+import boto3
 import warnings
 import shutil
+import urllib.request
 warnings.filterwarnings('ignore')
 # create empty folder to save output data
 # INPUT : None
 # OUTPUT : None
+
 def create_folder(task_pk):
     OUTPUT_PATH = 'static/images/featureSelection/temp/output/output' + str(task_pk)
     if not os.path.exists(OUTPUT_PATH):
@@ -35,7 +37,9 @@ def create_folder(task_pk):
 # INPUT : file name
 # OUTPUT : data list
 def getValFromFileByCols(fileName):
-    df = pd.read_csv(fileName,header=None)
+    full_path_filename = 'https://' + 'pycr-wwb' + '.s3.amazonaws.com/' + fileName
+    file = urllib.request.urlopen(full_path_filename)
+    df = pd.read_csv(file,header=None)
     row_count, column_count = df.shape
     retData = []
     for col in range(column_count):
@@ -50,7 +54,9 @@ def getValFromFileByCols(fileName):
 # INPUT : file name
 # OUTPUT : data list
 def getValFromFileByRows(fileName):
-    df = pd.read_csv(fileName,header=None)
+    full_path_filename = 'https://' + 'pycr-wwb' + '.s3.amazonaws.com/' + fileName
+    file = urllib.request.urlopen(full_path_filename)
+    df = pd.read_csv(file,header=None)
     row_count, column_count = df.shape
     retData = []
     for row in range(row_count):
@@ -108,7 +114,9 @@ def gen_file_by_list_col(header,list,fileName):
 # INPUT : file name
 # OUTPUT: sample data, sample name, class data, variable name
 def readMotabo(fileName):
-    df = pd.read_csv(fileName, header=None)
+    full_path_filename = 'https://' + 'pycr-wwb' + '.s3.amazonaws.com/' + fileName
+    file = urllib.request.urlopen(full_path_filename)
+    df = pd.read_csv(file, header=None)
     row_count, column_count = df.shape
     sampleName = []
     variableName = []
