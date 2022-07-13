@@ -4,7 +4,7 @@ import smtplib
 from email import encoders
 from email.mime.base import MIMEBase
 from django.conf import settings
-
+import urllib.request
 def send_mail(user_email,file_path, user_name, taskName, validationData,VRankingAlg,RocType,TupaType, scaletype, iterations, survivalRate):
     # Create a multipart message
     msg = MIMEMultipart()
@@ -32,7 +32,8 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
     msg.attach(body_part)
     # open and read the CSV file in binary
     file_msg = MIMEBase('application', 'zip')
-    zf = open(file_path, 'rb')
+    full_path_filename = 'https://' + 'pycr-wwb' + '.s3.amazonaws.com/' + file_path
+    zf = urllib.request.urlopen(full_path_filename)
     file_msg.set_payload(zf.read())
     encoders.encode_base64(file_msg)
     file_msg.add_header('Content-Disposition', 'attachment',
@@ -50,11 +51,10 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
 
 
 def runSendEmail(user_email, file_path,root_url,userName,taskName,isExternal, RankingAlg,rocType,tupaType,scaleType,iterations,survivalRate):
-    url = str(root_url) + file_path
     if isExternal:
         ValidationData = "with External Dataset"
     else:
         ValidationData = "Without External Dataset"
-    send_mail(user_email, url, userName, taskName, ValidationData, RankingAlg, rocType, tupaType, scaleType, iterations,
+    send_mail(user_email, file_path, userName, taskName, ValidationData, RankingAlg, rocType, tupaType, scaleType, iterations,
               survivalRate)
 

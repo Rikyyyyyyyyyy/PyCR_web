@@ -2,7 +2,6 @@ import pandas as pd
 import csv
 import os
 import numpy as np
-import boto3
 import warnings
 import shutil
 import urllib.request
