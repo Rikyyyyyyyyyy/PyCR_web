@@ -34,7 +34,7 @@ class PyCRThread(threading.Thread):
     def run(self):
         # try:
             s3 = boto3.resource('s3')
-            BUCKET = "pycr-wwb"
+            BUCKET = "pycr"
             PyCR.runPyCR(self.isExternal, self.splitratio, self.rocType, self.tupaType, self.isMotabo, self.motabo_url, self.sample_url, self.class_url, self.sampleName, self.VariableName, self.scaleType, self.iterations, self.survivalRate, self.rankingAlg, self.nComp, self.pk)
             shutil.make_archive('static/images/featureSelection/temp/zipOutput/output' + str(self.task.pk), "zip",
                                 'static/images/featureSelection/temp/output/', 'output' + str(self.task.pk))
