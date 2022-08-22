@@ -32,7 +32,7 @@ def send_mail(user_email,file_path, user_name, taskName, validationData,VRanking
     msg.attach(body_part)
     # open and read the CSV file in binary
     file_msg = MIMEBase('application', 'zip')
-    full_path_filename = 'https://' + 'pycr-wwb' + '.s3.amazonaws.com/' + file_path
+    full_path_filename = 'https://' + 'pycr' + '.s3.amazonaws.com/' + file_path
     zf = urllib.request.urlopen(full_path_filename)
     file_msg.set_payload(zf.read())
     encoders.encode_base64(file_msg)

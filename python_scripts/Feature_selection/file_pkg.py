@@ -36,7 +36,7 @@ def create_folder(task_pk):
 # INPUT : file name
 # OUTPUT : data list
 def getValFromFileByCols(fileName):
-    full_path_filename = 'https://' + 'pycr-wwb' + '.s3.amazonaws.com/' + fileName
+    full_path_filename = 'https://' + 'pycr' + '.s3.us-east-2.amazonaws.com/' + fileName
     file = urllib.request.urlopen(full_path_filename)
     df = pd.read_csv(file,header=None)
     row_count, column_count = df.shape
@@ -53,7 +53,7 @@ def getValFromFileByCols(fileName):
 # INPUT : file name
 # OUTPUT : data list
 def getValFromFileByRows(fileName):
-    full_path_filename = 'https://' + 'pycr-wwb' + '.s3.amazonaws.com/' + fileName
+    full_path_filename = 'https://' + 'pycr' + '.s3.amazonaws.com/' + fileName
     file = urllib.request.urlopen(full_path_filename)
     df = pd.read_csv(file,header=None)
     row_count, column_count = df.shape
@@ -113,7 +113,8 @@ def gen_file_by_list_col(header,list,fileName):
 # INPUT : file name
 # OUTPUT: sample data, sample name, class data, variable name
 def readMotabo(fileName):
-    full_path_filename = 'https://' + 'pycr-wwb' + '.s3.amazonaws.com/' + fileName
+    full_path_filename = 'https://' + 'pycr' + '.s3.amazonaws.com/' + fileName
+    print(full_path_filename)
     file = urllib.request.urlopen(full_path_filename)
     df = pd.read_csv(file, header=None)
     row_count, column_count = df.shape
