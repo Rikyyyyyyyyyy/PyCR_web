@@ -32,7 +32,7 @@ class PyCRThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        # try:
+        try:
             s3 = boto3.resource('s3')
             BUCKET = "pycr"
             PyCR.runPyCR(self.isExternal, self.splitratio, self.rocType, self.tupaType, self.isMotabo, self.motabo_url, self.sample_url, self.class_url, self.sampleName, self.VariableName, self.scaleType, self.iterations, self.survivalRate, self.rankingAlg, self.nComp, self.pk)
@@ -50,9 +50,9 @@ class PyCRThread(threading.Thread):
             self.task.save()
 
             # return False
-        # except Exception as e:
-        #     print("ERROR MESSAGE")
-        #     erro_message = str(e)
-        #     print(e)
-        #     self.task.erro_message = erro_message
-        #     self.task.save()
+        except Exception as e:
+            print("ERROR MESSAGE")
+            erro_message = str(e)
+            print(e)
+            self.task.erro_message = erro_message
+            self.task.save()
