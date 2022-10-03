@@ -1,0 +1,126 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+ <link rel="icon" href="images/logos/python.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+    header{
+        background-color: #3398E1;
+    }
+
+    .sta_text{
+      color: #ffffff;
+    }
+    .promo_background{
+      background-color: #f2f8fc;
+    }
+    .pycrLogo{
+      width: 400px;
+      height: 300px;
+      float: left;
+    }
+    .btn-upload{
+        float: left;
+        padding-top: 100px;
+        padding-left: 100px;
+    }
+    #instruction_btn {
+      float: left;
+    }
+    
+    #start_btn{
+      float: right;
+    }
+</style>
+
+{% if user.is_authenticated %}
+    {% csrf_token %}
+<header class="masthead">
+    <div class="overlay"></div>
+        <div class="row">
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
+              1D Reconstruct
+            </h3>
+        </div>
+</header>
+
+<div class = "container">
+    <div class ="personal_info col-md-8 col-md-10 mx-auto">
+        <div  class="PyCR_logo">
+            <img class="pycrLogo" src="{{ MEDIA_URL }}/images/1drecontruct.jpg">
+        </div>
+
+        <p class="btn-upload">
+            <a href="{% url '1drecontruct_upload_task' %}" class="btn btn-primary ">Create Task</a>
+          
+        </p>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th>Output File</th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task.task_name }}</td>
+                        {% if task.outputFile.name %}
+                            <td>
+                                <a href="{{task.outputFile.url}}"  class= "btn-primary btn-sm">Download</a>
+                            </td>
+                            <td>
+                                <a href= "{% url 'delete_1dconstruct_task' pk=task.pk %}" class="btn btn-primary btn-sm">Delete</a>
+                            </td>
+                        {% else %}
+                            {% if task.erro_message %}
+                                <td style="color: red">{{task.erro_message}}</td>
+                            {% else %}
+                                <td>Generating...</td>
+                            {% endif %}
+                            <td>
+                                <a href= "{% url 'delete_1dconstruct_task' pk=task.pk %}" class="btn btn-primary btn-sm">Delete</a>
+                            </td>
+                        {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+
+</div>
+    {% else %}
+    <header class="masthead">
+    <div class="container">
+        <div class="row">
+            <div class=" col-md-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h2 class=" site-heading my-4 mt-3 text-white">
+                        Please Sign In First
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+{% endif %}
+</body>
+</html>
+{% endblock content%}

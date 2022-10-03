@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login
-from .form import UserCreateForm,FeatureSelectionForm, edit_profile
+from .form import Others_1dreconstructFrom, UserCreateForm,FeatureSelectionForm, edit_profile
 from .models import *
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -14,6 +14,7 @@ from django.contrib import messages
 from faker import Faker
 from django.contrib.sites.shortcuts import get_current_site
 from python_scripts.Feature_selection.thread import PyCRThread
+from python_scripts.reconstruction.thread import reconstructThread
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
 from .gentoken import generate_token
@@ -39,10 +40,8 @@ TEMP_PROFILE_IMAGE_NAME = "temp_profile_image.png"
 def index(request):
     return render(request, 'homepage/index.html')
 
-
 def projects(request):
     return render(request, 'homepage/projects.html')
-
 
 def about(request):
     return render(request, 'about/about.html')
@@ -67,6 +66,61 @@ def about_privacy(request):
 
 def about_instruction(request):
     return render(request, 'about/about_instruction.html')
+
+def others(request):
+    return render(request, 'others/manue.html')
+
+def others_1dreconstruct(request):
+    user_id =request.user.id
+    feature_tasks = Others_1dreconstruct.objects.all()
+    user_tasks = []
+    for i in feature_tasks:
+        if getattr(i, 'user_id') == str(user_id):
+            user_tasks.append(i)
+    return render(request, 'others/1dreconstruct_taskList.html', {
+        'tasks': user_tasks
+    })
+
+def others_1drecontruct_upload_task(request):
+    if request.method == 'POST':
+        form = Others_1dreconstructFrom(request.POST, request.FILES)
+        print(form.errors)
+        if form.is_valid():
+            user_id = request.user.id
+            task_name = form.cleaned_data['task_name']
+            inputFile = form.cleaned_data['inputFile']
+            task = Others_1dreconstruct.objects.create(user_id=user_id, task_name=task_name, inputFile= inputFile)
+            task.save()
+            current_user = request.user
+            current_user = Author.objects.get(userid=current_user.id)
+            filename = task.inputFile.name
+            reThread = reconstructThread(filename, current_user, settings.BASE_DIR,task.pk,task,settings.BASE_DIR)
+            reThread.start()
+            return redirect('others-1dreconstruct')
+    else:
+        form = Others_1dreconstruct()
+    return render(request, 'others/1drecontruct_uploadTask.html',{'form': form})
+
+def delete_1dreconstruct_task(request, pk):
+    user_id = request.user.id
+    delete_task = Others_1dreconstruct.objects.filter(id=pk).first()
+    delete_file_urls = []
+    s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+    delete_file_urls.append(delete_task.inputFile)
+    if delete_task.outputFile:
+        s3.Object(bucket_name, delete_task.outputFile.name).delete()
+
+    for url in delete_file_urls:
+        if url:
+            s3.Object(bucket_name, url.name).delete()
+    delete_task.delete()
+    tasks = Others_1dreconstruct.objects.all()
+    user_tasks = []
+    for i in tasks:
+        if getattr(i, 'user_id') == str(user_id):
+            user_tasks.append(i)
+    return redirect('others-1dreconstruct')
 
 def send_activate_email(user, request):
     msg = MIMEMultipart()

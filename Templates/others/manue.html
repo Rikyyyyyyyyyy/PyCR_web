@@ -1,0 +1,56 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+ <link rel="icon" href="images/logos/python.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+    header{
+        background-color: #3398E1;
+    }
+
+    .sta_text{
+      color: #ffffff;
+    }
+    .promo_background{
+      background-color: #f2f8fc;
+    }
+    #instruction_btn {
+      float: left;
+    }
+    
+    #start_btn{
+      float: right;
+    }
+</style>
+
+<header class="masthead">
+    <div class="overlay"></div>
+        <div class="row">
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
+              Menu
+            </h3>
+        </div>
+</header>
+<body>
+
+    <!-- About Section -->
+<div class="w3-container" style="padding:128px 16px" id="about">
+  <div class="w3-row-padding w3-center" style="margin-top:64px">
+    <div class="w3-quarter">
+      <a href="{% url 'others-1dreconstruct' %}" >
+        <i class="fa fa-desktop w3-margin-bottom w3-jumbo w3-center"></i>
+      </a>
+      <p class="w3-large">1D - recontruct</p>
+    </div>
+  </div>
+</div>
+</body>
+
+{%endblock%}

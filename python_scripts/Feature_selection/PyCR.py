@@ -43,7 +43,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     print("Loading start and stop number .....")
     # create the needed folder to save ouput data
     # read data from input files
-    OUTPUT_PATH =  file_pkg.create_folder(task_pk)
+    OUTPUT_PATH = file_pkg.create_folder(task_pk)
     if isMotabo:
         sampleList, sampleName, classList, variableName =file_pkg.readMotabo(MotaboFileName)
     else:

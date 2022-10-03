@@ -1,7 +1,8 @@
+from dataclasses import field
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import  Author, Feature_selection
+from .models import  Author, Feature_selection,Others_1dreconstruct
 from django.contrib.auth import get_user_model
 
 iteration_error = {
@@ -65,3 +66,8 @@ class FeatureSelectionForm(forms.ModelForm):
     class Meta:
         model = Feature_selection
         fields = ['task_name','isExternal', 'splitRatio', 'rankingAlgorithm','vipComponent', 'rocType', 'tupaType', 'isMotabo', 'scaleType', 'iterations', 'survivalRate', 'motaboFile', 'sample_file', 'class_file', 'sampleName_file', 'variableName_file', 'sent_email']
+
+class Others_1dreconstructFrom(forms.ModelForm):
+    class Meta:
+        model=Others_1dreconstruct
+        fields = ['task_name','inputFile']

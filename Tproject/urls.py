@@ -40,7 +40,12 @@ urlpatterns = [
     path('about/license', views.about_license, name='about_licensePage'),
     path('about/privacy', views.about_privacy, name='about_privacyPage'),
     path('about/instruction', views.about_instruction, name='about_instructionPage'),
+    path('others/', views.others, name='others'),
+    path('others/1dreconstruct', views.others_1dreconstruct, name='others-1dreconstruct'),
+    path('others/1dreconstruct/upload', views.others_1drecontruct_upload_task, name='1drecontruct_upload_task'),
+    path('delete/idconstruct/<int:pk>/', views.delete_1dreconstruct_task, name='delete_1dconstruct_task'),
     path('featureselection/download/<int:pk>/', views.create_presigned_url, name='presign_url'),
+
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

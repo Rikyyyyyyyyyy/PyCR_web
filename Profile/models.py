@@ -43,3 +43,13 @@ class Feature_selection(models.Model):
 
     def __str__(self):
         return self.task_name
+
+class Others_1dreconstruct(models.Model):
+    user_id = models.TextField(default=0, null=True)
+    task_name = models.CharField(max_length=89)
+    inputFile = models.FileField(upload_to='others/1dreconstruct/inputFile', null=True, blank=True, default=0)
+    outputFile = models.FileField(upload_to='others/1dreconstruct/outputFile', null=True, blank=True)
+    erro_message = models.CharField(max_length=100, blank=True)
+
+    def __str__(self):
+        return self.task_name
