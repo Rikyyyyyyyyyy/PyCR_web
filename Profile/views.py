@@ -161,7 +161,6 @@ def signup(request):
                 email=new_user.email,
             )
 
-
             send_activate_email(new_user,request)
             messages.add_message(request,messages.SUCCESS,
                                  'We sent you an email to verify your account. If you did not receive a confirmation email, please check your spam folder.')

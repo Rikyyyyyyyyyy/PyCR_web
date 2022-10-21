@@ -118,7 +118,7 @@ def gaussian_algorithm(classNum,class_list,valList,V_rankingAlgoithm,nComponent,
         x1 = (c - u1) / (math.sqrt(2) * a1)
         x2 = (c - u2) / (math.sqrt(2) * a2)
         P = 1 - 0.5 * special.erf(x1) + 0.5 * special.erf(x2)
-        startNum = statistics.NormalDist(mu=true_fisher_mean, sigma=true_fisher_std).inv_cdf(0.90)
+        startNum = statistics.NormalDist(mu=true_fisher_mean, sigma=true_fisher_std).inv_cdf(0.9)
         if P == 0:
             endNum = statistics.NormalDist(mu=null_fisher_mean, sigma=null_fisher_std).inv_cdf(0.999)
         elif P == 1:

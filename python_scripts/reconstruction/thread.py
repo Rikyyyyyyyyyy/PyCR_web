@@ -18,7 +18,7 @@ class reconstructThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        # try:
+        try:
             s3 = boto3.resource('s3')
             BUCKET = "pycr"
             reconstructionMain.run1dreconstruct(self.inputFile,self.pk,self.homePath)
@@ -32,9 +32,8 @@ class reconstructThread(threading.Thread):
             os.remove(temp_path)
             os.remove(temp_input_path)
             # return False
-        # except Exception as e:
-        #     print("ERROR MESSAGE")
-        #     erro_message = str(e)
-        #     print(e)
-        #     self.task.erro_message = erro_message
-        #     self.task.save()
+        except Exception as e:
+            print("ERROR MESSAGE")
+            erro_message = str(e)
+            self.task.erro_message = erro_message
+            self.task.save()

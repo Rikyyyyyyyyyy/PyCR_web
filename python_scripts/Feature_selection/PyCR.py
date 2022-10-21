@@ -59,9 +59,10 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     classNum = len(unique_class)
     class_trans_dict = {}
     for i in range(classNum):
-        class_trans_dict[unique_class[i]] = str(i+1)
-    for key in class_trans_dict.keys():
-        classList = [sub.replace(key, class_trans_dict[key]) for sub in classList]
+        class_trans_dict[unique_class[i].replace(" ","").replace("/","-")] = str(i+1)
+    
+    classList = [class_trans_dict[sub.replace(" ","").replace("/","-")]for sub in classList]
+    
     classList = [int(x) for x in classList]
     # create label list for plot
     class_num_label = []
