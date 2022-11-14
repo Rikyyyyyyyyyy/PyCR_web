@@ -1,5 +1,6 @@
 {% extends 'homepage/base.html' %}
 {% load static %}
+{% load i18n %}
 {% block content %}
 <html lang="en">
 <head>
@@ -86,17 +87,32 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Task Name</th>
-                <th>Output File</th>
-                <th> </th>
+                <th>Name</th>
+                <th> Change Name</th>
+                <th> Status</th>
+                <th> Create Time</th>
+                <th> Output Time</th>
+                <th>Output</th>
+                <th> Delete </th>
+                
 
             </tr>
         </thead>
         <tbody>
             {% for task in tasks %}
                 <tr>
-                    <td>{{ task.task_name }}</td>
+                    <td>{{  task.task_name }} </td>
+                        <td>
+                            <a href= "{% url 'update_feature_task' pk=task.pk %}" class="btn btn-primary btn-sm">Update</a>
+                        </td>
                         {% if task.project_output.name %}
+                            <td><p>Complete</p></td>
+                            <td>
+                                <p>{{task.created_time}}</p>
+                            </td>
+                            <td>
+                                <p>{{task.output_time}}</p>
+                            </td>
                             <td>
                                 <a href="{{task.project_output.url}}"  class= "btn-primary btn-sm">Download</a>
                             </td>
@@ -110,11 +126,21 @@
                                 <td>Generating...</td>
                             {% endif %}
                             <td>
+                                <p>{{task.created_time}}</p>
+                            </td>
+                            <td>
+                                <p>{{task.output_time}}</p>
+                            </td>
+                            <td>
+                                <a style='color:darkgray' class= " btn-sm">Download</a>
+                            </td>
+                            <td>
                                 <a href= "{% url 'delete_feature_task' pk=task.pk %}" class="btn btn-primary btn-sm">Delete</a>
                             </td>
                         {% endif %}
                 </tr>
             {% endfor %}
+            
         </tbody>
     </table>
         <br>

@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from Profile import views
+from django.urls import reverse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +28,7 @@ urlpatterns = [
     path('profile/<user_id>', views.profile, name='profile'),
     path('profile/<user_id>/edit/', views.edit_profile_view, name='edit'),
     path('featureselection/task', views.feature_task_list, name='feature_task_list'),
+    path('featureselection/updatename/<int:pk>/', views.feature_task_update_name, name='update_feature_task'),
     path('featureselection/tasks/upload/', views.feature_upload_task, name='feature_upload_task'),
     path('delete/feature/<int:pk>/', views.delete_feature_task, name='delete_feature_task'),
     path('BuyMeCofee/', views.buyMeCoffee, name='buyMeCoffee'),

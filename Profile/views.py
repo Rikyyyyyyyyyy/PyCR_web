@@ -1,6 +1,7 @@
+from turtle import up
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login
-from .form import Others_1dreconstructFrom, UserCreateForm,FeatureSelectionForm, edit_profile
+from .form import Others_1dreconstructFrom, UserCreateForm,FeatureSelectionForm, edit_profile,FeatureNameUpdate
 from .models import *
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -22,6 +23,7 @@ from django.conf import settings
 import logging
 from botocore.exceptions import ClientError
 import boto3
+import datetime
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -289,10 +291,18 @@ def feature_task_list(request):
 def feature_upload_task(request):
     if request.method == 'POST':
         form = FeatureSelectionForm(request.POST, request.FILES)
-        print(form.errors)
+        user_id =request.user.id
+        feature_tasks = Feature_selection.objects.all()
+        user_tasks_name = []
+        for i in feature_tasks:
+            if getattr(i, 'user_id') == str(user_id):
+                user_tasks_name.append(i.task_name)
+        
         if form.is_valid():
             user_id = request.user.id
             task_name = form.cleaned_data['task_name']
+            while task_name in user_tasks_name:
+                task_name = task_name+ "_dup"
             isExternal = form.cleaned_data['isExternal']
             splitRatio = form.cleaned_data['splitRatio']
             rankingAlgorithm = form.cleaned_data['rankingAlgorithm']
@@ -309,8 +319,18 @@ def feature_upload_task(request):
             sampleName_file = form.cleaned_data['sampleName_file']
             variableName_file = form.cleaned_data['variableName_file']
             sent_email = form.cleaned_data['sent_email']
-            task = Feature_selection.objects.create(user_id=user_id, task_name=task_name, isExternal=isExternal, splitRatio=splitRatio, rankingAlgorithm=rankingAlgorithm,vipComponent=vipComponent, rocType=rocType, tupaType=tupaType, isMotabo = isMotabo, scaleType=scaleType, iterations= iterations, survivalRate=survivalRate, motaboFile=motaboFile,  sample_file=sample_file, class_file=class_file, sampleName_file=sampleName_file, variableName_file=variableName_file, sent_email=sent_email)
+            extrnal_type = form.cleaned_data['extrnal_type']
+            is_exMotabo = form.cleaned_data['is_exMotabo']
+            ex_motaboFile = form.cleaned_data['ex_motaboFile']
+            ex_sample_file = form.cleaned_data['ex_sample_file']
+            ex_class_file = form.cleaned_data['ex_class_file']
+            ex_sampleName_file = form.cleaned_data['ex_sampleName_file']
+            ex_variableName_file = form.cleaned_data['ex_variableName_file']
+            normType = form.cleaned_data['normType']
+            created_time = datetime.datetime.now()
+            task = Feature_selection.objects.create(user_id=user_id, task_name=task_name, isExternal=isExternal, splitRatio=splitRatio, rankingAlgorithm=rankingAlgorithm,vipComponent=vipComponent, rocType=rocType, tupaType=tupaType, isMotabo = isMotabo, scaleType=scaleType, iterations= iterations, survivalRate=survivalRate, motaboFile=motaboFile,  sample_file=sample_file, class_file=class_file, sampleName_file=sampleName_file, variableName_file=variableName_file, sent_email=sent_email, created_time=created_time,extrnal_type=extrnal_type,is_exMotabo=is_exMotabo, ex_motaboFile = ex_motaboFile,ex_sample_file=ex_sample_file,ex_class_file=ex_class_file, ex_sampleName_file=ex_sampleName_file,ex_variableName_file=ex_variableName_file,normType=normType)
             task.save()
+            # Internal file path
             if isMotabo == "false":
                 sample_url = task.sample_file.name
                 class_url = task.class_file.name
@@ -323,15 +343,62 @@ def feature_upload_task(request):
                 sampleName_url = 'none'
                 variableName_url = 'none'
                 motabo_url = task.motaboFile.name
+            # external file path 
+            if is_exMotabo == "false":
+                ex_sample_url = task.ex_sample_file.name
+                ex_class_url = task.ex_class_file.name
+                ex_sampleName_url = task.ex_sampleName_file.name
+                ex_variableName_url = task.ex_variableName_file.name
+                ex_motabo_url = 'none'
+            else:
+                ex_sample_url = 'none'
+                ex_class_url = 'none'
+                ex_sampleName_url = 'none'
+                ex_variableName_url = 'none'
+                ex_motabo_url = task.ex_motaboFile.name
+            current_user = Author.objects.get(userid=user_id)
             # out = run([sys.executable, '//Users//wenwenli//Desktop//TMIC//PyCRWEB//python_scripts//Feature_selection//PyCR.py',isExternal, str(splitRatio), rocType, tupaType, isMotabo, motabo_url, sample_url, class_url,sampleName_url, variableName_url, scaleType, str(iterations),str(survivalRate),rankingAlgorithm, str(vipComponent), str(task.pk)], shell=False, stdout=PIPE)
-            current_user = request.user
-            current_user = Author.objects.get(userid=current_user.id)
-            pyThread = PyCRThread(isExternal, splitRatio, rocType, tupaType, isMotabo, motabo_url, sample_url, class_url, sampleName_url, variableName_url, scaleType, iterations, survivalRate, rankingAlgorithm, vipComponent, task.pk,task,sent_email,current_user,settings.BASE_DIR)
+            pyThread = PyCRThread(isExternal, splitRatio, rocType, tupaType, isMotabo, motabo_url, sample_url, class_url, sampleName_url, variableName_url, extrnal_type,is_exMotabo, ex_motabo_url, ex_sample_url, ex_class_url, ex_sampleName_url, ex_variableName_url,  scaleType, normType, iterations, survivalRate, rankingAlgorithm, vipComponent, task.pk,task,sent_email,current_user,settings.BASE_DIR,task_name)
             pyThread.start()
             return redirect('feature_task_list')
     else:
         form = FeatureSelectionForm()
     return render(request, 'FeatureSelection/upload_task.html', {'form': form})
+
+
+def feature_task_update_name(request,pk):
+    user_id =request.user.id
+    if request.method == 'POST':
+        form = FeatureNameUpdate(request.POST, request.FILES)
+        if form.is_valid():
+            user_tasks_name = []
+            feature_tasks = Feature_selection.objects.all()
+            for i in feature_tasks:
+                if getattr(i, 'user_id') == str(user_id):
+                    if i.pk != pk:
+                        user_tasks_name.append(i.task_name)
+            user_id = request.user.id
+            update_task = Feature_selection.objects.filter(id=pk).first()
+            task_name = form.cleaned_data['task_name']
+            task_name = form.cleaned_data['task_name']
+            while task_name in user_tasks_name:
+                task_name = task_name+ "_dup"
+            update_task.task_name = task_name
+            update_task.save()
+            return redirect('feature_task_list')
+    else:
+        form = FeatureNameUpdate()
+        feature_tasks = Feature_selection.objects.all()
+        user_tasks = []
+        for i in feature_tasks:
+            if getattr(i, 'user_id') == str(user_id):
+                user_tasks.append(i)
+    return render(request, 'FeatureSelection/task_list_change_name.html', {
+        'tasks': user_tasks,
+        'form' : form,
+        'pk':pk,
+    })
+
 
 
 def delete_feature_task(request, pk):

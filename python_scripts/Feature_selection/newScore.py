@@ -129,7 +129,7 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                         plt.fill(x_ellipse, y_ellipse, color=CLASS_COLOR[z - 1], alpha=0.3)
                         class_Xt = score[class_index_list[z], :]
                         plt.scatter(class_Xt[:, 0], class_Xt[:, 1], c=CLASS_COLOR[z - 1], marker=CLASS_LABEL[0],
-                                    label='training ' + [k for k,v in class_trans_dict.items() if v == str(z)][0])
+                                    label=[k for k,v in class_trans_dict.items() if v == str(z)][0])
                     # calculating the PCA percentage value
                     pU, pS, pV = np.linalg.svd(temp_scaled_half_samples)
                     pca_percentage_val = np.cumsum(pS) / sum(pS)
@@ -180,7 +180,7 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
                     plt.fill(x_ellipse, y_ellipse, color=CLASS_COLOR[z - 1], alpha=0.3)
                     class_Xt = score[class_index_list[z], :]
                     plt.scatter(class_Xt[:, 0], class_Xt[:, 1], c=CLASS_COLOR[z - 1], marker=CLASS_LABEL[0],
-                                label='training ' + [k for k,v in class_trans_dict.items() if v == str(z)][0])
+                                label=[k for k,v in class_trans_dict.items() if v == str(z)][0])
                 # calculating the PCA percentage value
                 pU, pS, pV = np.linalg.svd(temp_selected_half_matrix)
                 pca_percentage_val = np.cumsum(pS) / sum(pS)
@@ -205,7 +205,7 @@ def setNumber(classNum, classList, allSampleList, startNum, endNum,howMuchSplit,
             if file_name.endswith('.png') and file_name != "0.png":
                 file_path = os.path.join(png_dir, file_name)
                 images.append(imageio.imread(file_path))
-        imageio.mimsave(outputPath + '/animation.gif', images)
+        imageio.mimsave(outputPath + '/additional_information/animation.gif', images)
         shutil.rmtree(png_dir)
     return finalOutPutIdx, sample_training, sample_test, class_training, class_test
 

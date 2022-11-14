@@ -158,18 +158,100 @@
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
                     </span>
-                    <select id = "id_isExternal" name="isExternal" onchange="ratio_show_hiden(this.options[this.selectedIndex].value)">
+                    <select id = "id_isExternal" name="isExternal" onchange="external_decision(this.options[this.selectedIndex].value)">
                         <option value="false"> -- Please Select -- </option>
                         <option value="false"> Internal/cross-validation</option>
                         <option value="true">  External validation</option>
                     </select>
-                    <h6  style="display: none"  class="mt-4 field-heading" id="text_splitRatio">Ratio for data split training:validation</h6>
-                    <span style="display: none" id="img_splitRatop" class="hovertext" data-hover="Ratio of training and optimization to external validation (0.5-1; 0.67 recommended). External validation is pulled randomly from the uploaded data.">
-                        <div  class="question_mark_container">
+
+                    <!-- External decision  -->
+                    <select style="display: none" id = "div_ex_type" name="extrnal_type" onchange="external_Type(this.options[this.selectedIndex].value)">
+                        <option value="false"> -- Please Select -- </option>
+                        <option value="file"> External File </option>
+                        <option value="split"> Split Original File </option>
+                    </select>
+                    <div style="display: none; margin-left: 20px;" id = 'ex_filetype'>
+                        <h6  class="mt-4 field-heading" id="text_isMotabo">Is MetaboAnalyst Dataset?</h6>
+                        <span class="hovertext" data-hover="Are you uploading a single data file in MetaboAnalyst format, or multiple single text files?">
+                            <div  class="question_mark_container">
+                                <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                            </div>
+                        </span>
+                        <select id="id_isMotabo" name="is_exMotabo" onchange="external_File_Type(this.options[this.selectedIndex].value)">
+                            <option value="false"> -- Please Select -- </option>
+                            <option value="false"> Not MetaboAnalyst Dataset</option>
+                            <option value="true">  MetaboAnalyst Dataset</option>
+                        </select>
+                    </div>
+
+                    <div style="display: none; margin-left: 40px;"id = 'ex_metabo_input'>
+                        <h6  class="mt-4 field-heading">MetaboAnalyst File</h6>
+                        <span  class="hovertext" data-hover="Upload your MetaboAnalyst csv file ">
+                            <div  class="question_mark_container">
+                                <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                            </div>
+                        </span>
+                        <div   class="template_icon_container">
+                            <a href="{{ MEDIA_URL }}/images/file_templates/mota_data.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
+                        </div>
+
+                        <input  type="file" name="ex_motaboFile" >
+                    </div>
+
+                    <div style="display: none; margin-left: 40px;" id="not_ex_motabo">
+                        <h6  class="mt-4 field-heading" >X-Block Data</h6>
+                        <span class="hovertext" data-hover="csv file with the response data for each variable in each sample. See template for example">
+                            <div  class="question_mark_container">
                             <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                         </div>
-                    </span>
-                    <input style="display: none"  type="text" id="id_splitRatio" name="splitRatio" >
+                        </span>
+                        <div class="template_icon_container">
+                            <a href="{{ MEDIA_URL }}/images/file_templates/X_Block_Data.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
+                        </div>
+                        <input  type="file" name="ex_sample_file">
+                        <h6  class="mt-4 field-heading" >Y-Block Data</h6>
+                        <span class="hovertext" data-hover="csv file containing class identifications for each sample in the data file. For a better visualization, please input a shorter sample name.">
+                            <div  class="question_mark_container">
+                                <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                            </div>
+                        </span>
+                        <div class="template_icon_container">
+                            <a href="{{ MEDIA_URL }}/images/file_templates/Y_Block_Data.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
+                        </div>
+                        <input  type="file"  name="ex_class_file" >
+                        <h6  class="mt-4 field-heading" >Sample Name File</h6>
+                        <span class="hovertext" data-hover="csv file containing unique names / identifiers for each sample in the data set. This is used so that you can link the results to your original data.">
+                            <div  class="question_mark_container">
+                                <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                            </div>
+                        </span>
+                        <div  class="template_icon_container">
+                            <a href="{{ MEDIA_URL }}/images/file_templates/Sample_Name.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
+                        </div>
+                        <input  type="file" name="ex_sampleName_file" >
+                        <h6  class="mt-4 field-heading" >Variable Name File</h6>
+                        <span class="hovertext" data-hover="csv file with unique identifiers for each variable in the data set. This ensures that you can link the results back to your original data.">
+                            <div  class="question_mark_container">
+                                <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                            </div>
+                        </span>
+                        <div class="template_icon_container">
+                            <a href="{{ MEDIA_URL }}/images/file_templates/Variable_Name.csv"> <img class="template_icon_img" src="{{ MEDIA_URL }}/images/template_icon.webp"></a>
+                        </div>
+                        <input  type="file"  name="ex_variableName_file" >
+                    </div>
+
+                    <div style="display: none; margin-left: 20px;"  id = 'div_external_split_ratio'>
+                        <h6    class="mt-4 field-heading" id="text_splitRatio">Ratio for data split training:validation</h6>
+                        <span  id="img_splitRatop" class="hovertext" data-hover="Ratio of training and optimization to external validation (0.5-1; 0.67 recommended). External validation is pulled randomly from the uploaded data.">
+                            <div  class="question_mark_container">
+                                <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                            </div>
+                        </span>
+                        <input  type="text" id="id_splitRatio" name="splitRatio" >
+                    </div>
+
+                    <!-- End external decision  -->
                     <h6  class="mt-4 field-heading" id="text_rankingAlgorithm">Variable Ranking Algorithm</h6>
                     <span class="hovertext" data-hover="Metric used for ranking variable significance. Fisher Ratio is recommended. Use of PLS-DA VIP scores or Selectivity Ratios may risk over-fitting.">
                         <div  class="question_mark_container">
@@ -210,7 +292,19 @@
                         <option value = "classtupa"> -- Please Select -- </option>
                         <option value = "classtupa"> cTUPA</option>
                         <option value = "tupa"> TUPA</option>
-                        <option value = "notupa"> No TUPA</option>
+                        <option value = "notupa"> None</option>
+                    </select>
+                    <h6  class="mt-4 field-heading" id="text_scaleType">Norm Type</h6>
+                    <span class="hovertext" data-hover="How do you want your data normalization? normal/SNV">
+                        <div  class="question_mark_container">
+                            <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
+                        </div>
+                    </span>
+                    <select id="id_scaleType" name="normType">
+                        <option value="autoscale"> -- Please Select -- </option>
+                        <option value="norm"> Normalization</option>
+                        <option value="SVN"> SNV</option>
+                        <option value="nonorm">None</option>
                     </select>
                     <h6  class="mt-4 field-heading" id="text_scaleType">Scale Type</h6>
                     <span class="hovertext" data-hover="How do you want your data scaled? Autoscale/SNV">
@@ -221,9 +315,10 @@
                     <select id="id_scaleType" name="scaleType">
                         <option value="autoscale"> -- Please Select -- </option>
                         <option value="autoscale"> Auto Scale</option>
-                        <option value="SVN"> SNV</option>
-                        <option value="None">None(mean-centred)</option>
+                        <option value="meancenter"> Mean Center</option>
                     </select>
+                    
+
                     <h6  class="mt-4 field-heading" id="text_iterations">How Many Iterations</h6>
                     <span class="hovertext" data-hover="How many iterations of feature selection do you want to run? Multiple iterations shuffle the training/optimization data and help ensure that the selected panel of variables does not contain spurious results. (1-100)">
                         <div  class="question_mark_container">
@@ -274,7 +369,7 @@
                         </div>
                         <input  type="file" id="id_sample" name="sample_file">
                         <h6  class="mt-4 field-heading" id="text_class_file">Y-Block Data</h6>
-                        <span class="hovertext" data-hover="csv file containing class identifications for each sample in the data file.">
+                        <span class="hovertext" data-hover="csv file containing class identifications for each sample in the data file. For a better visualization, please input a shorter sample name.">
                             <div  class="question_mark_container">
                                 <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                             </div>
@@ -294,7 +389,7 @@
                         </div>
                         <input  type="file" id="id_sampleName_file" name="sampleName_file" >
                         <h6  class="mt-4 field-heading" id="text_variableName_file">Variable Name File</h6>
-                        <span class="hovertext" data-hover="csv file with unique identifiers for each variable in the data set. This ensures that you can link the results back to your original data">
+                        <span class="hovertext" data-hover="csv file with unique identifiers for each variable in the data set. This ensures that you can link the results back to your original data.">
                             <div  class="question_mark_container">
                                 <img class="question_mark_img" src="{{ MEDIA_URL }}/images/question_mark.png">
                             </div>
@@ -329,23 +424,61 @@
     </div>
 </div>
 <script type="application/javascript">
-    function ratio_show_hiden(selected){
-        var ratio_text = document.getElementById("text_splitRatio")
-        var ratio_id = document.getElementById("id_splitRatio")
-        var ratio_img = document.getElementById("img_splitRatop")
+    function external_decision(selected){
+        var decideFile =document.getElementById("div_ex_type")
+        var ratio_input =document.getElementById("div_external_split_ratio")
+        var file_input = document.getElementById('ex_filetype')
+        var motabo_file = document.getElementById("ex_metabo_input")
+        var not_motabo_file = document.getElementById("not_ex_motabo")
         if (selected == "true"){
-            ratio_text.style.display = "block"
-            ratio_id.style.display = "block"
-            ratio_img.style.display = "block"
-
+            decideFile.style.display = "block"
         }
         if (selected == "false"){
-            ratio_text.style.display = "none"
-            ratio_id.style.display = "none"
-            ratio_img.style.display = "none"
+            decideFile.style.display = "none"
+            ratio_input.style.display = 'none'
+            file_input.style.display = 'none'
+            motabo_file.style.display = 'none'
+            not_motabo_file.style.display = 'none'
         }
 
     }
+    function external_Type(selected){
+        var ratio_input =document.getElementById("div_external_split_ratio")
+        var file_input = document.getElementById('ex_filetype')
+
+        if (selected == "split"){
+            ratio_input.style.display = "block"
+            file_input.style.display = "none"
+
+        }
+        if (selected == "file"){
+            ratio_input.style.display = "none"
+            file_input.style.display = "block"
+        }
+        if (selected == 'false'){
+            ratio_input.style.display = "none"
+            file_input.style.display = "none"
+        }
+
+    }
+    
+    function external_File_Type(selected){
+        var ratio_input =document.getElementById("div_external_split_ratio")
+        var motabo_file = document.getElementById("ex_metabo_input")
+        var not_motabo_file = document.getElementById("not_ex_motabo")
+        if(selected == "true"){
+            motabo_file.style.display = "block"
+            img_motaboFile.style.display = "block"
+            not_motabo_file.style.display = "none"
+        }
+        if(selected == "false"){
+            motabo_file.style.display = "none"
+            img_motaboFile.style.display = "none"
+            not_motabo_file.style.display = "block"
+        }
+
+    }
+
     function ranking_algorithm_show_hiden(selected){
         var ranking_algorithm_text = document.getElementById("text_vipComponent")
         var ranking_algorithm_id  = document.getElementById("id_vipComponent")

@@ -1,0 +1,184 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <meta name="google" content="notranslate" />
+    <link rel="icon" href="images/logos/python.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+    <title> TMIC Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <style type="text/css">
+        body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+        header{
+        background-color: #3398E1;
+    }
+    .head_text{
+        color: white;
+    }
+
+    .card{
+        box-shadow: 0 16px 48px #E3E7EB;
+    }
+    .container{
+        margin-bottom:15px;
+    }
+
+    .image_container{
+        width:300px;
+        height:300px;
+    }
+    .container img{
+        max-height: 500px;
+        height: 70%;
+        width: auto;
+    }
+    .file_name{
+        color: cornflowerblue;
+        float: left;
+    }
+    .PyCR_logo{
+        width: 400px;
+        height: 400px;
+        float: left;
+    }
+    .btn-upload{
+        float: left;
+        padding-top: 100px;
+        padding-left: 100px;
+    }
+
+    </style>
+{% if user.is_authenticated %}
+    {% csrf_token %}
+<header class="masthead">
+    <div class="overlay"></div>
+        <div class="row">
+            <h3 class=" site-heading my-4 mt-3 text-white" style="padding-left: 70px">
+              PyCR
+            </h3>
+        </div>
+</header>
+
+<div class = "container">
+    <div class ="personal_info col-md-8 col-md-10 mx-auto">
+        <div  class="PyCR_logo">
+            <img class="pycrLogo" src="{{ MEDIA_URL }}/images/PyCR.png">
+        </div>
+
+        <p class="btn-upload">
+            <a href="{% url 'feature_upload_task' %}" class="btn btn-primary ">Upload Task</a>
+            <a href="{% url 'about_instructionPage' %}"  class="btn btn-primary ">Instructions</a>
+        </p>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th> Change Name</th>
+                <th>Status</th>
+                <th>Created Time</th>
+                <th>Output Time</th>
+                <th>Output </th>
+                <th> Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+                <tr>
+                    
+                    {%if task.id == pk%}
+                    <td>
+                        <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %} 
+                        <input  type="text" name="task_name" id="id_task_name"  placeholder={{task.task_name}}  autofocus value={{form.initial.task_name}}>
+                        <button  type="submit" class="btn btn-primary btn-sm">Submit</button>
+                        </form>
+                    </td>
+                    
+                    {% else %}
+                        <td>{{  task.task_name }} </td>
+                        <td>
+                            <a href= "{% url 'update_feature_task' pk=task.pk %}" class="btn btn-primary btn-sm">Update</a>
+                        </td>
+                        {% if task.project_output.name %}
+                        <td><p>Complete</p></td>
+                        <td>
+                            <p>{{task.created_time}}</p>
+                        </td>
+                        <td>
+                            <p>{{task.output_time}}</p>
+                        </td>
+                        <td>
+                            <a href="{{task.project_output.url}}"  class= "btn-primary btn-sm">Download</a>
+                        </td>
+                        <td>
+                            <a href= "{% url 'delete_feature_task' pk=task.pk %}" class="btn btn-primary btn-sm">Delete</a>
+                        </td>
+                            
+                        {% else %}
+                            {% if task.erro_message %}
+                                <td style="color: red">{{task.erro_message}}</td>
+                            {% else %}
+                                <td>Generating...</td>
+                            {% endif %}
+                            <td>
+                                <p>{{task.created_time}}</p>
+                            </td>
+                            <td>
+                                <p>{{task.output_time}}</p>
+                            </td>
+                            <td>
+                                <a style='color:darkgray' class= "btn-primary btn-sm">Download</a>
+                            </td>
+                            <td>
+                                <a href= "{% url 'delete_feature_task' pk=task.pk %}" class="btn btn-primary btn-sm">Delete</a>
+                            </td>
+
+                        {% endif %}
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+
+</div>
+    {% else %}
+    <header class="masthead">
+    <div class="container">
+        <div class="row">
+            <div class=" col-md-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h2 class=" site-heading my-4 mt-3 text-white">
+                        Please Sign In First
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+{% endif %}
+</body>
+</html>
+{% endblock content%}

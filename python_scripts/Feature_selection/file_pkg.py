@@ -4,8 +4,12 @@ import os
 import numpy as np
 import warnings
 import shutil
+from io import BytesIO
 import urllib.request
+from fpdf import FPDF
+import awswrangler as wr
 warnings.filterwarnings('ignore')
+
 # create empty folder to save output data
 # INPUT : None
 # OUTPUT : None
@@ -17,28 +21,36 @@ def create_folder(task_pk):
     # Create the needed directory if directory not exist
     if not os.path.exists(OUTPUT_PATH + '/animation'):
         os.makedirs(OUTPUT_PATH + '/animation')
-    if not os.path.exists(OUTPUT_PATH + '/rocExternal'):
-        os.makedirs(OUTPUT_PATH + '/rocExternal')
-    if not os.path.exists(OUTPUT_PATH + '/rocIterations'):
-        os.makedirs(OUTPUT_PATH + '/rocIterations')
-    if not os.path.exists(OUTPUT_PATH + '/rocTrainFS'):
-        os.makedirs(OUTPUT_PATH + '/rocTrainFS')
-    if not os.path.exists(OUTPUT_PATH + '/rocTrainNoFS'):
-        os.makedirs(OUTPUT_PATH + '/rocTrainNoFS')
-    if not os.path.exists(OUTPUT_PATH + '/rocValiFS'):
-        os.makedirs(OUTPUT_PATH + '/rocValiFS')
-    if not os.path.exists(OUTPUT_PATH + '/rocValiNoFS'):
-        os.makedirs(OUTPUT_PATH + '/rocValiNoFS')
+    if not os.path.exists(OUTPUT_PATH + '/roc_curve/rocIterations'):
+        os.makedirs(OUTPUT_PATH + '/roc_curve/rocIterations')
+    if not os.path.exists(OUTPUT_PATH + '/roc_curve'):
+        os.makedirs(OUTPUT_PATH + '/roc_curve')
+    if not os.path.exists(OUTPUT_PATH + '/roc_curve'):
+        os.makedirs(OUTPUT_PATH + '/roc_curve')
+    if not os.path.exists(OUTPUT_PATH + '/PCA/pca_graph'):
+        os.makedirs(OUTPUT_PATH + '/pca/pca_graph')
+    if not os.path.exists(OUTPUT_PATH + '/PCA/biplot_graph'):
+        os.makedirs(OUTPUT_PATH + '/pca/biplot_graph')
+    if not os.path.exists(OUTPUT_PATH + '/PCA/loading_plot'):
+        os.makedirs(OUTPUT_PATH + '/pca/loading_plot')
+    if not os.path.exists(OUTPUT_PATH + '/selected_variable'):
+        os.makedirs(OUTPUT_PATH + '/selected_variable')
+    if not os.path.exists(OUTPUT_PATH + '/additional_information'):
+        os.makedirs(OUTPUT_PATH + '/additional_information')
     return OUTPUT_PATH
 
 
+
 # output csv file content as list by column
-# INPUT : file name
+# INPUT : file name (csv file)
 # OUTPUT : data list
 def getValFromFileByCols(fileName):
     full_path_filename = 'https://' + 'pycr' + '.s3.us-east-2.amazonaws.com/' + fileName
     file = urllib.request.urlopen(full_path_filename)
-    df = pd.read_csv(file,header=None)
+    if '.xlsx' in fileName:
+        df = pd.read_excel(full_path_filename, header=None)
+    if '.csv' in fileName:
+        df = pd.read_csv(file,header=None)
     row_count, column_count = df.shape
     retData = []
     for col in range(column_count):
@@ -50,12 +62,15 @@ def getValFromFileByCols(fileName):
 
 
 # output csv file content as list by row
-# INPUT : file name
+# INPUT : file name (csv file)
 # OUTPUT : data list
 def getValFromFileByRows(fileName):
     full_path_filename = 'https://' + 'pycr' + '.s3.amazonaws.com/' + fileName
     file = urllib.request.urlopen(full_path_filename)
-    df = pd.read_csv(file,header=None)
+    if '.xlsx' in fileName:
+        df = pd.read_excel(full_path_filename, header=None)
+    if '.csv' in fileName:
+        df = pd.read_csv(file,header=None)
     row_count, column_count = df.shape
     retData = []
     for row in range(row_count):
@@ -114,9 +129,11 @@ def gen_file_by_list_col(header,list,fileName):
 # OUTPUT: sample data, sample name, class data, variable name
 def readMotabo(fileName):
     full_path_filename = 'https://' + 'pycr' + '.s3.amazonaws.com/' + fileName
-    print(full_path_filename)
     file = urllib.request.urlopen(full_path_filename)
-    df = pd.read_csv(file, header=None)
+    if fileName.lower().endswith(".xlsx"):
+        df = pd.read_excel(full_path_filename, header=None)
+    if fileName.lower().endswith(".csv"):
+        df = pd.read_csv(file,header=None)
     row_count, column_count = df.shape
     sampleName = []
     variableName = []
@@ -175,3 +192,132 @@ def clearGenerateErrorMessage(msgs,path):
             writer.writerow(msg)
 
 
+def gen_overview_report(path,selected_variables):
+    pdf = FPDF()
+    # Add a page
+    pdf.add_page()
+
+    # set style and size of font
+    # that you want in the pdf
+    
+    # create a cell
+    pdf.set_font("Arial",'B', size = 20)
+    pdf.cell(200, 10, txt = "Overview Report",
+            ln = 2, align = 'C')
+    ## PCA graphs 
+    pdf.set_font("Arial",'B', size = 10)
+    pdf.cell(200, 10, txt = '1) PCA before Feature Selection ',
+        ln = 1, align = 'L')
+    pdf.image(path+'/pca/pca_graph/PCA_before_FS.png',x=10,y=40,w=84,h=70)
+    pdf.image(path+'/pca/pca_graph/PCA_before_FS.png',x=120,y=40,w=84,h=70)
+    # used to make white space for picture to fit in the roght position
+    for i in range(8):
+        pdf.cell(200, 10, txt = '',
+        ln = 1, align = 'L')
+    pdf.cell(200, 10, txt = '2) PCA after Feature Selection ',
+        ln = 1, align = 'L')
+    pdf.image(path+'/pca/pca_graph/PCA_after_FS.png',x=10,y=130,w=84,h=70)
+    pdf.image(path+'/pca/pca_graph/PCA_after_FS.png',x=120,y=130,w=84,h=70)
+    # used to make white space for picture to fit in the roght position
+    for i in range(8):
+        pdf.cell(200, 10, txt = '',
+        ln = 1, align = 'L')
+     ## Selected variables 
+    pdf.set_font("Arial",'B', size = 10)
+    pdf.cell(200, 10, txt = '3) Selected Variables',
+        ln = 1, align = 'L')
+    pdf.set_font("Arial", size = 10)
+    th = pdf.font_size
+    for row in selected_variables:
+        pdf.cell(20, 2*th, "")
+        for datum in row:
+            # Enter data in colums
+            pdf.cell(40, 2*th, str(datum), border=1)
+        pdf.ln(2*th)
+    # used to make white space for picture to fit in the roght position
+    for i in range(8):
+        pdf.cell(200, 10, txt = '',
+        ln = 1, align = 'L')
+    outputPath = path+"/overview_report"+".pdf"
+    pdf.output(outputPath,'F')  
+
+def gen_detail_report(path,selected_variables):
+    pdf = FPDF()
+    # Add a page
+    pdf.add_page()
+
+    # set style and size of font
+    # that you want in the pdf
+    
+    # create a cell
+    pdf.set_font("Arial",'B', size = 20)
+    pdf.cell(200, 10, txt = "Detail Report",
+            ln = 2, align = 'C')
+    ## PCA graphs 
+    pdf.set_font("Arial",'B', size = 10)
+    pdf.cell(200, 10, txt = '1) PCA before Feature Selection ',
+        ln = 1, align = 'L')
+    pdf.image(path+'/pca/pca_graph/PCA_before_FS.png',x=10,y=40,w=84,h=70)
+    pdf.image(path+'/pca/pca_graph/PCA_before_FS.png',x=120,y=40,w=84,h=70)
+    # used to make white space for picture to fit in the roght position
+    for i in range(8):
+        pdf.cell(200, 10, txt = '',
+        ln = 1, align = 'L')
+    pdf.cell(200, 10, txt = '2) PCA after Feature Selection ',
+        ln = 1, align = 'L')
+    pdf.image(path+'/pca/pca_graph/PCA_after_FS.png',x=10,y=130,w=84,h=70)
+    pdf.image(path+'/pca/pca_graph/PCA_after_FS.png',x=120,y=130,w=84,h=70)
+    # used to make white space for picture to fit in the roght position
+    for i in range(8):
+        pdf.cell(200, 10, txt = '',
+        ln = 1, align = 'L')
+    ## Selected variables 
+    pdf.set_font("Arial",'B', size = 10)
+    pdf.cell(200, 10, txt = '3) Selected Variables',
+        ln = 1, align = 'L')
+    pdf.set_font("Arial", size = 10)
+    th = pdf.font_size
+    for row in selected_variables:
+        pdf.cell(20, 2*th, "")
+        for datum in row:
+            # Enter data in colums
+            pdf.cell(40, 2*th, str(datum), border=1)
+        pdf.ln(2*th)
+
+    ## new content for detail report
+    pdf.add_page()
+    ## ROC graphs 
+    pdf.set_font("Arial",'B', size = 10)
+    pdf.cell(200, 10, txt = '4) ROC Iterations graph ',
+        ln = 1, align = 'L')
+    pdf.set_font("Arial",'B', size = 7)
+    pdf.cell(200, 10, txt = '   **Depend on how many iterations you have, the color start at red and tend to be blue when the interation goes.',
+        ln = 1, align = 'L')
+    pdf.image(path+'/roc_curve/rocIterations/rocIterations.png',x=50,y=30,w=84,h=70)
+
+    # used to make white space for picture to fit in the roght position
+    for i in range(8):
+        pdf.cell(200, 10, txt = '',
+        ln = 1, align = 'L')
+    ## Loading plots
+    pdf.set_font("Arial",'B', size = 10)
+    pdf.cell(200, 10, txt = '5) Loading Plots ',
+        ln = 1, align = 'L')
+    pdf.set_font("Arial",'B', size = 7)
+    pdf.image(path+'/roc_curve/rocIterations/rocIterations.png',x=50,y=120,w=84,h=70)
+
+    # used to make white space for picture to fit in the roght position
+    for i in range(8):
+        pdf.cell(200, 10, txt = '',
+        ln = 1, align = 'L')
+    ## Loading plots
+    pdf.set_font("Arial",'B', size = 10)
+    pdf.cell(200, 10, txt = '6) Start and Stop number ',
+        ln = 1, align = 'L')
+    pdf.set_font("Arial",'B', size = 7)
+    pdf.image(path+'/additional_information/startStopNum.png',x=50,y=220,w=84,h=70)
+    
+
+    ## output the report as pdf 
+    outputPath = path+"/detail_report"+".pdf"
+    pdf.output(outputPath,'F')  

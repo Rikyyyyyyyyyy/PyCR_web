@@ -44,6 +44,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     # create the needed folder to save ouput data
     # read data from input files
     OUTPUT_PATH = file_pkg.create_folder(task_pk)
+
     if isMotabo:
         sampleList, sampleName, classList, variableName =file_pkg.readMotabo(MotaboFileName)
     else:
@@ -192,7 +193,6 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     # get the start number and the end number
     startNum, endNum = genStartEndNum2.gaussian_algorithm(int(classNum), classList,sampleList,  V_rankingAlgorithm,nComponent,OUTPUT_PATH )
 
-    # create a file to save the generate statistical number(accuracy, sensitivity, selectivity)
 
     # create a hash table to take count for the show up times for each variables
     hash_list = [0]*(len(sampleList[0]))
@@ -262,7 +262,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
                     fpr, tpr, _ = metrics.roc_curve(class_test, class_pred, pos_label=2)
                     plt.plot(fpr, tpr, color=str(ROC_COLOR[k]))
                     plt.rcParams.update({'font.size': 10})
-                    plt.title('ROC ' + str(ITERATION) + ' iterations')
+                    # plt.title('ROC ' + str(ITERATION) + ' iterations')
                 else:
                     training_class = label_binarize(class_training, classes=class_num_label)
                     predict_class = label_binarize(class_test, classes=class_num_label)
@@ -286,12 +286,12 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
                         plt.plot(
                             fpr["micro"],
                             tpr["micro"],
-                            label="micro-average ROC curve (area = {0:0.2f})".format(roc_auc["micro"]),
+                            label=" (area = {0:0.2f})".format(roc_auc["micro"]),
                             color=str(ROC_COLOR[k]),
                         )
                         auc_table.append(roc_auc["micro"])
                         plt.rcParams.update({'font.size':10 })
-                        plt.title('ROC ' + str(ITERATION) + ' iterations')
+                        # plt.title('ROC ' + str(ITERATION) + ' iterations')
                     else:
                         for i in range(classNum):
                             auc_table[i].append(roc_auc[i])
@@ -317,7 +317,7 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         plt.figure().clear()
     else:
         for i in range(classNum):
-            figPlot[i][1].set_title('Roc ' + str(ITERATION) + ' iterations class: ' + [k for k, v in class_trans_dict.items() if v == str(i+1)][0])
+            # figPlot[i][1].set_title('Roc ' + str(ITERATION) + ' iterations class: ' + [k for k, v in class_trans_dict.items() if v == str(i+1)][0])
             figPlot[i][0].savefig(OUTPUT_PATH + '/rocIterations/roc '+str(ITERATION) +'iterations class: '+[k for k,v in class_trans_dict.items() if v == str(i+1)][0]+'.png')
             figPlot[i][0].clear()
 
@@ -327,7 +327,6 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     else:
         for j in range(classNum):
             file_pkg.gen_file_by_list(["Auc Number"],auc_table[i],OUTPUT_PATH + '/auc_table_class_' + [k for k,v in class_trans_dict.items() if v == str(j+1)][0] + '.csv')
-
 
 
     valid_idx = []
@@ -441,22 +440,30 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
     dummyU, dummyS, V = svds(class_variables, k=2)
     V = np.transpose(V)
     score = np.dot(scaled_all_sample[:,valid_idx], V)
+    ann_list = []
     for z in range(1, classNum+1):
         class_score = score[class_index_list[z],:]
         x_ellipse, y_ellipse = confident_ellipse(class_score[:, 0], class_score[:, 1])
         plt.plot(x_ellipse, y_ellipse,color=CLASS_COLOR[z-1])
         plt.fill(x_ellipse, y_ellipse,color=CLASS_COLOR[z-1], alpha=0.3)
         class_Xt = score[class_index_list[z], :]
-        plt.scatter(class_Xt[:, 0], class_Xt[:, 1], c=CLASS_COLOR[z-1], marker=CLASS_LABEL[0], label='training ' + [k for k,v in class_trans_dict.items() if v == str(z)][0])
+        plt.scatter(class_Xt[:, 0], class_Xt[:, 1], c=CLASS_COLOR[z-1], marker=CLASS_LABEL[0], label=[k for k,v in class_trans_dict.items() if v == str(z)][0])
+        label_text = [sampleName[idx] for idx in  class_index_list[z] ]
+        for i, txt in enumerate(label_text):
+           ann = plt.annotate(txt, (class_Xt[:, 0][i], class_Xt[:, 1][i]))
+           ann_list.append(ann)
     pU, pS, pV = np.linalg.svd(class_variables)
     pca_percentage_val = np.cumsum(pS) / sum(pS)
     p2_percentage = pca_percentage_val[0] * 100
     p1_percentage = pca_percentage_val[1] * 100
-    plt.xlabel("PC1(%{0:0.3f}".format(p1_percentage) + ")",fontsize=15)
-    plt.ylabel("PC2 (%{0:0.3f}".format(p2_percentage) + ")",fontsize=15)
+    plt.xlabel("PC1({0:0.3f}%".format(p1_percentage) + ")",fontsize=15)
+    plt.ylabel("PC2 ({0:0.3f}%".format(p2_percentage) + ")",fontsize=15)
     plt.rcParams.update({'font.size': 10})
-    plt.title('PCA training')
-    plt.legend()
+    # plt.title('PCA training')
+    plt.legend(loc="upper right",prop={'size': 5})
+    plt.savefig(OUTPUT_PATH + '/pca_taining_ann.png')
+    for i, a in enumerate(ann_list):
+        a.remove()
     plt.savefig(OUTPUT_PATH + '/pca_taining.png')
 
     if isexternal:
@@ -464,10 +471,10 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         for n in range(1, classNum + 1):
             class_external_Xt = external_Xt[external_class_index_list[n], :]
             plt.scatter(class_external_Xt[:, 0], class_external_Xt[:, 1], c=CLASS_COLOR[n - 1], marker=CLASS_LABEL[1],
-                        label='external ' + [k for k, v in class_trans_dict.items() if v == str(n)][0])
-        plt.title('PCA Training , Validation, with Feature Selection ')
+                        label= [k for k, v in class_trans_dict.items() if v == str(n)][0])
+        # plt.title('PCA Training , Validation, with Feature Selection ')
         plt.rcParams.update({'font.size': 10})
-        plt.legend()
+        plt.legend(loc="upper right",prop={'size': 5})
         plt.savefig(OUTPUT_PATH + '/pca_external.png')
         plt.figure().clear()
 
@@ -546,24 +553,24 @@ def main(isexternal,howMuchSplit,isMicro,tupaType,isMotabo,MotaboFileName,DataFi
         plt.plot(x_ellipse, y_ellipse,color=CLASS_COLOR[z-1])
         plt.fill(x_ellipse, y_ellipse,color=CLASS_COLOR[z-1], alpha=0.3)
         class_Xt_no_FS = score_no_FS[class_index_list[z], :]
-        plt.scatter(class_Xt_no_FS[:, 0], class_Xt_no_FS[:, 1], c=CLASS_COLOR[z-1], marker=CLASS_LABEL[0], label='training ' + [k for k,v in class_trans_dict.items() if v == str(z)][0])
+        plt.scatter(class_Xt_no_FS[:, 0], class_Xt_no_FS[:, 1], c=CLASS_COLOR[z-1], marker=CLASS_LABEL[0], label= [k for k,v in class_trans_dict.items() if v == str(z)][0])
     # calculating the PCA percentage value
     pU_no_FS, pS_no_FS, pV_no_FS = np.linalg.svd(class_variables_no_FS)
     pca_percentage_val_no_FS = np.cumsum(pS_no_FS) / sum(pS_no_FS)
     p2_percentage = pca_percentage_val_no_FS[0] * 100
     p1_percentage = pca_percentage_val_no_FS[1] * 100
-    plt.xlabel("PC1(%{0:0.3f}".format(p1_percentage) + ")")
-    plt.ylabel("PC2 (%{0:0.3f}".format(p2_percentage) + ")")
+    plt.xlabel("PC1({0:0.3f}%".format(p1_percentage) + ")")
+    plt.ylabel("PC2 ({0:0.3f}%".format(p2_percentage) + ")")
     plt.rcParams.update({'font.size': 10})
     if isexternal:
         external_Xt = np.dot(scaled_external, V_no_FS)
         for n in range(1, classNum+1):
             class_external_Xt = external_Xt[external_class_index_list[n], :]
             plt.scatter(class_external_Xt[:, 0], class_external_Xt[:, 1], c=CLASS_COLOR[n-1], marker=CLASS_LABEL[1],
-                               label='external ' + [k for k,v in class_trans_dict.items() if v == str(n)][0])
-    plt.title('PCA Training , Validation, No Feature Selection')
+                               label=[k for k,v in class_trans_dict.items() if v == str(n)][0])
+    # plt.title('PCA Training , Validation, No Feature Selection')
     plt.rcParams.update({'font.size': 10})
-    plt.legend()
+    plt.legend(loc="upper right",prop={'size': 5})
     plt.savefig(OUTPUT_PATH + '/pca_No_FS.png',bbox_inches="tight" )
     plt.figure().clear()
 
@@ -609,7 +616,6 @@ def SVN_scale_half_data(samples):
 
 # after get all the selected variables we make them a matrix and calculate the mean by using stander normal variate
 # INPUT : all sample data list,
-
 # OUTPUT: scaled all sample data
 def SNV_scale_all_data(samples,col_mean):
     scaled_samples = scale(samples, axis=1, with_mean=True, with_std=True)
@@ -681,7 +687,7 @@ def mul_roc_graph(classNum, class_num_label, trainingClass, predicClass, trainin
         plt.plot(
             fpr["micro"],
             tpr["micro"],
-            label="micro-average ROC curve (area = {0:0.2f})".format(roc_auc["micro"]),
+            label="(area = {0:0.2f})".format(roc_auc["micro"]),
             color=str(roc_colors[1]),
         )
     else:
@@ -690,7 +696,7 @@ def mul_roc_graph(classNum, class_num_label, trainingClass, predicClass, trainin
                 fpr[k],
                 tpr[k],
                 color=str(roc_colors[1]),
-                label="ROC curve (area = %0.3f)" % roc_auc[k],
+                label="(area = %0.3f)" % roc_auc[k],
             )
             figPlots[k][1].legend()
     plt.rcParams.update({'font.size': 14})
@@ -699,7 +705,7 @@ def mul_roc_graph(classNum, class_num_label, trainingClass, predicClass, trainin
         plt.figure().clear()
     else:
         for j in range(classNum):
-            figPlots[j][1].set_title(graph_title +'class '+ [k for k,v in class_trans_dict.items() if v == str(j+1)][0])
+            # figPlots[j][1].set_title(graph_title +'class '+ [k for k,v in class_trans_dict.items() if v == str(j+1)][0])
             figPlots[j][0].savefig(output_filename +'class '+ [k for k,v in class_trans_dict.items() if v == str(j+1)][0] + '.png')
             figPlots[j][0].clear()
 
@@ -715,10 +721,10 @@ def gen_roc_graph(training_sample,training_class,predict_sample,predict_class, f
     class_pred = class_pred[:, 1]
     auc_external = metrics.roc_auc_score(predict_class, class_pred)
     fpr, tpr, _ = metrics.roc_curve(predict_class, class_pred, pos_label=2)
-    plt.plot(fpr, tpr, label="micro-average ROC curve (area = {0:0.3f})".format(auc_external))
-    plt.title(graph_title)
+    plt.plot(fpr, tpr, label="(area = {0:0.3f})".format(auc_external))
+    # plt.title(graph_title)
     plt.rcParams.update({'font.size': 14})
-    plt.legend(loc=4)
+    plt.legend(loc="upper right",prop={'size': 5})
     plt.savefig(fileName,bbox_inches="tight")
     plt.figure().clear()
 
@@ -735,17 +741,17 @@ def gen_pca(training_sample,classNum,class_index_list,class_color,class_label,fi
         plt.plot(x_ellipse, y_ellipse, color=class_color[z - 1])
         plt.fill(x_ellipse, y_ellipse, color=class_color[z - 1], alpha=0.3)
         plt.scatter(class_Xt_training_noFS[:, 0], class_Xt_training_noFS[:, 1], c=class_color[z - 1],
-                    marker=class_label[0], label='class ' + [k for k,v in class_trans_dict.items() if v == str(z)][0])
+                    marker=class_label[0], label= [k for k,v in class_trans_dict.items() if v == str(z)][0])
     # calculating the PCA percentage value
     pU, pS, pV = np.linalg.svd(training_sample)
     pca_percentage_val = np.cumsum(pS) / sum(pS)
     p2_percentage = pca_percentage_val[0] * 100
     p1_percentage = pca_percentage_val[1] * 100
-    plt.xlabel("PC1(%{0:0.3f}".format(p1_percentage) + ")")
-    plt.ylabel("PC2 (%{0:0.3f}".format(p2_percentage) + ")")
-    plt.title(graph_title)
+    plt.xlabel("PC1({0:0.3f}%".format(p1_percentage) + ")")
+    plt.ylabel("PC2 ({0:0.3f}%".format(p2_percentage) + ")")
+    # plt.title(graph_title)
     plt.rcParams.update({'font.size': 10})
-    plt.legend()
+    plt.legend(loc="upper right",prop={'size': 5})
     plt.savefig(fileName,bbox_inches="tight")
     plt.figure().clear()
 

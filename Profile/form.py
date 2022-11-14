@@ -65,9 +65,15 @@ class edit_profile(forms.ModelForm):
 class FeatureSelectionForm(forms.ModelForm):
     class Meta:
         model = Feature_selection
-        fields = ['task_name','isExternal', 'splitRatio', 'rankingAlgorithm','vipComponent', 'rocType', 'tupaType', 'isMotabo', 'scaleType', 'iterations', 'survivalRate', 'motaboFile', 'sample_file', 'class_file', 'sampleName_file', 'variableName_file', 'sent_email']
+        fields = ['task_name','isExternal', 'splitRatio', 'rankingAlgorithm','vipComponent', 'rocType', 'tupaType', 'isMotabo', 'scaleType', 'iterations', 'survivalRate', 'motaboFile', 'sample_file', 'class_file', 'sampleName_file', 'variableName_file', 'sent_email','normType','extrnal_type','is_exMotabo',  'ex_motaboFile', 'ex_sample_file',  'ex_class_file',  'ex_sampleName_file', 'ex_variableName_file','extrnal_type']
+
+class FeatureNameUpdate(forms.ModelForm):
+    class Meta:
+        model=Feature_selection
+        fields = ['task_name']
 
 class Others_1dreconstructFrom(forms.ModelForm):
     class Meta:
         model=Others_1dreconstruct
         fields = ['task_name','inputFile']
+
