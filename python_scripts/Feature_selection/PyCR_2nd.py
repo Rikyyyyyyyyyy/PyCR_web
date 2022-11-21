@@ -6,14 +6,18 @@ import warnings
 import matplotlib
 import xlsxwriter
 import numpy as np
-from numpy import inf
-from sklearn import svm
+import pandas as pd 
 from enum import auto
+from numpy import inf
 from pydoc import plain
+from sklearn import svm
 from colour import Color
 from sklearn import metrics
 import matplotlib.pyplot as plt
+from sklearn import preprocessing
 from scipy.sparse.linalg import svds
+from bioinfokit.visuz import cluster
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import scale
 from sklearn.metrics import roc_curve, auc
 from scipy.stats.distributions import chi2
@@ -61,7 +65,6 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
         variableName = file_pkg.getValFromFileByCols(variableNameFile)
     
     
-    # read external data from input file 
     # external file split in 2 ways 
         #1 input a external file directly 
         #2 aplit file from sample file by given ratio
@@ -80,25 +83,6 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
     else:
         index_indices = [x for x in range(len(classList))]
     
-    # # keep a copy of riginal data 
-    # ori_sampleList = sampleList
-    # ori_externalList = externalList
-    # # output the splited training and external variables(if meet the external requirement) in MetaboAnalyze form
-    # if isexternal:
-    #     index_indices_Internal = [x - 1 for x in indices_train]
-    #     index_indices_external = [x - 1 for x in indices_test]
-    #     file_pkg.export_file(ori_sample, ori_class, index_indices_train, hori_index, OUTPUT_PATH + '/training_variables.csv', class_trans_dict, sampleName,variableName)
-    #     file_pkg.export_file(ori_sample, ori_class, index_indices_test, hori_index, OUTPUT_PATH + '/external_variables.csv', class_trans_dict, sampleName,variableName)
-    # else:
-    #     indices_train = [i for i in range(len(classList))]
-    #     index_indices_train = [x - 1 for x in indices_train]
-    #     file_pkg.export_file(ori_sample, ori_class, index_indices_train, hori_index, OUTPUT_PATH + '/training_variables.csv', class_trans_dict, sampleName,variableName)
-    #     external_variables_wb = xlsxwriter.Workbook(OUTPUT_PATH + '/external_variables.xlsx')
-    #     external_variables_ws = external_variables_wb.add_worksheet()
-    #     external_variables_ws.write(0, 0, "There is not enough samples to have external validation.")
-    #     
- 
-    
     # get the class number from class name
     # generate number version of class name
     unique_class = set(classList)
@@ -115,6 +99,9 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
     if isexternal:
         externalClassList = [class_trans_dict[sub.replace(" ","").replace("/","-")]for sub in externalClassList]
         externalClassList = [int(x) for x in externalClassList]
+
+    file_pkg.export_file(sampleList, classList, [i for i in range(len(sampleList))], [i for i in range(len(variableName))], OUTPUT_PATH +'/additional_information/original_file.csv', class_trans_dict,sampleName,variableName)
+
 
     # group different sample index by different class
     class_index_list = []
@@ -142,15 +129,21 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
 
     # Genrate  PCA graph with no Feature selection 
 
-   
+    
     if isexternal:
         if classNum == 2:
             gen_roc_graph(externalList,externalClassList,externalList,externalClassList,OUTPUT_PATH + "/roc_curve/roc_before_FS.png")
         else:
             mul_roc_graph(classNum,class_num_label,externalClassList,externalClassList,externalList,externalList,ROC_COLOR,OUTPUT_PATH + "/roc_curve/roc_before_FS.png ",isMicro, class_trans_dict)
         gen_pca(externalList,classNum,external_class_index_list,CLASS_COLOR, CLASS_LABEL,OUTPUT_PATH +  '/PCA/pca_graph/PCA_before_FS.png', class_trans_dict)
+        gen_biplot_loading(externalList,classNum,external_class_index_list,OUTPUT_PATH+'/PCA/biplot_graph/biplot_before_FS.png',OUTPUT_PATH+'/PCA/loading_plot/loading_before_FS')
+        gen_stat_report(externalList,externalClassList,OUTPUT_PATH+'/additional_information/staticReport_before_FS.csv') 
+        file_pkg.gen_matlab_plot(externalList,externalSampleName,externalClassList,externalVariableName,OUTPUT_PATH)  
     else:
         gen_pca(sampleList,classNum,class_index_list,CLASS_COLOR, CLASS_LABEL,OUTPUT_PATH +  '/PCA/pca_graph/PCA_before_FS.png', class_trans_dict)
+        gen_biplot_loading(sampleList,classNum,class_index_list,OUTPUT_PATH+'/PCA/biplot_graph/biplot_before_FS.png',OUTPUT_PATH+'/PCA/loading_plot/loading_before_FS')
+        gen_stat_report(sampleList,classList,OUTPUT_PATH+'/additional_information/staticReport_before_FS.csv')  
+        file_pkg.gen_matlab_plot(sampleList,sampleName,classList,variableName,OUTPUT_PATH)
         if classNum == 2:
             gen_roc_graph(sampleList,classList,sampleList,classList,OUTPUT_PATH + "/roc_curve/roc_before_FS.png")
         else:
@@ -307,13 +300,23 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
             mul_roc_graph(classNum,class_num_label,externalClassList,externalClassList,externalList[:, valid_idx],externalList[:, valid_idx],ROC_COLOR,OUTPUT_PATH + "/roc_curve/roc_after_FS.png ",isMicro, class_trans_dict)
         gen_pca(externalList[:, valid_idx], classNum, external_class_index_list, CLASS_COLOR, CLASS_LABEL,
                 OUTPUT_PATH + '/PCA/pca_graph/PCA_after_FS.png',class_trans_dict)
+        gen_biplot_loading(externalList[:, valid_idx],classNum,external_class_index_list,OUTPUT_PATH+'/PCA/biplot_graph/biplot_after_FS.png',OUTPUT_PATH+'/PCA/loading_plot/loading_after_FS')
+        gen_stat_report(externalList[:, valid_idx],externalClassList,OUTPUT_PATH+'/additional_information/staticReport_after_FS.csv') 
+        if external_type == 'file':
+            file_pkg.export_file(externalList, externalClassList,index_indices, valid_idx, OUTPUT_PATH +'/additional_information/selected_variable.csv', class_trans_dict,externalSampleName,externalVariableName)
+        else:
+            file_pkg.export_file(externalList, externalClassList,[i for i in range(len(externalClassList))], valid_idx, OUTPUT_PATH +'/additional_information/selected_variable.csv', class_trans_dict,externalSampleName,externalVariableName)
+
     else:
         if classNum == 2:
             gen_roc_graph(sampleList[:, valid_idx],classList,sampleList[:, valid_idx],classList,OUTPUT_PATH + "/roc_curve/roc_after_FS.png")
         else:
             mul_roc_graph(classNum,class_num_label,classList,classList,sampleList[:, valid_idx],sampleList[:, valid_idx],ROC_COLOR,OUTPUT_PATH + "/roc_curve/roc_after_FS.png ",isMicro, class_trans_dict)
+        gen_biplot_loading(sampleList[:,valid_idx],classNum,class_index_list,OUTPUT_PATH+'/PCA/biplot_graph/biplot_after_FS.png',OUTPUT_PATH+'/PCA/loading_plot/loading_after_FS')
         gen_pca(sampleList[:,valid_idx],classNum,class_index_list,CLASS_COLOR, CLASS_LABEL,OUTPUT_PATH +  '/PCA/pca_graph/PCA_after_FS.png', class_trans_dict)
-       
+        gen_stat_report(sampleList[:, valid_idx],classList,OUTPUT_PATH+'/additional_information/staticReport_after_FS.csv') 
+        file_pkg.export_file(sampleList, classList, [i for i in range(len(sampleList))], valid_idx, OUTPUT_PATH +'/additional_information/selected_variable.csv', class_trans_dict,sampleName,variableName)
+
     pdf_report_variables =[]
     for indx in valid_idx:
         v_name = variableName[indx]
@@ -322,34 +325,85 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
     file_pkg.gen_overview_report(OUTPUT_PATH,pdf_report_variables)
     file_pkg.gen_detail_report(OUTPUT_PATH,pdf_report_variables)
 
-def gen_biplot():
-    pass
+def gen_biplot_loading(data,classNum,class_index_list,fileName_bi, fileName_lo):
+    pca = PCA(n_components=2)
+    pca_laodings = PCA(n_components=2)
+    score_loading = pca_laodings.fit(data) 
+    score = pca.fit_transform(data)
+    plt.scatter(score[:,0], score[:,1], color='b')
+    loadings = pca_laodings.components_
+    loadings = loadings
+    plt.scatter(loadings[0]*500,loadings[1]*500, color='r')
+
+    # Add the axis labels
+    plt.xlabel('PC 1 (%.2f%%)' % (pca.explained_variance_ratio_[0]*100))
+    plt.ylabel('PC 2 (%.2f%%)' % (pca.explained_variance_ratio_[1]*100)) 
+
+    # Done
+    plt.savefig(fileName_bi,bbox_inches="tight")
+    plt.figure().clear()
+
+    # generate loading graph for PC1
+    variable_idx = [i+1 for i in range(len(data[0]))]
+
+    plt.scatter(variable_idx,loadings[0],Color='b')
+    # Add the axis labels
+    plt.xlabel('Variable index')
+    plt.ylabel('PC 1 (%.2f%%)' % (pca.explained_variance_ratio_[1]*100)) 
+
+    # Done
+    plt.savefig(fileName_lo+'_PC1.png',bbox_inches="tight")
+    plt.figure().clear()
+
+    # generate loading plot for PC2
+    variable_idx = [i+1 for i in range(len(data[0]))]
+
+    plt.scatter(variable_idx,loadings[1],Color='b')
+    # Add the axis labels
+    plt.xlabel('Variable index')
+    plt.ylabel('PC 2 (%.2f%%)' % (pca.explained_variance_ratio_[1]*100)) 
+
+    # Done
+    plt.savefig(fileName_lo+'_PC2.png',bbox_inches="tight")
+    plt.figure().clear()
+
         
 # generate STAT report 
-def gen_stat_report():
-    pass
+def gen_stat_report(data,classList,fileName):
+    clf_FS = svm.SVC(kernel='linear', random_state=42, probability=True)
+    clf_FS.fit(data, classList)
+    class_pred = clf_FS.predict(data)
+    internal_stat_acc_w_FS = accuracy_score(classList, class_pred)
+    internal_stat_sel_w_FS = precision_score(classList, class_pred, average='micro')
+    internal_stat_sen_w_FS = recall_score(classList, class_pred, average='micro')
+    file_pkg.gen_file_by_line(["Selectivity", "Sensitivity", "Accuracy"],
+                                      [internal_stat_sel_w_FS, internal_stat_sen_w_FS, internal_stat_acc_w_FS],
+                                      fileName)
 
 # generate PCA graph
 # INPUT : training data, number of class, class index list, class color list, class label list, name of the output file, original class name
 # OUTPUT : None
 def gen_pca(sampleData,classNum,class_index_list,class_color,class_label,fileName,class_trans_dict):
+    pca = PCA(n_components=2)
+    score = pca.fit_transform(sampleData)
     dummyU, dummyS, V = svds(sampleData, k=2)
     V = np.transpose(V)
-    Xt_training_noFS = np.dot(sampleData, V)
+    score = np.dot(sampleData, V)
     for z in range(1, classNum + 1):
-        class_Xt_training_noFS = Xt_training_noFS[class_index_list[z], :]
-        x_ellipse, y_ellipse = confident_ellipse(class_Xt_training_noFS[:, 0], class_Xt_training_noFS[:, 1])
+        class_score = score[class_index_list[z], :]
+        x_ellipse, y_ellipse = confident_ellipse(class_score[:, 0], class_score[:, 1])
         plt.plot(x_ellipse, y_ellipse, color=class_color[z - 1])
         plt.fill(x_ellipse, y_ellipse, color=class_color[z - 1], alpha=0.3)
-        plt.scatter(class_Xt_training_noFS[:, 0], class_Xt_training_noFS[:, 1], c=class_color[z - 1],
+        plt.scatter(class_score[:, 0], class_score[:, 1], c=class_color[z - 1],
                     marker=class_label[0], label= [k for k,v in class_trans_dict.items() if v == str(z)][0])
     # calculating the PCA percentage value
     pU, pS, pV = np.linalg.svd(sampleData)
     pca_percentage_val = np.cumsum(pS) / sum(pS)
     p2_percentage = pca_percentage_val[0] * 100
     p1_percentage = pca_percentage_val[1] * 100
-    plt.xlabel("PC1({0:0.3f}%".format(p1_percentage) + ")")
-    plt.ylabel("PC2 ({0:0.3f}%".format(p2_percentage) + ")")
+    # Add the axis labels
+    plt.xlabel('PC 1 (%.2f%%)' % (pca.explained_variance_ratio_[0]*100))
+    plt.ylabel('PC 2 (%.2f%%)' % (pca.explained_variance_ratio_[1]*100)) 
     # plt.title(graph_title)
     plt.rcParams.update({'font.size': 10})
     plt.legend(loc="upper right",prop={'size': 5})
@@ -582,10 +636,15 @@ class Normalization:
         return scaled_samples
 
     def norm_normalization(self,samples):
-        return samples
+        normalized = preprocessing.normalize(samples)
+        return normalized
 
     def mean_center_scale(self,samples):
-        return samples
+        samples = np.array(samples)
+        samples_mean = samples.mean(axis=0)
+        np.set_printoptions(threshold=sys.maxsize)
+        scaled_samples = np.subtract(samples, samples_mean)
+        return scaled_samples
 
     # scale samples with the mean and std from previous scaling
     # INPUT : all sample data list, mean of previous scaling, stander deviation of previous scaling

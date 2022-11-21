@@ -65,7 +65,7 @@ def gen_detail_report(path,selected_variables):
     pdf.cell(200, 10, txt = '1) PCA before Feature Selection ',
         ln = 1, align = 'L')
     pdf.image(path+'/pca/pca_graph/PCA_before_FS.png',x=10,y=40,w=84,h=70)
-    pdf.image(path+'/pca/pca_graph/PCA_before_FS.png',x=120,y=40,w=84,h=70)
+    pdf.image(path+'/pca/biplot_graph/biplot_before_FS.png',x=120,y=40,w=84,h=70)
     # used to make white space for picture to fit in the roght position
     for i in range(8):
         pdf.cell(200, 10, txt = '',
@@ -73,7 +73,7 @@ def gen_detail_report(path,selected_variables):
     pdf.cell(200, 10, txt = '2) PCA after Feature Selection ',
         ln = 1, align = 'L')
     pdf.image(path+'/pca/pca_graph/PCA_after_FS.png',x=10,y=130,w=84,h=70)
-    pdf.image(path+'/pca/pca_graph/PCA_after_FS.png',x=120,y=130,w=84,h=70)
+    pdf.image(path+'/pca/biplot_graph/biplot_after_FS.png',x=120,y=130,w=84,h=70)
     # used to make white space for picture to fit in the roght position
     for i in range(8):
         pdf.cell(200, 10, txt = '',
@@ -100,7 +100,7 @@ def gen_detail_report(path,selected_variables):
     pdf.set_font("Arial",'B', size = 7)
     pdf.cell(200, 10, txt = '   **Depend on how many iterations you have, the color start at red and tend to be blue when the interation goes.',
         ln = 1, align = 'L')
-    pdf.image(path+'/roc_curve/rocIterations/roc 1.png',x=50,y=30,w=84,h=70)
+    pdf.image(path+'/roc_curve/rocIterations/rocIterations.png',x=50,y=30,w=84,h=70)
 
     # used to make white space for picture to fit in the roght position
     for i in range(8):
@@ -108,21 +108,27 @@ def gen_detail_report(path,selected_variables):
         ln = 1, align = 'L')
     ## Loading plots
     pdf.set_font("Arial",'B', size = 10)
-    pdf.cell(200, 10, txt = '5) Loading Plots ',
+    pdf.cell(200, 10, txt = '5) Loading Plots before FS',
         ln = 1, align = 'L')
-    pdf.set_font("Arial",'B', size = 7)
-    pdf.image(path+'/roc_curve/rocIterations/roc 1.png',x=50,y=120,w=84,h=70)
-
-    # used to make white space for picture to fit in the roght position
-    for i in range(8):
+    pdf.image(path+'/pca/loading_plot/loading_before_FS_PC1.png',x=10,y=130,w=84,h=70)
+    pdf.image(path+'/pca/loading_plot/loading_before_FS_PC2.png',x=120,y=130,w=84,h=70)
+    for i in range(9):
         pdf.cell(200, 10, txt = '',
         ln = 1, align = 'L')
+    pdf.cell(200, 10, txt = '5) Loading Plots after FS',
+        ln = 1, align = 'L')
+    pdf.set_font("Arial",'B', size = 7)
+    pdf.image(path+'/pca/loading_plot/loading_after_FS_PC1.png',x=10,y=220,w=84,h=70)
+    pdf.image(path+'/pca/loading_plot/loading_after_FS_PC2.png',x=120,y=220,w=84,h=70)
+
+    ## new content for detail report
+    pdf.add_page()
     ## Loading plots
     pdf.set_font("Arial",'B', size = 10)
     pdf.cell(200, 10, txt = '6) Start and Stop number ',
         ln = 1, align = 'L')
     pdf.set_font("Arial",'B', size = 7)
-    pdf.image(path+'/additional_information/FisherMean.png',x=50,y=220,w=84,h=70)
+    pdf.image(path+'/additional_information/startStopNum.png',x=50,y=30,w=84,h=70)
     
 
     ## output the report as pdf 
@@ -131,8 +137,8 @@ def gen_detail_report(path,selected_variables):
 
 
 def main():
-    path = '/Users/wenwenli/Desktop/my_TMIC/PyCR_web_git/static/images/featureSelection/temp/output/output431'
-    gen_overview_report(path,[['Location','Variable Name'],['1','a'],['2','b'],['3','c'],['4','d']])
+    path = '/Users/wenwenli/Desktop/output_stat'
+    # gen_overview_report(path,[['Location','Variable Name'],['1','a'],['2','b'],['3','c'],['4','d']])
     gen_detail_report(path,[['Location','Variable Name'],['1','a'],['2','b'],['3','c'],['4','d']])
 
 

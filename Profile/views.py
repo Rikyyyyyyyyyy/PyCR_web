@@ -380,7 +380,8 @@ def feature_task_update_name(request,pk):
             user_id = request.user.id
             update_task = Feature_selection.objects.filter(id=pk).first()
             task_name = form.cleaned_data['task_name']
-            task_name = form.cleaned_data['task_name']
+            if task_name == "":
+                task_name = update_task.task_name
             while task_name in user_tasks_name:
                 task_name = task_name+ "_dup"
             update_task.task_name = task_name

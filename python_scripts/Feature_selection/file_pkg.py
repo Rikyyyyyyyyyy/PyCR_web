@@ -37,6 +37,8 @@ def create_folder(task_pk):
         os.makedirs(OUTPUT_PATH + '/selected_variable')
     if not os.path.exists(OUTPUT_PATH + '/additional_information'):
         os.makedirs(OUTPUT_PATH + '/additional_information')
+    if not os.path.exists(OUTPUT_PATH + '/matlab_plot'):
+        os.makedirs(OUTPUT_PATH + '/matlab_plot')
     return OUTPUT_PATH
 
 
@@ -164,9 +166,11 @@ def export_file(variable, class_list, indice, hori, fileName, label_dic,sampleNa
         # write multiple rows
         sampleName_row = [sampleName[i] for i in indice]
         sampleName_row.insert(0, "")
+        sampleName_row.insert(1,"")
         writer.writerow(sampleName_row)
         class_row = [trans_class_list[i] for i in indice]
-        class_row.insert(0, "Label")
+        class_row.insert(0, "position")
+        class_row.insert(1, "Label")
         writer.writerow(class_row)
         variable = np.array(variable)
 
@@ -174,11 +178,12 @@ def export_file(variable, class_list, indice, hori, fileName, label_dic,sampleNa
         variable = variable[list(indice),:]
 
         variableName = [variableName[i] for i in hori]
+        variableIndex = [i+1 for i in hori]
         variable = np.transpose(variable)
         temp_vari = np.ndarray.tolist(variable)
         for i in range(len(temp_vari)):
-            temp_vari[i].insert(0,str(variableName[i]))
-            writer.writerow(temp_vari[i])
+            temp_vari[i].insert(0,str(variableIndex[i]))
+            temp_vari[i].insert(1,str(variableName[i]))
             writer.writerow(temp_vari[i])
 
 def clearGenerateErrorMessage(msgs,path):
@@ -209,7 +214,7 @@ def gen_overview_report(path,selected_variables):
     pdf.cell(200, 10, txt = '1) PCA before Feature Selection ',
         ln = 1, align = 'L')
     pdf.image(path+'/pca/pca_graph/PCA_before_FS.png',x=10,y=40,w=84,h=70)
-    pdf.image(path+'/pca/pca_graph/PCA_before_FS.png',x=120,y=40,w=84,h=70)
+    pdf.image(path+'/pca/biplot_graph/biplot_before_FS.png',x=120,y=40,w=84,h=70)
     # used to make white space for picture to fit in the roght position
     for i in range(8):
         pdf.cell(200, 10, txt = '',
@@ -217,7 +222,7 @@ def gen_overview_report(path,selected_variables):
     pdf.cell(200, 10, txt = '2) PCA after Feature Selection ',
         ln = 1, align = 'L')
     pdf.image(path+'/pca/pca_graph/PCA_after_FS.png',x=10,y=130,w=84,h=70)
-    pdf.image(path+'/pca/pca_graph/PCA_after_FS.png',x=120,y=130,w=84,h=70)
+    pdf.image(path+'/pca/biplot_graph/biplot_after_FS.png',x=120,y=130,w=84,h=70)
     # used to make white space for picture to fit in the roght position
     for i in range(8):
         pdf.cell(200, 10, txt = '',
@@ -258,7 +263,7 @@ def gen_detail_report(path,selected_variables):
     pdf.cell(200, 10, txt = '1) PCA before Feature Selection ',
         ln = 1, align = 'L')
     pdf.image(path+'/pca/pca_graph/PCA_before_FS.png',x=10,y=40,w=84,h=70)
-    pdf.image(path+'/pca/pca_graph/PCA_before_FS.png',x=120,y=40,w=84,h=70)
+    pdf.image(path+'/pca/biplot_graph/biplot_before_FS.png',x=120,y=40,w=84,h=70)
     # used to make white space for picture to fit in the roght position
     for i in range(8):
         pdf.cell(200, 10, txt = '',
@@ -266,7 +271,7 @@ def gen_detail_report(path,selected_variables):
     pdf.cell(200, 10, txt = '2) PCA after Feature Selection ',
         ln = 1, align = 'L')
     pdf.image(path+'/pca/pca_graph/PCA_after_FS.png',x=10,y=130,w=84,h=70)
-    pdf.image(path+'/pca/pca_graph/PCA_after_FS.png',x=120,y=130,w=84,h=70)
+    pdf.image(path+'/pca/biplot_graph/biplot_after_FS.png',x=120,y=130,w=84,h=70)
     # used to make white space for picture to fit in the roght position
     for i in range(8):
         pdf.cell(200, 10, txt = '',
@@ -299,25 +304,59 @@ def gen_detail_report(path,selected_variables):
     for i in range(8):
         pdf.cell(200, 10, txt = '',
         ln = 1, align = 'L')
+
     ## Loading plots
     pdf.set_font("Arial",'B', size = 10)
-    pdf.cell(200, 10, txt = '5) Loading Plots ',
+    pdf.cell(200, 10, txt = '5) Loading Plots before FS',
         ln = 1, align = 'L')
-    pdf.set_font("Arial",'B', size = 7)
-    pdf.image(path+'/roc_curve/rocIterations/rocIterations.png',x=50,y=120,w=84,h=70)
-
-    # used to make white space for picture to fit in the roght position
-    for i in range(8):
+    pdf.image(path+'/pca/loading_plot/loading_before_FS_PC1.png',x=10,y=130,w=84,h=70)
+    pdf.image(path+'/pca/loading_plot/loading_before_FS_PC2.png',x=120,y=130,w=84,h=70)
+    for i in range(9):
         pdf.cell(200, 10, txt = '',
         ln = 1, align = 'L')
+    pdf.cell(200, 10, txt = '5) Loading Plots after FS',
+        ln = 1, align = 'L')
+    pdf.set_font("Arial",'B', size = 7)
+    pdf.image(path+'/pca/loading_plot/loading_after_FS_PC1.png',x=10,y=220,w=84,h=70)
+    pdf.image(path+'/pca/loading_plot/loading_after_FS_PC2.png',x=120,y=220,w=84,h=70)
+
+    ## new content for detail report
+    pdf.add_page()
     ## Loading plots
     pdf.set_font("Arial",'B', size = 10)
     pdf.cell(200, 10, txt = '6) Start and Stop number ',
         ln = 1, align = 'L')
     pdf.set_font("Arial",'B', size = 7)
-    pdf.image(path+'/additional_information/startStopNum.png',x=50,y=220,w=84,h=70)
+    pdf.image(path+'/additional_information/startStopNum.png',x=50,y=30,w=84,h=70)
     
 
     ## output the report as pdf 
     outputPath = path+"/detail_report"+".pdf"
-    pdf.output(outputPath,'F')  
+    pdf.output(outputPath,'F') 
+
+def gen_matlab_plot(data,sampleName,classList,variableName,path):
+    with open(path+'/matlab_plot/sampleName.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        # write multiple rows
+        for sn in sampleName:
+            writer.writerow([sn])
+
+    with open(path+'/matlab_plot/Y_block.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        # write multiple rows
+        for cl in classList:
+            writer.writerow([str(cl)])
+
+    with open(path+'/matlab_plot/variableName.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        # write multiple rows
+        writer.writerow(variableName)
+    
+    with open(path+'/matlab_plot/X_block.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        # write multiple rows
+        for d in data:
+            writer.writerow(d)
+
+    
+
