@@ -47,7 +47,7 @@ class PyCRThread(threading.Thread):
         # try:
             s3 = boto3.resource('s3')
             BUCKET = "pycr"
-            PyCR.runPyCR(self.isExternal, self.splitratio, self.rocType, self.tupaType, self.isMotabo, self.motabo_url, self.sample_url, self.class_url, self.sampleName, self.VariableName,self.external_type, self.ex_isMotabo, self.ex_motabo_url, self.ex_sample_url, self.ex_calss_url, self.ex_sampleName_url, self.ex_variableName, self.scaleType,self.normType, self.iterations, self.survivalRate, self.rankingAlg, self.nComp, self.pk)
+            PyCR.runPyCR(self.isExternal, self.splitratio, self.rocType, self.tupaType, self.isMotabo, self.motabo_url, self.sample_url, self.class_url, self.sampleName, self.VariableName,self.external_type, self.ex_isMotabo, self.ex_motabo_url, self.ex_sample_url, self.ex_calss_url, self.ex_sampleName_url, self.ex_variableName, self.scaleType,self.normType, self.iterations, self.survivalRate, self.rankingAlg, self.nComp, self.pk,self.task_name)
             os.rename( 'static/images/featureSelection/temp/output/'+ 'output' + str(self.task.pk), 'static/images/featureSelection/temp/output/'+ 'output_' + self.task_name)
             shutil.make_archive('static/images/featureSelection/temp/zipOutput/output_' + self.task_name, "zip",
                                  'static/images/featureSelection/temp/output/'+ 'output_' + self.task_name)

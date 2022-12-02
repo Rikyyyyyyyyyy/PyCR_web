@@ -89,9 +89,9 @@ def createPDF(taskName, validationData, rankingAlgorithm, rocType, tupaType, sca
         ln = 2, align = 'C')
     pdf.cell(200, 10, txt ='Survival Rate: ' + str(survivalRate) ,
         ln = 2, align = 'C')
-    pdf.cell(200, 10, txt ='Thank you for using PyCR. ' + str(survivalRate) ,
+    pdf.cell(200, 10, txt ='Thank you for using PyCR. ' ,
         ln = 2, align = 'C')
-    pdf.cell(200, 10, txt ='Please do not reply to this email. ' + str(survivalRate) ,
+    pdf.cell(200, 10, txt ='Please do not reply to this email. ' ,
         ln = 2, align = 'C')
     # save the pdf with name .pdf
     outputPath = "static/images/featureSelection/temp/emailPDF/email_info"+str(pk)+".pdf"

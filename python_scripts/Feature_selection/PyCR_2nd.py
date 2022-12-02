@@ -34,7 +34,7 @@ from sklearn.metrics import accuracy_score,precision_score,recall_score
 matplotlib.use('agg')
 warnings.filterwarnings('ignore')
 
-def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,DataFileName,ClassFileName,sampleNameFile,variableNameFile,external_type,ex_isMotabo, ex_MotaboFileName,ex_DataFileName,ex_ClassFileName,ex_sampleNameFile,ex_variableNameFile, scale_type,norm_type,iteration,survivalRate,V_rankingAlgorithm, nComponent,task_pk):
+def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,DataFileName,ClassFileName,sampleNameFile,variableNameFile,external_type,ex_isMotabo, ex_MotaboFileName,ex_DataFileName,ex_ClassFileName,ex_sampleNameFile,ex_variableNameFile, scale_type,norm_type,iteration,survivalRate,V_rankingAlgorithm, nComponent,task_pk,task_name):
     # Iterations for feature selection 
     ITERATION = iteration
 
@@ -135,13 +135,13 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
             gen_roc_graph(externalList,externalClassList,externalList,externalClassList,OUTPUT_PATH + "/roc_curve/roc_before_FS.png")
         else:
             mul_roc_graph(classNum,class_num_label,externalClassList,externalClassList,externalList,externalList,ROC_COLOR,OUTPUT_PATH + "/roc_curve/roc_before_FS.png ",isMicro, class_trans_dict)
-        gen_pca(externalList,classNum,external_class_index_list,CLASS_COLOR, CLASS_LABEL,OUTPUT_PATH +  '/PCA/pca_graph/PCA_before_FS.png', class_trans_dict)
-        gen_biplot_loading(externalList,classNum,external_class_index_list,OUTPUT_PATH+'/PCA/biplot_graph/biplot_before_FS.png',OUTPUT_PATH+'/PCA/loading_plot/loading_before_FS')
+        gen_pca(externalList,classNum,external_class_index_list,CLASS_COLOR, CLASS_LABEL,OUTPUT_PATH +  '/PCA/pca_scores_plots/PCA_before_FS.png', class_trans_dict)
+        gen_biplot_loading(externalList,classNum,external_class_index_list,OUTPUT_PATH+'/PCA/biplots/biplot_before_FS.png',OUTPUT_PATH+'/PCA/loading_plots/loading_before_FS','',False,variableName)
         gen_stat_report(externalList,externalClassList,OUTPUT_PATH+'/additional_information/staticReport_before_FS.csv') 
         file_pkg.gen_matlab_plot(externalList,externalSampleName,externalClassList,externalVariableName,OUTPUT_PATH)  
     else:
-        gen_pca(sampleList,classNum,class_index_list,CLASS_COLOR, CLASS_LABEL,OUTPUT_PATH +  '/PCA/pca_graph/PCA_before_FS.png', class_trans_dict)
-        gen_biplot_loading(sampleList,classNum,class_index_list,OUTPUT_PATH+'/PCA/biplot_graph/biplot_before_FS.png',OUTPUT_PATH+'/PCA/loading_plot/loading_before_FS')
+        gen_pca(sampleList,classNum,class_index_list,CLASS_COLOR, CLASS_LABEL,OUTPUT_PATH +  '/PCA/pca_scores_plots/PCA_before_FS.png', class_trans_dict)
+        gen_biplot_loading(sampleList,classNum,class_index_list,OUTPUT_PATH+'/PCA/biplots/biplot_before_FS.png',OUTPUT_PATH+'/PCA/loading_plots/loading_before_FS','',False,variableName)
         gen_stat_report(sampleList,classList,OUTPUT_PATH+'/additional_information/staticReport_before_FS.csv')  
         file_pkg.gen_matlab_plot(sampleList,sampleName,classList,variableName,OUTPUT_PATH)
         if classNum == 2:
@@ -170,7 +170,7 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
     error_msg = []
     for k in range(ITERATION):
         if erro_iterations < ceil(ITERATION, 2):
-            print("################## ITERATION "+ str(k)+" ##################")
+            print("################## ITERATION "+ str(k+1)+" ##################")
             try:
                 # Start Feature Selection
                 return_idx, sample_taining, sample_test, class_training, class_test = newScore.setNumber(int(classNum), classList, sampleList, startNum, endNum, splitRatio,k, class_trans_dict, scale_type, V_rankingAlgorithm, nComponent,OUTPUT_PATH)
@@ -256,12 +256,14 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
             return
     # save the roc graph for N iterations
     if classNum ==2 or isMicro:
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate') 
         plt.savefig(OUTPUT_PATH + '/roc_curve/rocIterations/rocIterations.png')
         plt.figure().clear()
     else:
         for i in range(classNum):
-            # figPlot[i][1].set_title('Roc ' + str(ITERATION) + ' iterations class: ' + [k for k, v in class_trans_dict.items() if v == str(i+1)][0])
-            figPlot[i][0].savefig(OUTPUT_PATH + '/roc_curve/rocIterations/roc '+str(ITERATION) +'iterations class: '+[k for k,v in class_trans_dict.items() if v == str(i+1)][0]+'.png')
+            figPlot[i][1].set_title('class: ' + [k for k, v in class_trans_dict.items() if v == str(i+1)][0])
+            figPlot[i][0].savefig(OUTPUT_PATH + '/roc_curve/rocIterations/rocIterations_'+[k for k,v in class_trans_dict.items() if v == str(i+1)][0]+'.png')
             figPlot[i][0].clear()
     # save all the auc number in to csv table
     if classNum == 2 or isMicro:
@@ -271,16 +273,21 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
             file_pkg.gen_file_by_list(["Auc Number"],auc_table[i],OUTPUT_PATH + '/roc_curve/rocIterations/auc_table_class_' + [k for k,v in class_trans_dict.items() if v == str(j+1)][0] + '.csv')
 
     valid_idx = []
+    all_variable_prob = []
     # calculate the show-up ratio for each variable
     for i in range(len(hash_list)):
         prob = float(hash_list[i])/ITERATION
         # we are only taking the ratio more than 30%
+        all_variable_prob.append(prob)
         if prob >= survivalRate:
             valid_idx.append(i)
 
+    file_pkg.gen_variable_prob_file(['index']+[i+1 for i in range(len(variableName))], ['survival rate']+all_variable_prob,['variable Name']+variableName,OUTPUT_PATH+'/additional_information/variable_prob_file.csv')
+    
+
     # If there is no enought valid variable selected, return error message 
     if len(valid_idx) < 2:
-        notEnoughtSelectedVariableErrorMessage(hash_list, survivalRate, variableName, ITERATION, OUTPUT_PATH)
+        notEnoughtSelectedVariableErrorMessage(hash_list, survivalRate, variableName, ITERATION, OUTPUT_PATH+'/additional_information/ErrorMessage.csv')
         return
 
     # generate selected variable file 
@@ -299,8 +306,8 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
         else:
             mul_roc_graph(classNum,class_num_label,externalClassList,externalClassList,externalList[:, valid_idx],externalList[:, valid_idx],ROC_COLOR,OUTPUT_PATH + "/roc_curve/roc_after_FS.png ",isMicro, class_trans_dict)
         gen_pca(externalList[:, valid_idx], classNum, external_class_index_list, CLASS_COLOR, CLASS_LABEL,
-                OUTPUT_PATH + '/PCA/pca_graph/PCA_after_FS.png',class_trans_dict)
-        gen_biplot_loading(externalList[:, valid_idx],classNum,external_class_index_list,OUTPUT_PATH+'/PCA/biplot_graph/biplot_after_FS.png',OUTPUT_PATH+'/PCA/loading_plot/loading_after_FS')
+                OUTPUT_PATH + '/PCA/pca_scores_plots/PCA_after_FS.png',class_trans_dict)
+        gen_biplot_loading(externalList[:, valid_idx],classNum,external_class_index_list,OUTPUT_PATH+'/PCA/biplots/biplot_after_FS.png',OUTPUT_PATH+'/PCA/loading_plots/loading_after_FS',OUTPUT_PATH+'/additional_information/loading_details.csv',True,variableName)
         gen_stat_report(externalList[:, valid_idx],externalClassList,OUTPUT_PATH+'/additional_information/staticReport_after_FS.csv') 
         if external_type == 'file':
             file_pkg.export_file(externalList, externalClassList,index_indices, valid_idx, OUTPUT_PATH +'/additional_information/selected_variable.csv', class_trans_dict,externalSampleName,externalVariableName)
@@ -312,8 +319,8 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
             gen_roc_graph(sampleList[:, valid_idx],classList,sampleList[:, valid_idx],classList,OUTPUT_PATH + "/roc_curve/roc_after_FS.png")
         else:
             mul_roc_graph(classNum,class_num_label,classList,classList,sampleList[:, valid_idx],sampleList[:, valid_idx],ROC_COLOR,OUTPUT_PATH + "/roc_curve/roc_after_FS.png ",isMicro, class_trans_dict)
-        gen_biplot_loading(sampleList[:,valid_idx],classNum,class_index_list,OUTPUT_PATH+'/PCA/biplot_graph/biplot_after_FS.png',OUTPUT_PATH+'/PCA/loading_plot/loading_after_FS')
-        gen_pca(sampleList[:,valid_idx],classNum,class_index_list,CLASS_COLOR, CLASS_LABEL,OUTPUT_PATH +  '/PCA/pca_graph/PCA_after_FS.png', class_trans_dict)
+        gen_biplot_loading(sampleList[:,valid_idx],classNum,class_index_list,OUTPUT_PATH+'/PCA/biplots/biplot_after_FS.png',OUTPUT_PATH+'/PCA/loading_plots/loading_after_FS',OUTPUT_PATH+'/additional_information/loading_details.csv',True,variableName)
+        gen_pca(sampleList[:,valid_idx],classNum,class_index_list,CLASS_COLOR, CLASS_LABEL,OUTPUT_PATH +  '/PCA/pca_scores_plots/PCA_after_FS.png', class_trans_dict)
         gen_stat_report(sampleList[:, valid_idx],classList,OUTPUT_PATH+'/additional_information/staticReport_after_FS.csv') 
         file_pkg.export_file(sampleList, classList, [i for i in range(len(sampleList))], valid_idx, OUTPUT_PATH +'/additional_information/selected_variable.csv', class_trans_dict,sampleName,variableName)
 
@@ -322,24 +329,57 @@ def mainPyCR(isexternal,splitRatio,isMicro,tupaType,isMotabo,MotaboFileName,Data
         v_name = variableName[indx]
         temp = [str(indx+3),v_name]
         pdf_report_variables.append(temp)
-    file_pkg.gen_overview_report(OUTPUT_PATH,pdf_report_variables)
-    file_pkg.gen_detail_report(OUTPUT_PATH,pdf_report_variables)
 
-def gen_biplot_loading(data,classNum,class_index_list,fileName_bi, fileName_lo):
+
+    roc_name = []
+    if classNum <=2:
+        roc_name.append('rocIterations.png')
+    else:
+        for i in range(classNum):
+            roc_name.append('rocIterations_'+[k for k,v in class_trans_dict.items() if v == str(i+1)][0]+'.png')
+
+
+    ## Generate the final report
+    if isexternal:
+        validation = 'External'
+    else:
+        validation = 'Internal'
+    
+    if isMicro:
+        rocType = 'Single Roc'
+    else:
+        rocType = 'Multi Roc'
+
+    file_pkg.gen_overview_report(OUTPUT_PATH,pdf_report_variables,task_name,validation,V_rankingAlgorithm,rocType,tupaType,scale_type,ITERATION,survivalRate,norm_type,nComponent)
+    file_pkg.gen_detail_report(OUTPUT_PATH,pdf_report_variables,roc_name,task_name,validation,V_rankingAlgorithm,rocType,tupaType,scale_type,ITERATION,survivalRate,norm_type,nComponent)
+
+def gen_biplot_loading(data,classNum,class_index_list,fileName_bi, fileName_lo,loading_path,is_loadingFile,variableName):
     pca = PCA(n_components=2)
     pca_laodings = PCA(n_components=2)
     score_loading = pca_laodings.fit(data) 
     score = pca.fit_transform(data)
-    plt.scatter(score[:,0], score[:,1], color='b')
+    abs_score = np.absolute(score)
+    pc1_max, pc2_max = abs_score.max(axis=0)
     loadings = pca_laodings.components_
     loadings = loadings
-    plt.scatter(loadings[0]*500,loadings[1]*500, color='r')
+    coe_loadings = [math.sqrt(loadings[0][i]**2+loadings[1][i]**2) for i in range(len(loadings[0]))]
+    max_coe_loading = max(coe_loadings)
+    pc1_scores = [p1/pc1_max*max_coe_loading for p1 in score[:,0]] 
+    pc2_scores = [p2/pc2_max*max_coe_loading for p2 in score[:,1]]   
+    plt.scatter(pc1_scores, pc2_scores, color='b',label='scores')
+    plt.scatter(loadings[0],loadings[1], color='r',label='loadings')
+    plt.title('Biplot')
 
     # Add the axis labels
     plt.xlabel('PC 1 (%.2f%%)' % (pca.explained_variance_ratio_[0]*100))
     plt.ylabel('PC 2 (%.2f%%)' % (pca.explained_variance_ratio_[1]*100)) 
-
+    # adding vertical line in data co-ordinates
+    plt.axvline(0, c='black', ls='--')
+    
+    # adding horizontal line in data co-ordinates
+    plt.axhline(0, c='black', ls='--')
     # Done
+    plt.legend(loc="upper right",prop={'size': 5})
     plt.savefig(fileName_bi,bbox_inches="tight")
     plt.figure().clear()
 
@@ -349,6 +389,7 @@ def gen_biplot_loading(data,classNum,class_index_list,fileName_bi, fileName_lo):
     plt.scatter(variable_idx,loadings[0],Color='b')
     # Add the axis labels
     plt.xlabel('Variable index')
+    
     plt.ylabel('PC 1 (%.2f%%)' % (pca.explained_variance_ratio_[1]*100)) 
 
     # Done
@@ -366,6 +407,13 @@ def gen_biplot_loading(data,classNum,class_index_list,fileName_bi, fileName_lo):
     # Done
     plt.savefig(fileName_lo+'_PC2.png',bbox_inches="tight")
     plt.figure().clear()
+    if is_loadingFile:
+        header = ['Variable Name','PC1','PC2']
+        lines = []
+        for idx, v_idx in enumerate(variable_idx):
+            lines.append([variableName[v_idx],loadings[0][idx],loadings[1][idx]])
+        file_pkg.gen_file_by_class_matrix(header,lines,loading_path)
+
 
         
 # generate STAT report 
@@ -386,9 +434,9 @@ def gen_stat_report(data,classList,fileName):
 def gen_pca(sampleData,classNum,class_index_list,class_color,class_label,fileName,class_trans_dict):
     pca = PCA(n_components=2)
     score = pca.fit_transform(sampleData)
-    dummyU, dummyS, V = svds(sampleData, k=2)
-    V = np.transpose(V)
-    score = np.dot(sampleData, V)
+    # dummyU, dummyS, V = svds(sampleData, k=2)
+    # V = np.transpose(V)
+    # score = np.dot(sampleData, V)
     for z in range(1, classNum + 1):
         class_score = score[class_index_list[z], :]
         x_ellipse, y_ellipse = confident_ellipse(class_score[:, 0], class_score[:, 1])
@@ -407,6 +455,7 @@ def gen_pca(sampleData,classNum,class_index_list,class_color,class_label,fileNam
     # plt.title(graph_title)
     plt.rcParams.update({'font.size': 10})
     plt.legend(loc="upper right",prop={'size': 5})
+    plt.title('Scores Plot')
     plt.savefig(fileName,bbox_inches="tight")
     plt.figure().clear()
 
@@ -476,6 +525,8 @@ def gen_roc_graph(training_sample,training_class,predict_sample,predict_class, f
     # plt.title(graph_title)
     plt.rcParams.update({'font.size': 14})
     plt.legend(loc="upper right",prop={'size': 5})
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate') 
     plt.savefig(fileName,bbox_inches="tight")
     plt.figure().clear()
 
@@ -523,6 +574,8 @@ def mul_roc_graph(classNum, class_num_label, trainingClass, predicClass, trainin
             figPlots[k][1].legend()
     plt.rcParams.update({'font.size': 14})
     if classNum ==2 or isMicro:
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate') 
         plt.savefig(output_filename+'.png')
         plt.figure().clear()
     else:
@@ -532,7 +585,7 @@ def mul_roc_graph(classNum, class_num_label, trainingClass, predicClass, trainin
             figPlots[j][0].clear()
 
 
-def runPyCR(isexternal,rateSplit,isMicro,tupaType,isMotabo,motaboFileName,dataFileName,classFileName,sampleNameFileName,variableNameFileName,external_type,ex_isMotabo, ex_MotaboFileName,ex_DataFileName,ex_ClassFileName,ex_sampleNameFile,ex_variableNameFile,scaleType,normType,howManyIteration,survivalrate,V_rankingAlgorithm,nComponent, task_pk):
+def runPyCR(isexternal,rateSplit,isMicro,tupaType,isMotabo,motaboFileName,dataFileName,classFileName,sampleNameFileName,variableNameFileName,external_type,ex_isMotabo, ex_MotaboFileName,ex_DataFileName,ex_ClassFileName,ex_sampleNameFile,ex_variableNameFile,scaleType,normType,howManyIteration,survivalrate,V_rankingAlgorithm,nComponent, task_pk,task_name):
     if isexternal == 'true':
         isexternal = True
     else:
@@ -554,7 +607,7 @@ def runPyCR(isexternal,rateSplit,isMicro,tupaType,isMotabo,motaboFileName,dataFi
 
     mainPyCR(isexternal, rateSplit, isMicro, tupaType, isMotabo, motaboFileName, dataFileName, classFileName,
          sampleNameFileName, variableNameFileName, external_type,ex_isMotabo, ex_MotaboFileName,ex_DataFileName,ex_ClassFileName,ex_sampleNameFile,ex_variableNameFile, scaleType, normType, howManyIteration, survivalrate, V_rankingAlgorithm,
-         nComponent, task_pk)
+         nComponent, task_pk,task_name)
 
 
 class Normalization:
